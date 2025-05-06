@@ -27,3 +27,7 @@ $routes->post('admin/users/create', 'UsersController::create');
 $routes->get('admin/users/edit/(:num)', 'UsersController::edit/$1');
 $routes->post('admin/users/update/(:num)', 'UsersController::update/$1');
 $routes->get('admin/users/delete/(:num)', 'UsersController::delete/$1');
+
+
+//Admin dashboard routes
+$routes->get('admin/dashboard', 'AdminDashboard::index');
