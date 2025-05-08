@@ -1,7 +1,9 @@
-<?= view('layout/header') ?>
+<?= $this->extend('layouts/main'); ?>
 
-<div class="container mt-4">
-    <h3 class="mb-4">Admin Dashboard</h3>
+<?= $this->section('content'); ?>
+
+<div class="container mt-8">
+    <h3 class="mb-4">Dashboard</h3>
 
     <!-- Summary Cards -->
     <div class="row g-4">
@@ -78,22 +80,51 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-header bg-light">
-                    <strong>Quick Actions</strong>
-                </div>
-                <div class="card-body d-grid gap-2">
-                    <a href="<?= base_url('admin/users/add') ?>" class="btn btn-outline-primary">➕ Add User</a>
-                    <a href="<?= base_url('admin/vehicles/add') ?>" class="btn btn-outline-success">🚗 Register Vehicle</a>
-                    <a href="<?= base_url('admin/jobs/create') ?>" class="btn btn-outline-warning">🛠️ Create Job</a>
-                    <a href="<?= base_url('admin/sublets/add') ?>" class="btn btn-outline-info">🔁 Add Sublet</a>
-                    <a href="<?= base_url('admin/lpos/add') ?>" class="btn btn-outline-danger">📄 New LPO</a>
-                    <a href="<?= base_url('admin/pettycash/add') ?>" class="btn btn-outline-dark">💸 Add Petty Cash</a>
-                </div>
-            </div>
+<div class="col-md-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light">
+            <strong>Quick Actions</strong>
+        </div>
+        <div class="card-body d-grid gap-3">
+            <a href="<?= base_url('admin/users/add') ?>" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                <i class="bi bi-person-plus"></i> Add User
+            </a>
+            <a href="<?= base_url('admin/vehicles/add') ?>" class="btn btn-outline-success d-flex align-items-center gap-2">
+                <i class="bi bi-car-front"></i> Register Vehicle
+            </a>
+            <a href="<?= base_url('admin/jobs/create') ?>" class="btn btn-outline-warning d-flex align-items-center gap-2">
+                <i class="bi bi-briefcase"></i> Create Job
+            </a>
+            <a href="<?= base_url('admin/sublets/add') ?>" class="btn btn-outline-info d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-repeat"></i> Add Sublet
+            </a>
+            <a href="<?= base_url('admin/lpos/add') ?>" class="btn btn-outline-danger d-flex align-items-center gap-2">
+                <i class="bi bi-file-earmark-plus"></i> New LPO
+            </a>
+            <a href="<?= base_url('admin/pettycash/add') ?>" class="btn btn-outline-dark d-flex align-items-center gap-2">
+                <i class="bi bi-cash"></i> Add Petty Cash
+            </a>
         </div>
     </div>
 </div>
 
-<?= view('layout/footer') ?>
+    </div>
+</div>
+<style>
+    .btn {
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .btn i {
+        font-size: 16px;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+
+<?= $this->endSection(); ?>

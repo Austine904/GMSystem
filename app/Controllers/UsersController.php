@@ -13,12 +13,28 @@ class UsersController extends BaseController
             return redirect()->to('/login');
         }
 
-        // Query users
         $db = \Config\Database::connect();
-        $builder = $db->table('users');
-        $users = $builder->get()->getResultArray();
+        $query = $db->table('users');
 
-        return view('admin/users', ['users' => $users]);
+        $search = $this->request->getVar('search');
+
+        if (!empty($search)) {
+            $query->like('name', $search)
+                ->orLike('phone', $search)
+                ->orLike('role', $search);
+        }
+
+        $perPage = 10;
+        $currentPage = $this->request->getVar('page') ?? 1;
+
+        $users = $query->limit($perPage, ($currentPage - 1) * $perPage)->get()->getResultArray();
+        $pager = \Config\Services::pager();
+
+        if ($this->request->isAJAX()) {
+            return view('admin/users/user_list', ['users' => $users, 'pager' => $pager]);
+        }
+
+        return view('admin/users', ['users' => $users, 'pager' => $pager]);
     }
 
     // Show the add user form
@@ -114,4 +130,39 @@ class UsersController extends BaseController
 
         return redirect()->to('/admin/users')->with('success', 'User deleted successfully.');
     }
-}
+
+    // Handle bulk actions (delete)
+    public function bulk_action()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
+            return redirect()->to('/login');
+        }
+
+        $userIds = $this->request->getPost('users');
+
+        if ($userIds) {
+            $db = \Config\Database::connect();
+            $builder = $db->table('users');
+            $builder->whereIn('id', $userIds)->delete();
+
+            return redirect()->to('/admin/users')->with('success', 'Selected users deleted successfully.');
+        } else {
+            return redirect()->to('/admin/users')->with('error', 'No users selected for deletion.');
+        }
+    }
+
+    // Handle viewing user details
+   
+    // Handle viewing user details in a modal
+    public function view($id)
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
+            return redirect()->to('/login');
+        }
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+        $user = $builder->where('id', $id)->get()->getRowArray();
+
+        return view('admin/user_details', ['user' => $user]);
+}}

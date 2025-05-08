@@ -1,6 +1,6 @@
 </div> <!-- content container -->
 
-<footer class="bg-dark text-white text-center py-3 mt-auto">
+<footer class="bg-light text-dark text-center py-3 mt-auto">
     <div class="container">
         <p>Developed by Austine</p>
         <small>&copy; <?= date('Y') ?> Garage Management System. All rights reserved.</small>

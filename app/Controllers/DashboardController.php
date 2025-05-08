@@ -20,7 +20,27 @@ class DashboardController extends BaseController
 
     public function admin()
     {
-        return $this->restrictTo('admin', 'admin_dashboard');
+        $session = session();
+        $role = $session->get('role');
+
+        // Fetch other necessary data
+        $userCount = 10;
+        $vehicleCount = 5;
+        $activeJobs = 2;
+        $pendingLPOs = 3;
+        $recentActivity = ['Job #12 created', 'User added: John Doe'];
+
+        // Pass data to the view
+        return view('admin/dashboard', [
+            'role' => $role,
+            'userCount' => $userCount,
+            'vehicleCount' => $vehicleCount,
+            'activeJobs' => $activeJobs,
+            'pendingLPOs' => $pendingLPOs,
+            'recentActivity' => $recentActivity
+        ]);
+        // return $this->restrictTo('admin', 'admin_dashboard');
+
     }
 
     public function mechanic()
