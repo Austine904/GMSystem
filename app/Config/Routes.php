@@ -13,7 +13,6 @@ $routes->get('logout', 'LoginController::logout');
 
 
 //Dashhboard routes
-$routes->get('/', 'DashboardController::index');
 $routes->get('admin', 'DashboardController::admin');
 $routes->get('mechanic', 'DashboardController::mechanic');
 $routes->get('receptionist', 'DashboardController::receptionist');

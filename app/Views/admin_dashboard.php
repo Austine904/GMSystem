@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <title>Admin Dashboard - GMS</title>
@@ -33,4 +33,4 @@
 </div>
 
 </body>
-</html>
+</html> -->
