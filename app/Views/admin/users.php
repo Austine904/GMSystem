@@ -28,7 +28,7 @@
             <thead class="table-light">
                 <tr>
                     <th><input type="checkbox" id="select_all"></th>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Role</th>
@@ -86,25 +86,25 @@
     };
 
     function loadUserDetails(userId) {
-    fetch(`<?= base_url('admin/users/details/') ?>/${userId}`)
-        .then(response => response.json())
-        .then(data => {
-            // Display user details in the modal
-            document.getElementById('user-details-content').innerHTML = `
+        fetch(`<?= base_url('admin/users/details/') ?>/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Display user details in the modal
+                document.getElementById('user-details-content').innerHTML = `
                 <p><strong>Name:</strong> ${data.name}</p>
                 <p><strong>Phone:</strong> ${data.phone}</p>
                 <p><strong>Role:</strong> ${data.role}</p>
             `;
 
-            // Update action buttons with the correct URLs
-            document.getElementById('edit-user-btn').href = `<?= base_url('admin/users/edit/') ?>/${userId}`;
-            document.getElementById('delete-user-btn').href = `<?= base_url('admin/users/delete/') ?>/${userId}`;
+                // Update action buttons with the correct URLs
+                document.getElementById('edit-user-btn').href = `<?= base_url('admin/users/edit/') ?>/${userId}`;
+                document.getElementById('delete-user-btn').href = `<?= base_url('admin/users/delete/') ?>/${userId}`;
 
-            // Show the modal after content is loaded
-            $('#userDetailsModal').modal('show');
-        })
-        .catch(error => console.error('Error loading user details:', error));
-}
+                // Show the modal after content is loaded
+                $('#userDetailsModal').modal('show');
+            })
+            .catch(error => console.error('Error loading user details:', error));
+    }
 
 
     const searchInput = document.getElementById('search');
@@ -112,14 +112,16 @@
     // Function to load user list
     function loadUsers(url) {
         fetch(url, {
-            headers: {'X-Requested-With': 'XMLHttpRequest'}
-        })
-        .then(response => response.text())
-        .then(data => {
-            // Only replace the <tbody> part of the table
-            document.getElementById('user-list').innerHTML = data;
-        })
-        .catch(error => console.error('Error:', error));
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Only replace the <tbody> part of the table
+                document.getElementById('user-list').innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     searchInput.addEventListener('input', () => {
