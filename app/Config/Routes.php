@@ -33,3 +33,24 @@ $routes->get('admin/users/details/(:num)', 'UsersController::details/$1');
 $routes->get('admin/dashboard', 'AdminDashboard::index');
 
 
+
+$routes->get('user/step1', 'UsersController::addUserStep1');
+$routes->post('user/step1', 'UsersController::addUserStep1'); // Handle POST request for Step 1
+
+$routes->get('user/step2', 'UsersController::addUserStep2'); // Step 2 view
+$routes->post('user/step2', 'UsersController::addUserStep2'); // Handle POST request for Step 2
+
+$routes->post('user/submit', 'UsersController::submitUser'); // Final form submission
+
+$routes->post('user/add_step2', 'UsersController::add_step2');
+$routes->get('user/add_step3', 'UsersController::add_step3');
+
+$routes->post('user/add_step3', 'UsersController::add_step3');
+$routes->get('user/preview', 'UsersController::preview');
+
+$routes->post('user/submit', 'UsersController::submit');
+
+$routes->post('user/add_step1', 'UsersController::addStep1');
+
+
+

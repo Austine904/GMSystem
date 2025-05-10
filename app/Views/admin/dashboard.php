@@ -80,51 +80,71 @@
         </div>
 
         <!-- Quick Actions -->
-<div class="col-md-4">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-light">
-            <strong>Quick Actions</strong>
-        </div>
-        <div class="card-body d-grid gap-3">
-            <a href="<?= base_url('admin/users/add') ?>" class="btn btn-outline-primary d-flex align-items-center gap-2">
-                <i class="bi bi-person-plus"></i> Add User
-            </a>
-            <a href="<?= base_url('admin/vehicles/add') ?>" class="btn btn-outline-success d-flex align-items-center gap-2">
-                <i class="bi bi-car-front"></i> Register Vehicle
-            </a>
-            <a href="<?= base_url('admin/jobs/create') ?>" class="btn btn-outline-warning d-flex align-items-center gap-2">
-                <i class="bi bi-briefcase"></i> Create Job
-            </a>
-            <a href="<?= base_url('admin/sublets/add') ?>" class="btn btn-outline-info d-flex align-items-center gap-2">
-                <i class="bi bi-arrow-repeat"></i> Add Sublet
-            </a>
-            <a href="<?= base_url('admin/lpos/add') ?>" class="btn btn-outline-danger d-flex align-items-center gap-2">
-                <i class="bi bi-file-earmark-plus"></i> New LPO
-            </a>
-            <a href="<?= base_url('admin/pettycash/add') ?>" class="btn btn-outline-dark d-flex align-items-center gap-2">
-                <i class="bi bi-cash"></i> Add Petty Cash
-            </a>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <strong>Quick Actions</strong>
+                </div>
+                <div class="card-body d-grid gap-3">
+                    <button onclick="openModal('<?= base_url('admin/users/add') ?>')" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                        <i class="bi bi-person-plus"></i> Add User
+                    </button>
+                    <button onclick="openModal('<?= base_url('admin/vehicles/add') ?>')" class="btn btn-outline-success d-flex align-items-center gap-2">
+                        <i class="bi bi-car-front"></i> Register Vehicle
+                    </button>
+                    <button onclick="openModal('<?= base_url('admin/jobs/create') ?>')" class="btn btn-outline-warning d-flex align-items-center gap-2">
+                        <i class="bi bi-briefcase"></i> Create Job
+                    </button>
+                    <button onclick="openModal('<?= base_url('admin/sublets/add') ?>')" class="btn btn-outline-info d-flex align-items-center gap-2">
+                        <i class="bi bi-arrow-repeat"></i> Add Sublet
+                    </button>
+                    <button onclick="openModal('<?= base_url('admin/lpos/add') ?>')" class="btn btn-outline-danger d-flex align-items-center gap-2">
+                        <i class="bi bi-file-earmark-plus"></i> New LPO
+                    </button>
+                    <button onclick="openModal('<?= base_url('admin/pettycash/add') ?>')" class="btn btn-outline-dark d-flex align-items-center gap-2">
+                        <i class="bi bi-cash"></i> Add Petty Cash
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Modal Structure -->
+<div id="actionModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">Loading...</div>
+            </div>
+        </div>
     </div>
 </div>
-<style>
-    .btn {
-        font-size: 14px;
-        transition: all 0.2s ease;
-    }
-
-    .btn i {
-        font-size: 16px;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-</style>
 
 
+<script>
+   function openModal(url) {
+     const modal = new bootstrap.Modal(document.getElementById('actionModal'));
+     modal.show();
+     
+     fetch(url, {
+         headers: {
+             'X-Requested-With': 'XMLHttpRequest'
+         }
+     })
+     .then(response => response.text())
+     .then(data => {
+         document.getElementById('modalContent').innerHTML = data;
+     })
+     .catch(error => {
+         document.getElementById('modalContent').innerHTML = "Error loading content.";
+         console.error('Error:', error);
+     });
+ }
+
+</script>
 <?= $this->endSection(); ?>
