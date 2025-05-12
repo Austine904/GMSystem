@@ -1,10 +1,13 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <h5>Add New User - Step 2: Personal Information</h5>
         </div>
         <div class="card-body">
-            <form id="step2Form" method="POST" enctype="multipart/form-data">
+            <form id="step2Form" method="POST" action="<?= base_url('user/add_step2') ?>">
                 <?= csrf_field() ?>
 
                 <div class="mb-3">
@@ -30,16 +33,13 @@
                 <div class="mb-3">
                     <label class="form-label">Gender</label><br>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="male" value="Male" required>
-                        <label class="form-check-label" for="male">Male</label>
+                        <input class="form-check-input" type="radio" name="gender" value="Male" required> Male
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="female" value="Female">
-                        <label class="form-check-label" for="female">Female</label>
+                        <input class="form-check-input" type="radio" name="gender" value="Female"> Female
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="other" value="Other">
-                        <label class="form-check-label" for="other">Other</label>
+                        <input class="form-check-input" type="radio" name="gender" value="Other"> Other
                     </div>
                 </div>
 
@@ -49,14 +49,18 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
+                    <label for="address" class="form-label">Home Address</label>
+                    <input type="text" class="form-control" id="address" name="address" required>
 
-                <div class="d-flex justify-content-between">
-                    <button type="button" onclick="loadStep1()" class="btn btn-secondary">Previous</button>
-                    <button type="submit" class="btn btn-primary">Next Step</button>
-                </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" onclick="loadStep1()" class="btn btn-secondary">Previous</button>
+                        <button type="submit" class="btn btn-primary">Next Step</button>
+                    </div>
             </form>
         </div>
     </div>
@@ -65,37 +69,21 @@
 <script>
     // Navigate back to Step 1
     function loadStep1() {
-        $.ajax({
-            url: "<?= base_url('user/step1') ?>",
-            type: "GET",
-            success: function(response) {
-                $('#modal-body').html(response); // Update modal content
-            },
-            error: function() {
-                alert('Failed to load Step 1.');
-            }
-        });
+        window.location.href = "<?= base_url('user/add_step1') ?>";
     }
 
     // AJAX Form Submission for Step 2
     $('#step2Form').submit(function(e) {
         e.preventDefault();
-        
         $.ajax({
-            url: "<?= base_url('user/step2') ?>",
+            url: "<?= base_url('user/add_step2') ?>",
             type: "POST",
             data: $(this).serialize(),
             success: function(response) {
                 if (response.success) {
-                    $.ajax({
-                        url: "<?= base_url('user/load_step3') ?>",
-                        type: "GET",
-                        success: function(step3) {
-                            $('#modal-body').html(step3); // Load Step 3
-                        }
-                    });
+                    window.location.href = "<?= base_url('user/add_step3') ?>";
                 } else {
-                    alert('Something went wrong!');
+                    alert(response.message);
                 }
             },
             error: function() {

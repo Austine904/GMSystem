@@ -43,10 +43,10 @@
                         <td><?= esc($user['id']) ?></td>
                         <td>
                             <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#userDetailsModal" onclick="loadUserDetails(<?= $user['id'] ?>)">
-                                <?= esc($user['name']) ?>
+                                <?= esc($user['first_name']) ?>
                             </button>
                         </td>
-                        <td><?= esc($user['phone']) ?></td>
+                        <td><?= esc($user['phone_number']) ?></td>
                         <td><?= esc($user['role']) ?></td>
                     </tr>
                 <?php endforeach; ?>

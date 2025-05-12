@@ -1,10 +1,9 @@
-""<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Add New User - Step 3: Next of Kin Information</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 
@@ -14,8 +13,7 @@
             <h5>Add New User - Step 3: Next of Kin Information</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="<?= base_url('user/add_step3') ?>">
-
+            <form id="step3Form" method="POST">
                 <!-- First Name -->
                 <div class="mb-3">
                     <label for="kin_first_name" class="form-label">First Name</label>
@@ -43,7 +41,7 @@
                 <!-- Navigation Buttons -->
                 <div class="d-flex justify-content-between">
                     <button type="button" onclick="goBackToStep2()" class="btn btn-secondary">Previous</button>
-                    <button type="submit" class="btn btn-primary">Next Step</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>
@@ -52,9 +50,29 @@
 
 <script>
     function goBackToStep2() {
-        window.location.href = "<?= base_url('user/step2') ?>";
+        window.location.href = "<?= base_url('user/add_step2') ?>";
     }
+
+    // AJAX Submission for Step 3
+   $('#step3Form').submit(function(e) {
+    e.preventDefault();
+    
+    $.ajax({
+        url: "<?= base_url('user/add_step3') ?>",
+        type: "POST",
+        data: $(this).serialize(),
+        success: function(response) {
+            if (response.success) {
+                window.location.href = "<?= base_url('user/preview') ?>";
+            } else {
+                alert('Something went wrooong!');
+            }
+        },
+     
+    });
+});
+
 </script>
 
 </body>
-</html>""
+</html>

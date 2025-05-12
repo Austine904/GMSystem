@@ -126,6 +126,19 @@
 </div>
 
 
+ <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+          <a class="nav-link active" href="#step1" onclick="showStep(1)">Step 1</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#step2" onclick="showStep(2)">Step 2</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#step3" onclick="showStep(3)">Step 3</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#step4" onclick="showStep(4)">Step 4</a>
+
 <script>
    function openModal(url) {
      const modal = new bootstrap.Modal(document.getElementById('actionModal'));
@@ -144,6 +157,8 @@
          document.getElementById('modalContent').innerHTML = "Error loading content.";
          console.error('Error:', error);
      });
+
+     
  }
 
 </script>

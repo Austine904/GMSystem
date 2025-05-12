@@ -31,8 +31,8 @@
 
     <form method="post" action="<?= base_url('login/auth') ?>">
         <div class="mb-3">
-            <label for="phone" class="form-label">Phone</label>
-            <input type="text" name="phone" id="phone" class="form-control" required autofocus>
+            <label for="phone" class="form-label">Company ID</label>
+            <input type="text" name="company_id" id="company_id" class="form-control" required autofocus>
         </div>
 
         <div class="mb-3">

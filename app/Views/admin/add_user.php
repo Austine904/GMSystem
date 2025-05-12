@@ -2,128 +2,177 @@
 <html>
 
 <head>
-  <title>Add New User - Admin Dashboard</title>
+  <title>Add New User - Multi-Step Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
 
   <div class="container mt-5">
-    <h3>Add New User</h3>
+    <h3>Add New User - Multi-Step Form</h3>
 
-    <!-- Multi-step form (Step 1) -->
-    <form id="step1Form" enctype="multipart/form-data">
+    <form id="multiStepForm" enctype="multipart/form-data">
       <?= csrf_field() ?>
 
-      <!-- User Image -->
-      <div class="mb-3">
-        <label for="profile_picture" class="form-label">Profile Picture</label>
-        <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
-        <small class="form-text text-muted">Upload a profile picture (max 2MB, image files only).</small>
-      </div>
 
-      <!-- Role Selection -->
-      <div class="mb-3">
-        <label for="role" class="form-label">Role</label>
-        <select class="form-select" name="role" id="role" required>
-          <option value="" disabled selected>Select Role</option>
-          <option value="admin">Admin</option>
-          <option value="mechanic">Mechanic</option>
-          <option value="receptionist">Receptionist</option>
-        </select>
-      </div>
+       <div id="step1">
+                    <h5>Step 1: Company Information</h5>
+                    <form id="formStep1" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="userImage" class="form-label">User Image</label>
+                            <input class="form-control" type="file" id="userImage" name="user_image" accept="image/*">
+                        </div>
 
-      <!-- Company ID (Read-only) -->
-      <div class="mb-3">
-        <label for="company_id" class="form-label">Company ID</label>
-        <input type="text" class="form-control" id="company_id" name="company_id" readonly>
-      </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" name="role" id="role" required>
+                                <option value="" disabled selected>Select Role</option>
+                                <option value="admin">Admin</option>
+                                <option value="mechanic">Mechanic</option>
+                                <option value="receptionist">Receptionist</option>
+                            </select>
+                        </div>
 
-      <!-- Date of Employment (Read-only) -->
-      <div class="mb-3">
-        <label for="date_of_employment" class="form-label">Date of Employment</label>
-        <input type="text" class="form-control" id="date_of_employment" name="date_of_employment" value="<?= date('Y-m-d') ?>" readonly>
-      </div>
+                        <div class="mb-3">
+                            <label for="company_id" class="form-label">Company ID</label>
+                            <input type="text" class="form-control" id="company_id" name="company_id" readonly>
+                        </div>
 
-      <!-- Submit Button (Step 1) -->
-      <button type="submit" class="btn btn-primary">Next</button>
+                        <div class="mb-3">
+                            <label for="employment_date" class="form-label">Date of Employment</label>
+                            <input type="text" class="form-control" id="employment_date" name="employment_date" readonly value="<?= date('Y-m-d') ?>">
+                        </div>
+
+                        <div class="mb-3" id="passwordDiv" style="display: none;">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Step 2 -->
+                <div id="step2" style="display: none;">
+                    <h5>Step 2: Personal Information</h5>
+                    <form id="formStep2">
+                        <div class="mb-3">
+                            <label for="first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="dob" name="dob" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="national_id" class="form-label">National ID Number</label>
+                            <input type="text" class="form-control" id="national_id" name="national_id" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" value="Male" required> Male
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" value="Female"> Female
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" value="Other"> Other
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3 -->
+                <div id="step3" style="display: none;">
+                    <h5>Step 3: Next of Kin Information</h5>
+                    <form id="formStep3">
+                        <div class="mb-3">
+                            <label for="kin_first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="kin_first_name" name="kin_first_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="kin_last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="kin_last_name" name="kin_last_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="relationship" class="form-label">Relationship</label>
+                            <input type="text" class="form-control" id="relationship" name="relationship" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="kin_phone_number" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="kin_phone_number" name="kin_phone_number" required>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Previous</button>
+                <button type="button" id="nextBtn" class="btn btn-primary">Next</button>
+            </div>
+        </div>
+
     </form>
   </div>
 
-  <!-- Modal for Step 2 -->
-  <div id="multiStepModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add New User - Step 2</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" id="modalContent">
-          <!-- Content for Step 2 will be injected here -->
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // Handle role change for Company ID generation
-    document.getElementById('role').addEventListener('change', function() {
-      const role = this.value;
-      const year = new Date().getFullYear().toString().slice(-2);
+    $(document).ready(function() {
+      showStep(1);
 
-      fetch("<?= base_url('user/getLastId') ?>/" + role)
-        .then(response => response.json())
-        .then(data => {
+      function showStep(step) {
+        $(".step-content").addClass('d-none');
+        $("#step" + step).removeClass('d-none');
+      }
+
+      function saveStepData(step) {
+        const formData = $('#multiStepForm').serialize();
+        $.post("<?= base_url('user/save_step_data/') ?>" + step, formData, function(response) {
+          if (response.success) {
+            showStep(step + 1);
+          } else {
+            alert('Error saving step data. Please try again.');
+          }
+        });
+      }
+
+      function finalSubmit() {
+        $.post("<?= base_url('user/final_submit') ?>", {}, function(response) {
+          if (response.success) {
+            alert('User successfully added!');
+            window.location.reload();
+          } else {
+            alert('Error saving user. Please try again.');
+          }
+        });
+      }
+      // Generate Company ID based on Role
+      $('#role').on('change', function() {
+        const role = $(this).val();
+        const year = new Date().getFullYear().toString().slice(-2);
+        const prefix = role === 'admin' ? 'ADM' : role === 'mechanic' ? 'MECH' : 'REC';
+        
+        $.get("<?= base_url('user/getLastId') ?>/" + role, function(data) {
           const lastId = (parseInt(data.last_id) + 1).toString().padStart(3, '0');
-          let prefix = "";
-
-          if (role === 'admin') prefix = "ADM";
-          else if (role === 'mechanic') prefix = "MECH";
-          else if (role === 'receptionist') prefix = "RP";
-
-          document.getElementById('company_id').value = prefix + year + lastId;
-        })
-        .catch(error => console.error('Error:', error));
-    });
-
-    // Handle form submission with AJAX
-    // Handle form submission with AJAX
-    $('#step1Form').submit(function(e) {
-      e.preventDefault();
-
-      var formData = new FormData(this); // Use FormData to handle file uploads
-
-      $.ajax({
-        url: "<?= base_url('user/step1') ?>",
-        type: "POST",
-        data: formData,
-        processData: false, // Prevent jQuery from processing the data
-        contentType: false, // Prevent jQuery from setting content type
-        success: function(response) {
-          // if (response.success) {
-            // Load Step 2 content into the modal
-            $.ajax({
-              url: "<?= base_url('user/add_step2') ?>",
-              type: "GET",
-              success: function(step2) {
-                $('#modalContent').html(step2); // Correct ID now
-                $('#multiStepModal').modal('show'); // Show the modal
-              },
-              error: function(xhr, status, error) {
-                console.error("Error loading Step 2: ", error);
-              }
-            });
-          // } else {
-          //   alert('Something went wrong!');
-          // }
-        },
-        error: function(xhr, status, error) {
-          console.error("AJAX Error: ", error);
-          alert('Failed to submit Step 1.');
-        }
+          $('#company_id').val(prefix + year + lastId);
+        });
       });
+    //   $('#role').on('change', function() {
+    //     const role = $(this).val().toUpperCase();
+    //     const year = new Date().getFullYear();
+    //     const uniqueId = Math.floor(1000 + Math.random() * 9000);
+    //     $('#company_id').val(`${role}-${year}-${uniqueId}`);
+    //   });
     });
   </script>
 
