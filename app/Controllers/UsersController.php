@@ -446,102 +446,107 @@ class UsersController extends BaseController
     //         return $this->response->setJSON(['success' => false, 'message' => 'Database error. Please try again.']);
     //     }
     // }
-   public function addStep1()
-{
-    return view('user/add_step1');
-}
-
-public function add_step1()
-{
-    $validation = \Config\Services::validation();
-    
-    $rules = [
-        'profile_picture'     => 'uploaded[profile_picture]|max_size[profile_picture,2048]|is_image[profile_picture]',
-        'role'               => 'required',
-        'company_id'         => 'required',
-        'date_of_employment' => 'required'
-    ];
-    
-    // if (in_array($this->request->getPost('role'), ['admin', 'receptionist'])) {
-    //     $rules['password'] = 'required|min_length[6]';
-    // }
-
-    $validation->setRules($rules);
-
-    if (!$validation->withRequest($this->request)->run()) {
-        return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+    public function addStep1()
+    {
+        return view('user/add_step1');
     }
 
-    $profileImage = $this->request->getFile('profile_picture');
-    if ($profileImage->isValid() && !$profileImage->hasMoved()) {
-        $newName = $profileImage->getRandomName();
-        $profileImage->move('uploads/users', $newName);
-        $imagePath = 'uploads/users/' . $newName;
-    }
+    public function add_step1()
+    {
+        $validation = \Config\Services::validation();
 
-    session()->set('step1_data', [
-        'profile_picture'     => $imagePath ?? null,
-        'role'               => $this->request->getPost('role'),
-        'company_id'         => $this->request->getPost('company_id'),
-        'date_of_employment' => $this->request->getPost('date_of_employment'),
-        // 'password'           => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
-    ]);
+        $rules = [
+            'profile_picture'     => 'uploaded[profile_picture]|max_size[profile_picture,2048]|is_image[profile_picture]',
+            'role'               => 'required',
+            'company_id'         => 'required',
+            'date_of_employment' => 'required'
+        ];
 
-    return $this->response->setJSON([
-        'success' => true,
-        'message' => 'Step 1 completed successfully!'
-    ]);
+        // if (in_array($this->request->getPost('role'), ['admin', 'receptionist'])) {
+        //     $rules['password'] = 'required|min_length[6]';
+        // }
 
-    return redirect()->to(base_url('user/add_step2'));
-}
+        $validation->setRules($rules);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
+        $profileImage = $this->request->getFile('profile_picture');
+        $imagePath = null; // Initialize the path as null
+
+        if ($profileImage && $profileImage->isValid() && !$profileImage->hasMoved()) {
+            $newName = $profileImage->getRandomName();
+            $profileImage->move('uploads/users', $newName);
+            $imagePath = 'uploads/users/' . $newName;
+        }
+
+        // Store in session
+        session()->set('step1_data', [
+            'profile_picture'     => $imagePath,
+            'role'               => $this->request->getPost('role'),
+            'company_id'         => $this->request->getPost('company_id'),
+            'date_of_employment' => $this->request->getPost('date_of_employment'),
 
 
+            // 'password'           => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
+        ]);
 
-   public function addStep2()
-{
-    return view('user/add_step2');
-}
-
-public function add_step2()
-{
-    // Validate incoming data
-    $validation = \Config\Services::validation();
-    $validation->setRules([
-        'first_name'   => 'required',
-        'last_name'    => 'required',
-        'dob'          => 'required|valid_date',
-        'national_id'  => 'required',
-        'gender'       => 'required',
-        'phone_number' => 'required',
-        'address'      => 'required',
-        'email'        => 'required|valid_email'
-    ]);
-
-    if (!$validation->withRequest($this->request)->run()) {
         return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Validation errors occurred!',
-            'errors'  => $validation->getErrors()
+            'success' => true,
+            'message' => 'Step 1 completed successfully!'
+        ]);
+
+        return redirect()->to(base_url('user/add_step2'));
+    }
+
+
+
+    public function addStep2()
+    {
+        return view('user/add_step2');
+    }
+
+    public function add_step2()
+    {
+        // Validate incoming data
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'first_name'   => 'required',
+            'last_name'    => 'required',
+            'dob'          => 'required|valid_date',
+            'national_id'  => 'required',
+            'gender'       => 'required',
+            'phone_number' => 'required',
+            'address'      => 'required',
+            'email'        => 'required|valid_email'
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Validation errors occurred!',
+                'errors'  => $validation->getErrors()
+            ]);
+        }
+
+        // Store Step 2 data in the session
+        session()->set('step2_data', [
+            'first_name'   => $this->request->getPost('first_name'),
+            'last_name'    => $this->request->getPost('last_name'),
+            'dob'          => $this->request->getPost('dob'),
+            'national_id'  => $this->request->getPost('national_id'),
+            'gender'       => $this->request->getPost('gender'),
+            'address'      => $this->request->getPost('address'),
+            'phone_number' => $this->request->getPost('phone_number'),
+            'email'        => $this->request->getPost('email')
+        ]);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Step 2 completed successfully!'
         ]);
     }
-
-    // Store Step 2 data in the session
-    session()->set('step2_data', [
-        'first_name'   => $this->request->getPost('first_name'),
-        'last_name'    => $this->request->getPost('last_name'),
-        'dob'          => $this->request->getPost('dob'),
-        'national_id'  => $this->request->getPost('national_id'),
-        'gender'       => $this->request->getPost('gender'),
-        'address'      => $this->request->getPost('address'),
-        'phone_number' => $this->request->getPost('phone_number'),
-        'email'        => $this->request->getPost('email')
-    ]);
-
-    return $this->response->setJSON([
-        'success' => true,
-        'message' => 'Step 2 completed successfully!'
-    ]);
-}
 
     public function addStep3()
     {
@@ -570,7 +575,7 @@ public function add_step2()
             'relationship'     => $this->request->getPost('relationship'),
             'kin_phone_number' => $this->request->getPost('kin_phone_number')
         ]);
-        
+
 
         // For example, you can return a success message
         return $this->response->setJSON([
@@ -593,43 +598,43 @@ public function add_step2()
         return $this->response->setJSON($result);
     }
 
-public function preview()
-{
-    return view('user/preview');
+    public function preview()
+    {
+        return view('user/preview');
+    }
+
+    public function saveUser()
+    {
+        // Retrieve all the session data
+        $step1Data = session('step1_data');
+        $step2Data = session('step2_data');
+        $step3Data = session('step3_data');
+
+        // Prepare the data for database insertion
+        $userData = array_merge($step1Data, $step2Data);
+
+        // Insert into the database (you can use Query Builder here)
+        $db = \Config\Database::connect();
+        $db->table('users')->insert($userData);
+        $db->table('next_of_kin')->insert([
+            'user_id'       => $db->insertID(),
+            'kin_first_name'    => $step3Data['kin_first_name'],
+            'kin_last_name'     => $step3Data['kin_last_name'],
+            'relationship'  => $step3Data['relationship'],
+            'kin_phone_number'  => $step3Data['kin_phone_number']
+        ]);
+        // $db->table('next_of_kin')->insert($userData);
+
+        // Clear the session data
+        session()->remove('step1_data');
+        session()->remove('step2_data');
+        session()->remove('step3_data');
+
+        // Redirect to a success page
+        return redirect()->to(base_url('user/success'))->with('message', 'User added successfully!');
+    }
+    public function success()
+    {
+        return view('user/success');
+    }
 }
-
-public function saveUser()
-{
-    // Retrieve all the session data
-    $step1Data = session('step1_data');
-    $step2Data = session('step2_data');
-    $step3Data = session('step3_data');
-
-    // Prepare the data for database insertion
-    $userData = array_merge($step1Data, $step2Data);
-
-    // Insert into the database (you can use Query Builder here)
-    $db = \Config\Database::connect();
-    $db->table('users')->insert($userData);
-    $db->table('next_of_kin')->insert([
-        'user_id'       => $db->insertID(),
-        'kin_first_name'    => $step3Data['kin_first_name'],
-        'kin_last_name'     => $step3Data['kin_last_name'],
-        'relationship'  => $step3Data['relationship'],
-        'kin_phone_number'  => $step3Data['kin_phone_number']
-    ]);
-    // $db->table('next_of_kin')->insert($userData);
-
-    // Clear the session data
-    session()->remove('step1_data');
-    session()->remove('step2_data');
-    session()->remove('step3_data');
-
-    // Redirect to a success page
-    return redirect()->to(base_url('user/success'))->with('message', 'User added successfully!');
-}
-public function success()
-{
-    return view('user/success');
-
-}}

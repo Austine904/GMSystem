@@ -116,11 +116,11 @@
                             <img id="user-photo" src="" class="card-img-top" alt="User Photo">
                             <div class="card-body">
                                 <h5 class="card-title" id="user-fullname"></h5>
-                                <p><strong>Company ID:</strong> <span id="user-company-id"></span></p>
-                                <p><strong>Employment Date:</strong> <span id="user-employment-date"></span></p>
-                                <p><strong>Year of Birth:</strong> <span id="user-yob"></span></p>
-                                <p><strong>National ID:</strong> <span id="user-national-id"></span></p>
-                                <p><strong>Next of Kin:</strong> <span id="user-next-of-kin"></span></p>
+                                <p><strong>Company ID:</strong> <span id="company_id"></span></p>
+                                <p><strong>Employment Date:</strong> <span id="date_of employment"></span></p>
+                                <p><strong>Year of Birth:</strong> <span id="dob"></span></p>
+                                <p><strong>National ID:</strong> <span id="national_id"></span></p>
+                                <p><strong>Next of Kin:</strong> <span id="kin_first_name"></span></p>
                             </div>
                         </div>
                     </div>

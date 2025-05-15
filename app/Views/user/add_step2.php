@@ -61,6 +61,7 @@
                         <button type="button" onclick="loadStep1()" class="btn btn-secondary">Previous</button>
                         <button type="submit" class="btn btn-primary">Next Step</button>
                     </div>
+                </div>
             </form>
         </div>
     </div>

@@ -16,7 +16,7 @@
 
             <div class="d-flex justify-content-between">
                 <a href="<?= base_url('user/add_step1') ?>" class="btn btn-primary">Add Another User</a>
-                <a href="<?= base_url('dashboard') ?>" class="btn btn-secondary">Go to Dashboard</a>
+                <a href="<?= base_url('admin/') ?>" class="btn btn-secondary">Go to Dashboard</a>
             </div>
         </div>
     </div>
