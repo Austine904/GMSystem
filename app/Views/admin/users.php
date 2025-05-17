@@ -38,16 +38,18 @@
             </thead>
             <tbody id="user-list">
                 <?php foreach ($users as $user): ?>
+
                     <tr>
                         <td><input type="checkbox" name="users[]" value="<?= $user['id'] ?>"></td>
                         <td><?= esc($user['id']) ?></td>
-                        <td>
-                            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#userDetailsModal" onclick="loadUserDetails(<?= $user['id'] ?>)">
-                                <?= esc($user['first_name']) ?>
-                            </button>
-                        </td>
+                        <td><?= esc($user['first_name'] . ' ' . $user['last_name']) ?></td>
                         <td><?= esc($user['phone_number']) ?></td>
                         <td><?= esc($user['role']) ?></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm view-user" data-id="<?= $user['id'] ?>">
+                                <i class="bi bi-eye"></i> View
+                            </button>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -175,8 +177,6 @@
             });
     }
 
-
-
     const searchInput = document.getElementById('search');
 
     // Function to load user list
@@ -222,6 +222,38 @@
             .catch(error => {
                 document.getElementById('modalContent').innerHTML = "Error loading content.";
                 console.error('Error:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewButtons = document.querySelectorAll('.view-user');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                loadUserDetails(userId);
+            });
+        });
+    });
+
+
+    function loadUserDetails(userId) {
+        fetch(`<?= base_url('admin/users/details/') ?>/${userId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Open the modal
+                const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+                modal.show();
+
+
+            })
+            .catch(error => {
+                console.error('Error fetching user details:', error);
+                alert('Failed to load user details. Please try again.');
             });
     }
 </script>

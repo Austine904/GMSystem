@@ -46,7 +46,7 @@ $routes->post('user/add_step2', 'UsersController::add_step2');
 $routes->get('user/add_step3', 'UsersController::addStep3');
 $routes->post('user/add_step3', 'UsersController::addUserStep3');
 $routes->post('user/addUserStep3', 'UsersController::addUserStep3');
-// Handle POST request for Step 3
+
 
 $routes->get('user/preview', 'UsersController::preview');
 $routes->get('user/saveUser', 'UsersController::saveUser');
