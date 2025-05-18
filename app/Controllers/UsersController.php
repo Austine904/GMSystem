@@ -135,54 +135,34 @@ class UsersController extends BaseController
         }
     }
 
-    public function details($id)
-    {
-        // Fetch user data from the database
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
-            return redirect()->to('/login');
-        }
+   public function details($id)
+{
+    $db = \Config\Database::connect();
+    $query = $db->query("SELECT * FROM users WHERE id = ?", [$id],);
+    $result = $query->getRowArray();
 
-        $query = \Config\Database::connect()->query("SELECT * FROM users WHERE id = ?", [$id]);
-        $user = $query->getRowArray();
 
-        if ($user) {
-            // Prepare the response structure
-            $response = [
-                "photo" => !empty($user['photo']) ? base_url('uploads/users/' . $user['photo']) : base_url('uploads/users/default-photo.jpg'),
-                "name" => $user['name'],
-                "company_id" => $user['company_id'],
-                "employment_date" => $user['employment_date'],
-                "year_of_birth" => $user['year_of_birth'],
-                "national_id" => $user['national_id'],
-                "next_of_kin" => $user['next_of_kin'],
-                "last_login" => $user['last_login'],
-                "department" => $user['department'],
-                "role_privileges" => $user['role_privileges'],
-                "projects_managed" => $user['projects_managed'],
-                "recent_activities" => $user['recent_activities'],
-                "performance_metrics" => $user['performance_metrics']
-            ];
-            return $this->response->setJSON($response);
-        } else {
-            // If user not found, send error response
-            return $this->response->setJSON(['error' => 'User not found'], 404);
-        }
+    if (!$result) {
+        return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
     }
 
+    return $this->response->setJSON($result);
+}
 
-    // Handle viewing user details in a modal
-    public function view($id)
-    {
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
-            return redirect()->to('/login');
-        }
 
-        $db = \Config\Database::connect();
-        $builder = $db->table('users');
-        $user = $builder->where('id', $id)->get()->getRowArray();
+    // // Handle viewing user details in a modal
+    // public function view($id)
+    // {
+    //     if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
+    //         return redirect()->to('/login');
+    //     }
 
-        return view('admin/user_details', ['user' => $user]);
-    }
+    //     $db = \Config\Database::connect();
+    //     $builder = $db->table('users');
+    //     $user = $builder->where('id', $id)->get()->getRowArray();
+
+    //     return view('admin/user_details', ['user' => $user]);
+    // }
 
     // Handle adding a new user
     public function addStep1()
@@ -376,4 +356,11 @@ class UsersController extends BaseController
     {
         return view('user/success');
     }
+
+    public function failure()
+    {
+        return view('user/failure');
+    }
+
+
 }

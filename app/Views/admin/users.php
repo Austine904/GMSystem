@@ -72,6 +72,7 @@
     </div>
 </div>
 
+
 <!-- View User Details Modal -->
 <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -85,177 +86,139 @@
             <div class="modal-body">
                 <div class="row">
 
-                    <!-- Main Content Card (Additional Details) -->
-                    <div class="col-md-9">
-                        <div class="card shadow-sm">
-                            <div class="card-header">
-                                <i class="bi bi-info-circle me-1"></i> Additional Information
-                            </div>
-                            <div class="card-body" id="admin-additional-details">
-                                <!-- Suggestions for additional details:
-                                    - Login History
-                                    - Role-specific Privileges
-                                    - Last Activity
-                                    - Department Information
-                                    - Projects Managed
-                                    - Recent Activities 
-                                    - Performance Metrics
-                                -->
-                                <p><strong>Last Login:</strong> <span id="last-login"></span></p>
-                                <p><strong>Department:</strong> <span id="department"></span></p>
-                                <p><strong>Role Privileges:</strong> <span id="role-privileges"></span></p>
-                                <p><strong>Projects Managed:</strong> <span id="projects-managed"></span></p>
-                                <p><strong>Recent Activities:</strong> <span id="recent-activities"></span></p>
-                                <p><strong>Performance Metrics:</strong> <span id="performance-metrics"></span></p>
-
-                            </div>
-                        </div>
-                    </div>
+                
 
                     <!-- Right Side Card (Basic Details) -->
                     <div class="col-md-3">
                         <div class="card shadow-sm">
-                            <img id="user-photo" src="" class="card-img-top" alt="User Photo">
-                            <div class="card-body">
-                                <h5 class="card-title" id="user-fullname"></h5>
-                                <p><strong>Company ID:</strong> <span id="company_id"></span></p>
-                                <p><strong>Employment Date:</strong> <span id="date_of employment"></span></p>
-                                <p><strong>Year of Birth:</strong> <span id="dob"></span></p>
-                                <p><strong>National ID:</strong> <span id="national_id"></span></p>
-                                <p><strong>Next of Kin:</strong> <span id="kin_first_name"></span></p>
+                            <img id="profile_picture" src="" class="card-img-top" alt="User Photo">
+                            <div class="card-header">
+                                <i class="bi bi-person-circle me-1"></i> Basic Information
+                                <div class="card-body">
+                                    <h5 class="card-title" id="user-fullname"></h5>
+                                    <p><strong>Company ID:</strong> <span id="company_id"></span></p>
+                                    <p><strong>Employment Date:</strong> <span id="date_of_employment"></span></p>
+                                    <p><strong>Year of Birth:</strong> <span id="dob"></span></p>
+                                    <p><strong>National ID:</strong> <span id="national_id"></span></p>
+                                    <p><strong>Next of Kin:</strong> <span id="kin_first_name"></span></p>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Close
-                </button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    
 
 
-<script>
-    document.getElementById('select_all').onclick = function() {
-        let checkboxes = document.querySelectorAll('input[name="users[]"]');
-        checkboxes.forEach((checkbox) => checkbox.checked = this.checked);
-    };
+    <script>
+        document.getElementById('select_all').onclick = function() {
+            let checkboxes = document.querySelectorAll('input[name="users[]"]');
+            checkboxes.forEach((checkbox) => checkbox.checked = this.checked);
+        };
 
-    function loadUserDetails(userId) {
-        fetch(`<?= base_url('admin/users/details/') ?>/${userId}`)
-            .then(response => response.json())
-            .then(data => {
-                // Populate Basic Details (Right Card)
-                document.getElementById('user-photo').src = data.photo ? data.photo : 'default-photo.jpg';
-                document.getElementById('user-fullname').innerText = data.name;
-                document.getElementById('user-company-id').innerText = data.company_id;
-                document.getElementById('user-employment-date').innerText = data.employment_date;
-                document.getElementById('user-yob').innerText = data.year_of_birth;
-                document.getElementById('user-national-id').innerText = data.national_id;
-                document.getElementById('user-next-of-kin').innerText = data.next_of_kin;
+        const searchInput = document.getElementById('search');
 
-                // Populate Additional Details (Main Card)
-                document.getElementById('last-login').innerText = data.last_login;
-                document.getElementById('department').innerText = data.department;
-                document.getElementById('role-privileges').innerText = data.role_privileges;
-                document.getElementById('projects-managed').innerText = data.projects_managed;
-                document.getElementById('recent-activities').innerText = data.recent_activities;
-                document.getElementById('performance-metrics').innerText = data.performance_metrics;
-
-                // Show the modal
-                $('#userDetailsModal').modal('show');
-            })
-            .catch(error => {
-                console.error('Error loading user details:', error);
-                alert('Failed to load user details. Please try again.');
-            });
-    }
-
-    const searchInput = document.getElementById('search');
-
-    // Function to load user list
-    function loadUsers(url) {
-        fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('user-list').innerHTML = data;
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value;
-        loadUsers(`<?= base_url('admin/users') ?>?search=${query}`);
-    });
-
-    // Pagination handling
-    document.addEventListener('click', function(e) {
-        if (e.target.tagName === 'A' && e.target.closest('#pagination-links')) {
-            e.preventDefault();
-            loadUsers(e.target.href);
+        // Function to load user list
+        function loadUsers(url) {
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('user-list').innerHTML = data;
+                })
+                .catch(error => console.error('Error:', error));
         }
-    });
 
-    function openModal(url) {
-        const modal = new bootstrap.Modal(document.getElementById('actionModal'));
-        modal.show();
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value;
+            loadUsers(`<?= base_url('admin/users') ?>?search=${query}`);
+        });
 
-        fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('modalContent').innerHTML = data;
-            })
-            .catch(error => {
-                document.getElementById('modalContent').innerHTML = "Error loading content.";
-                console.error('Error:', error);
-            });
-    }
+        // Pagination handling
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.closest('#pagination-links')) {
+                e.preventDefault();
+                loadUsers(e.target.href);
+            }
+        });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const viewButtons = document.querySelectorAll('.view-user');
+        function openModal(url) {
+            const modal = new bootstrap.Modal(document.getElementById('actionModal'));
+            modal.show();
 
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const userId = this.getAttribute('data-id');
-                loadUserDetails(userId);
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('modalContent').innerHTML = data;
+                })
+                .catch(error => {
+                    document.getElementById('modalContent').innerHTML = "Error loading content.";
+                    console.error('Error:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewButtons = document.querySelectorAll('.view-user');
+
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    loadUserDetails(userId);
+                });
             });
         });
-    });
 
 
-    function loadUserDetails(userId) {
-        fetch(`<?= base_url('admin/users/details/') ?>/${userId}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Open the modal
-                const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
-                modal.show();
+        function loadUserDetails(userId) {
+            fetch(`<?= base_url('admin/users/details/') ?>${userId}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('User not found Mazee');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log(data); // ✅ Add this line to check the data in the console
 
+                    // Populate Basic Details (Right Card)
+                    document.getElementById('profile_picture').src = data.photo ?  `<?= base_url() ?>/${data.photo}`: 'default-photo.jpg';
+                    document.getElementById('user-fullname').innerText = data.first_name + ' ' + data.last_name;
+                    document.getElementById('company_id').innerText = data.company_id;
+                    document.getElementById('date_of_employment').innerText = data.date_of_employment;
+                    document.getElementById('dob').innerText = data.dob;
+                    document.getElementById('national_id').innerText = data.national_id;
+                    document.getElementById('kin_first_name').innerText = data.next_of_kin;
 
-            })
-            .catch(error => {
-                console.error('Error fetching user details:', error);
-                alert('Failed to load user details. Please try again.');
-            });
-    }
-</script>
+                    // Open the modal only after populating data
+                    const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    // console.error('Error fetching userzz details:', error.message);
+                    alert('Failed to load user details. Please try again.');
+                });
+ 
 
-<?php echo $this->endSection(); ?>
+        }
+    </script>
+
+    <?php echo $this->endSection(); ?>
