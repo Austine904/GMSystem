@@ -75,8 +75,9 @@ $role = $session->get('role');
 
 <style>
     .sidebar {
-        width: 250px;
+        width: 200px;
         position: fixed;
+        top: 0;
     }
 
     .sidebar-footer {
@@ -112,4 +113,5 @@ $role = $session->get('role');
     .nav-hover.active i {
         color: #007bff;
     }
+
 </style>

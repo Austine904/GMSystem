@@ -67,6 +67,14 @@ $routes->get('user/failure', 'UsersController::failure');
 $routes->post('admin/users/bulk_action', 'UsersController::bulk_action');
 $routes->get('admin/users/details/(:num)', 'Admin\Users::details/$1');
 
+//vehicles routes
+$routes->get('admin/vehicles', 'VehicleController::index');
+$routes->get('vehicles/fetch', 'VehicleController::fetchVehicles');
+$routes->post('vehicles/store', 'VehicleController::store');
+$routes->post('vehicles/update/(:num)', 'VehicleController::update/$1');
+$routes->post('vehicles/delete/(:num)', 'VehicleController::delete/$1');
+$routes->post('admin/vehicles/add', 'VehicleController::add');
+
 
 
 
