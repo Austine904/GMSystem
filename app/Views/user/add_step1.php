@@ -60,17 +60,32 @@
         const role = this.value;
         const year = new Date().getFullYear().toString().slice(-2);
 
-        fetch("<?= base_url('user/getLastId') ?>/" + role)
+        // Define the prefixes for each role
+        const rolePrefixes = {
+            admin: 'ADM',
+            mechanic: 'MECH',
+            receptionist: 'RP'
+        };
+
+        // Fetch the last ID for the selected role
+        fetch("<?= base_url('user/getLastId') ?>?role=" + role, {
+                method: 'GET'
+            })
             .then(response => response.json())
             .then(data => {
-                const lastId = (parseInt(data.id) + 1).toString().padStart(3, '0');
-                let prefix = "";
+                // Get the last ID from the response and increment it
+                const lastId = parseInt(data.result) + 1;
 
-                if (role === 'admin') prefix = "ADM";
-                else if (role === 'mechanic') prefix = "MECH";
-                else if (role === 'receptionist') prefix = "RP";
+                // Format the ID to 3 digits (e.g., 001, 002, etc.)
+                const formattedId = String(lastId).padStart(3, '0');
 
-                document.getElementById('company_id').value = prefix + year + lastId;
+                // Use the appropriate prefix based on the role
+                const companyId = `${rolePrefixes[role]}${year}${formattedId}`;
+
+                // Populate the fields
+                document.getElementById('company_id').value = companyId;
+                document.getElementById('company_id').setAttribute('readonly', true);
+                document.getElementById('date_of_employment').value = new Date().toISOString().split('T')[0];
             })
             .catch(error => console.error('Error:', error));
     });
@@ -100,7 +115,7 @@
         // document.getElementById('role').addEventListener('change', function() {
         //     const role = this.value;
         //     const passwordField = document.getElementById('passwordField');
-            
+
 
         //     if (role === 'Admin' || role === 'Receptionist') {
         //         passwordField.style.display = 'block';

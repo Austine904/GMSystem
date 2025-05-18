@@ -25,7 +25,8 @@ class UsersController extends BaseController
         if (!empty($search)) {
             $query->like('name', $search)
                 ->orLike('phone', $search)
-                ->orLike('role', $search);
+                ->orLike('role', $search)
+                ->orLike('company_id', $search);
         }
 
         $perPage = 10;
@@ -39,8 +40,6 @@ class UsersController extends BaseController
         }
 
         return view('admin/users', ['users' => $users, 'pager' => $pager]);
-
-        
     }
 
     // Show the add user form
@@ -135,19 +134,19 @@ class UsersController extends BaseController
         }
     }
 
-   public function details($id)
-{
-    $db = \Config\Database::connect();
-    $query = $db->query("SELECT * FROM users WHERE id = ?", [$id],);
-    $result = $query->getRowArray();
+    public function details($id)
+    {
+        $db = \Config\Database::connect();
+        $query = $db->query("SELECT * FROM users WHERE id = ?", [$id],);
+        $result = $query->getRowArray();
 
 
-    if (!$result) {
-        return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
+        if (!$result) {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
+        }
+
+        return $this->response->setJSON($result);
     }
-
-    return $this->response->setJSON($result);
-}
 
 
     // // Handle viewing user details in a modal
@@ -306,15 +305,39 @@ class UsersController extends BaseController
         return redirect()->to(base_url('user/preview'));
     }
 
-    public function getlastid()
+    public function getLastId()
     {
+        $role = $this->request->getVar('role');
+
+        // Define prefixes for each role
+        $rolePrefixes = [
+            'admin' => 'ADM',
+            'mechanic' => 'MECH',
+            'receptionist' => 'RP'
+        ];
+
+        // Get the appropriate prefix based on the role
+        $prefix = $rolePrefixes[$role] ?? '';
+
+        if ($prefix === '') {
+            return $this->response->setJSON(['result' => 0]);
+        }
+
+        // Connect to the database and fetch the last company_id for this role
         $db = \Config\Database::connect();
         $builder = $db->table('users');
-        $builder->selectMax('id');
+        $builder->selectMax('company_id');
+        $builder->like('company_id', $prefix, 'after');
         $query = $builder->get();
-        $result = $query->getRowArray();
+        $result = $query->getRow();
 
-        return $this->response->setJSON($result);
+        // Extract the last 3 digits and increment
+        $lastId = 0;
+        if ($result && !empty($result->company_id)) {
+            $lastId = (int)substr($result->company_id, -3);
+        }
+
+        return $this->response->setJSON(['result' => $lastId]);
     }
 
     public function preview()
@@ -361,6 +384,4 @@ class UsersController extends BaseController
     {
         return view('user/failure');
     }
-
-
 }

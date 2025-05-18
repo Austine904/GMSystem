@@ -12,7 +12,9 @@ class AdminDashboard extends BaseController
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
             return redirect()->to('/login');
         }
-
+        
+        // Fetch data for the dashboard
         return view('admin/dashboard');
     }
+
 }

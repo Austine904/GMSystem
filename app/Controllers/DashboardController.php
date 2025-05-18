@@ -20,11 +20,23 @@ class DashboardController extends BaseController
 
     public function admin()
     {
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+        $builder->select('COUNT(*) as user_count');
+        $query = $builder->get();
         $session = session();
         $role = $session->get('role');
 
+        if (!$session->get('isLoggedIn') || $role !== 'admin') {
+            return redirect()->to('/login');
+        }
+
+        $userCount = $query->getRow()->user_count;
+        $session->set('user_count', $userCount);
+        
+
         // Fetch other necessary data
-        $userCount = 10;
         $vehicleCount = 5;
         $activeJobs = 2;
         $pendingLPOs = 3;
@@ -33,7 +45,7 @@ class DashboardController extends BaseController
         // Pass data to the view
         return view('admin/dashboard', [
             'role' => $role,
-            'userCount' => $userCount,
+            'user_count' => $userCount,
             'vehicleCount' => $vehicleCount,
             'activeJobs' => $activeJobs,
             'pendingLPOs' => $pendingLPOs,
