@@ -1,0 +1,56 @@
+:root {
+        --primary-color: #007bff; /* Blue for active/hover states */
+        --text-dark: #000;       /* Default text color */
+        --bg-light: #f8f9fa;     /* Light background color */
+    }
+
+    .sidebar {
+        width: 200px;
+        position: fixed;
+        top: 0;
+        background-color: var(--bg-light); /* Using CSS variable */
+        height: 100vh; /* Full viewport height */
+        padding: 1rem; /* Equivalent to p-3 in Bootstrap */
+    }
+
+    .sidebar-footer {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+    }
+
+    .nav-hover {
+        color: var(--text-dark); /* Using CSS variable */
+        font-size: 14px;
+        transition: all 0.2s ease;
+        display: flex; /* Ensure flex properties are applied */
+        align-items: center; /* Align items vertically */
+        gap: 0.5rem; /* Equivalent to gap-2 in Bootstrap */
+        padding: 0.5rem 1rem; /* Add some padding for better click area */
+        border-radius: 0.25rem; /* Slightly rounded corners */
+        text-decoration: none; /* Remove underline from links */
+    }
+
+    .nav-hover i {
+        color: var(--text-dark); /* Using CSS variable */
+    }
+
+    .nav-hover:hover {
+        color: var(--primary-color); /* Using CSS variable */
+        background-color: rgba(0, 123, 255, 0.1); /* Light blue background on hover */
+    }
+
+    .nav-hover:hover i {
+        color: var(--primary-color); /* Using CSS variable */
+    }
+
+    .nav-hover.active {
+        color: var(--primary-color); /* Using CSS variable */
+        font-weight: bold;
+        background-color: rgba(0, 123, 255, 0.2); /* Slightly darker blue background for active */
+    }
+
+    .nav-hover.active i {
+        color: var(--primary-color); /* Using CSS variable */
+    }

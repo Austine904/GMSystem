@@ -1,0 +1,200 @@
+:root {
+    /* Inherited from login page theme */
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --text-dark: #343a40;
+    --bg-light: #f8f9fa;
+    --card-bg: #ffffff;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    /* Used for main cards */
+    --shadow-button: rgba(0, 123, 255, 0.2);
+    /* For primary button */
+    --shadow-button-hover: rgba(0, 123, 255, 0.3);
+    /* For primary button hover */
+
+    /* Dashboard specific colors, aligned with theme */
+    --success-color: #28a745;
+    --success-hover-color: #218838;
+    --warning-color: #ffc107;
+    --warning-hover-color: #e0a800;
+    --danger-color: #dc3545;
+    --danger-hover-color: #c82333;
+    --info-color: #17a2b8;
+    /* For sublets */
+    --info-hover-color: #138496;
+    --dark-color: #343a40;
+    /* For petty cash button */
+    --dark-hover-color: #23272b;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    /* Ensure Inter font is applied */
+    color: var(--text-dark);
+    /* Consistent text color */
+}
+
+/* Modern Card Styling */
+.card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px var(--shadow-medium);
+    overflow: hidden;
+}
+
+/* Summary Card Specifics with subtle gradients */
+.card.bg-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    /* Primary gradient */
+}
+
+.card.bg-success {
+    background: linear-gradient(135deg, #28a745, #218838) !important;
+    /* Success gradient */
+}
+
+.card.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+    /* Warning gradient */
+    color: var(--text-dark) !important;
+}
+
+.card.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    /* Danger gradient */
+}
+
+/* Ensure icons in summary cards are white */
+.card.text-white .bi {
+    color: white !important;
+}
+
+/* Ensure icon in warning card is dark */
+.card.bg-warning .bi {
+    color: var(--text-dark) !important;
+}
+
+/* Card Header Styling (Recent Activity, Quick Actions) */
+.card-header {
+    background-color: var(--bg-light) !important;
+    /* Use theme's light background */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    /* Subtle border */
+    font-weight: 600;
+    /* Semi-bold for headings */
+    color: var(--text-dark);
+    /* Consistent text color */
+    padding: 1.25rem 1.5rem;
+    /* More generous padding */
+    font-size: 1.1rem;
+}
+
+/* List Group Item Styling */
+.list-group-item {
+    border-color: rgba(0, 0, 0, 0.05);
+    /* Lighter borders */
+    padding: 1rem 1.5rem;
+    /* Consistent padding */
+}
+
+/* Quick Action Button Styling */
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-warning,
+.btn-outline-info,
+.btn-outline-danger,
+.btn-outline-dark {
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 0.75rem 1.25rem;
+    /* Consistent padding */
+    font-size: 0.95rem;
+    /* Slightly smaller font for actions */
+    font-weight: 500;
+    /* Medium weight */
+    transition: all 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    /* Smooth transitions */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* Subtle initial shadow */
+}
+
+.btn-outline-primary:hover,
+.btn-outline-success:hover,
+.btn-outline-warning:hover,
+.btn-outline-info:hover,
+.btn-outline-danger:hover,
+.btn-outline-dark:hover {
+    transform: translateY(-2px);
+    /* Subtle lift on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* More prominent shadow on hover */
+}
+
+/* Specific hover colors for outline buttons */
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-outline-warning:hover {
+    background-color: var(--warning-color);
+    color: var(--text-dark);
+    /* Keep text dark on warning hover */
+}
+
+.btn-outline-info:hover {
+    background-color: var(--info-color);
+    color: white;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-outline-dark:hover {
+    background-color: var(--dark-color);
+    color: white;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 15px;
+    /* Rounded corners for modal */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    /* Softer, larger shadow */
+    border: none;
+    /* Remove default modal border */
+}
+
+.modal-header {
+    border-bottom: none;
+    /* Remove default header border */
+    padding: 1.5rem;
+    /* More padding */
+}
+
+.modal-title {
+    font-weight: 600;
+    /* Semi-bold */
+    color: var(--primary-color);
+    /* Primary color for modal title */
+    font-size: 1.5rem;
+    /* Larger title */
+}
+
+.modal-body {
+    padding: 1.5rem;
+    /* Consistent padding */
+}
+
+/* Ensure container has proper top margin*/
+.container.mt-5 {
+    margin-top: 3rem !important;
+}

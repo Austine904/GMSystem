@@ -13,6 +13,9 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
     <link rel="stylesheet" href="<?= base_url('public/css/vehicles.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('public/css/sidebar.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('public/css/login.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('public/css/dashboard.css') ?>">
 
 
 
