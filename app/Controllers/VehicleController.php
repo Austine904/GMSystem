@@ -16,9 +16,25 @@ class VehicleController extends Controller
 
     public function fetchVehicles()
     {
+
         $db = \Config\Database::connect();
-        $vehicles = $db->table('vehicles')->get()->getResultArray();
-        return $this->response->setJSON($vehicles);
+        $builder = $db->table('vehicles');
+        $query = $builder->get();
+        $result = $query->getResultArray();
+
+        $vehicles = [];
+        foreach ($result as $row) {
+            $vehicles[] = [
+                'id' => $row['id'],
+                'registration_number' => $row['registration_number'],
+                'owner_id' => $row['owner_id'],
+                'vehicle' => $row['make'] . ' ' . $row['model'],
+                'color' => $row['color'],
+                'status' => $row['status']
+            ];
+        }
+
+        return $this->response->setJSON(['data' => $vehicles]);
     }
     public function add()
     {
@@ -34,7 +50,7 @@ class VehicleController extends Controller
         return view('vehicles/add');
     }
 
-     public function store()
+    public function store()
     {
         $data = $this->request->getPost();
         $db = \Config\Database::connect();
@@ -43,14 +59,14 @@ class VehicleController extends Controller
         return $this->response->setJSON(['status' => 'success']);
     }
 
-    public function update($id)
-    {
-        $data = $this->request->getPost();
-        $db = \Config\Database::connect();
-        $db->table('vehicles')->where('id', $id)->update($data);
+    // public function update($id)
+    // {
+    //     $data = $this->request->getPost();
+    //     $db = \Config\Database::connect();
+    //     $db->table('vehicles')->where('id', $id)->update($data);
 
-        return $this->response->setJSON(['status' => 'success']);
-    }
+    //     return $this->response->setJSON(['status' => 'success']);
+    // }
 
     public function delete($id)
     {
@@ -61,16 +77,36 @@ class VehicleController extends Controller
     }
 
     public function details($id)
-{
-    $db = db_connect();
-    $query = $db->query("SELECT * FROM vehicles WHERE id = ?", [$id]);
-    $vehicle = $query->getRowArray();
+    {
+        $db = db_connect();
+        $query = $db->query("SELECT * FROM vehicles WHERE id = ?", [$id]);
+        $vehicle = $query->getRowArray();
 
-    if ($vehicle) {
-        return $this->response->setJSON($vehicle);
-    } else {
-        return $this->response->setStatusCode(404)->setJSON(['message' => 'Vehicle not found']);
+        if ($vehicle) {
+            return $this->response->setJSON($vehicle);
+        } else {
+            return $this->response->setStatusCode(404)->setJSON(['message' => 'Vehicle not found']);
+        }
     }
+
+    public function get($id)
+{
+    $db = \Config\Database::connect();
+    $builder = $db->table('vehicles');
+    $vehicle = $builder->where('id', $id)->get()->getRowArray();
+
+    return $this->response->setJSON($vehicle);
+}
+
+public function update()
+{
+    $data = $this->request->getPost();
+
+    $db = \Config\Database::connect();
+    $builder = $db->table('vehicles');
+    $builder->where('id', $data['id'])->update($data);
+
+    return $this->response->setJSON(['status' => 'success']);
 }
 
 }

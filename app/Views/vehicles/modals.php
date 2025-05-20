@@ -84,3 +84,97 @@
     </div>
 </div>
 
+<!-- Edit Vehicle Modal -->
+<div class="modal fade" id="editVehicleModal" tabindex="-1" aria-labelledby="editVehicleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="editVehicleForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editVehicleLabel">Edit Vehicle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <input type="hidden" id="edit_vehicle_id" name="id">
+
+                    <div class="col-md-6">
+                        <label>Registration Number</label>
+                        <input type="text" class="form-control" id="edit_registration_number" name="registration_number">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Make</label>
+                        <input type="text" class="form-control" id="edit_make" name="make">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Model</label>
+                        <input type="text" class="form-control" id="edit_model" name="model">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Year of Manufature</label>
+                        <input type="number" class="form-control" id="edit_year_of_manufacture" name="year_of_manufatcure">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Chassis Number</label>
+                        <input type="text" class="form-control" id="edit_chassis_number" name="chassis_number">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Engine Number</label>
+                        <input type="text" class="form-control" id="edit_engine_number" name="engine_number">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Fuel Type</label>
+                        <select class="form-control" id="edit_fuel_type" name="fuel_type">
+                            <option value="Petrol">Petrol</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Electric">Electric</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Transmission</label>
+                        <select class="form-control" id="edit_transmission" name="transmission">
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                            <option value="Semi-Automatic">Semi-Automatic</option>
+                            <option value="CVT">CVT</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Status</label>
+                        <select class="form-control" id="edit_status" name="status">
+                            <option value="In Queue">In Queue</option>
+                            <option value="Awaiting Diagnosis">Awaiting Diagnosis</option>
+                            <option value="Pending Client approval">Pending Client approval</option>
+                            <option value="Pending Parts">Pending Parts</option>
+                            <option value="Under Repair">Under Repair</option>
+                            <option value="Checkout">Checkout</option>
+                            <option value="Ready for Pickup">Ready for Pickup</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+                    <label>Color</label>
+                    <input type="text" class="form-control" id="edit_color" name="color">
+                </div>
+                <div class="col-md-6">
+                    <label>Status</label>
+                    <select class="form-control" id="edit_status" name="status">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Maintenance">Maintenance</option>
+                    </select>
+                </div>
+                <!-- Add more fields if you like -->
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Save Changes</button>
+            </div>
+    </div>
+    </form>
+</div>
+</div>

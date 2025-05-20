@@ -74,6 +74,10 @@ $routes->post('vehicles/store', 'VehicleController::store');
 $routes->post('vehicles/update/(:num)', 'VehicleController::update/$1');
 $routes->post('vehicles/delete/(:num)', 'VehicleController::delete/$1');
 $routes->post('admin/vehicles/add', 'VehicleController::add');
+$routes->get('admin/vehicles/edit/(:num)', 'VehicleController::edit/$1');
+$routes->get('admin/vehicles/delete/(:num)', 'VehicleController::delete/$1');
+$routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');
+
 
 
 

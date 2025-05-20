@@ -1,0 +1,107 @@
+
+    body {
+        background-color: #f7f9fc;
+        /* soft light gray-blue tone */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .table-container {
+        background-color: #ffffff;
+        padding: 30px;
+        margin: 40px auto;
+        margin-left: 0px;
+        margin-top: 0px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        /* subtle elevation */
+        max-width: 95%;
+    }
+
+    .icon-btn {
+        background: transparent;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-radius: 4px;
+    }
+
+    .icon-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Modern Table Styling */
+    table.dataTable {
+        border-collapse: separate;
+        border-spacing: 0;
+        border: yellow;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        overflow: hidden;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #fff;
+        margin-top: 1rem;
+    }
+
+    /* Sticky header with background */
+    table.dataTable thead {
+        background: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    /* Header cells */
+    table.dataTable thead th {
+        padding: 14px;
+        font-weight: 600;
+        font-size: 15px;
+        color: #495057;
+        border-bottom: 1px solid #dee2e6;
+        border: none;
+    }
+
+    /* Row hover */
+    table.dataTable tbody tr:hover {
+        background-color: #f1f3f5;
+        transition: background 0.3s ease;
+        border-right: none;
+
+    }
+
+    /* Data cells */
+    table.dataTable td {
+        padding: 14px 12px;
+        vertical-align: middle;
+        font-size: 14px;
+        color: #343a40;
+        border-bottom: 1px solid #f1f1f1;
+        border: grey;
+    }
+
+    /* Rounded pagination */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 6px 12px;
+        margin: 2px;
+        border: none;
+        border-radius: 6px;
+        background-color: #e9ecef;
+        color: #495057 !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #ced4da;
+        color: #212529 !important;
+    }
+
+    /* Length + Search Box Modern */
+    .dataTables_wrapper .dataTables_length select,
+    .dataTables_wrapper .dataTables_filter input {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        outline: none;
+        font-size: 14px;
+        margin-left: 8px;
+        margin-bottom: 20px;
+    }
