@@ -42,7 +42,7 @@
     $(document).ready(function() {
         // Initialize DataTable
         const table = $('#vehicleTable').DataTable({
-            "ajax": "<?= base_url('vehicles/fetch') ?>",
+            "ajax": "<?= base_url('admin/vehicles/fetch') ?>",
             "columns": [{
                     "data": "id"
                 },
@@ -96,7 +96,7 @@
 
     // Edit Vehicle AJAX
     window.editVehicle = function(id) {
-        $.get(`<?= base_url('vehicles/fetch') ?>/${id}`, function(data) {
+        $.get(`<?= base_url('admin/vehicles/fetch') ?>/${id}`, function(data) {
             $('#vehicle_id').val(data.id);
             $('#vehicle_number').val(data.vehicle_number);
             $('#make').val(data.make);
@@ -110,7 +110,7 @@
     // Delete Vehicle AJAX
     window.deleteVehicle = function(id) {
         if (confirm("Are you sure you want to delete this vehicle?")) {
-            $.post(`<?= base_url('vehicles/delete') ?>/${id}`, function(response) {
+            $.post(`<?= base_url('admin/vehicles/delete') ?>/${id}`, function(response) {
                 table.ajax.reload();
             });
         }

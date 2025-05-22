@@ -44,12 +44,12 @@ class LoginController extends BaseController
 
                 // Redirect by role
                 if ($user['role'] === 'admin') {
-                    return redirect()->to('/admin');
+                    return redirect()->to('/admin/dashboard');
+                } elseif ($user['role'] === 'receptionist') {
+                    return redirect()->to('/receptionist/dashboard');
                 } elseif ($user['role'] === 'mechanic') {
-                    return redirect()->to('/mechanic');
-                } else {
-                    return redirect()->to('/dashboard');
-                }
+                    return redirect()->to('/mechanic/dashboard');
+                } 
             } else {
                 return redirect()->back()->with('error', 'Wrong password');
             }
