@@ -53,9 +53,9 @@
 
 </body>
 
-<footer class="bg-light text-dark text-center py-3 fixed-bottom" style="margin-left: 200px;">
+<footer class="bg-light text-dark text-center py-3" style="margin-left: 200px;">
     <div class="container">
-        <p>Developed by Austine</p>
+        <p>Developed by Austiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiine</p>
         <small>&copy; <?= date('Y') ?> Garage Management System. All rights reserved.</small>
     </div>
 </footer>
