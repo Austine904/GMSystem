@@ -197,7 +197,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    // console.log(data); // ✅ Add this line to check the data in the console
 
                     // Populate Basic Details (Right Card)
                     document.getElementById('profile_picture').src = data.photo ?  `<?= base_url() ?>/${data.photo}`: 'default-photo.jpg';

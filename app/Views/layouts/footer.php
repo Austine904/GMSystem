@@ -4,6 +4,7 @@
     <div class="container">
         <p>Developed by Austine</p>
         <small>&copy; <?= date('Y') ?> Garage Management System. All rights reserved.</small>
+    </div>
 </footer>
 
 </div> <!-- wrapper -->

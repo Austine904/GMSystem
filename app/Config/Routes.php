@@ -30,6 +30,7 @@ $routes->get('admin/users/delete/(:num)', 'UsersController::delete/$1');
 $routes->get('admin/users/details/(:num)', 'UsersController::details/$1');
 
 
+
 //Admin dashboard routes
 $routes->get('admin/dashboard', 'AdminDashboard::index');
 
