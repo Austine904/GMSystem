@@ -5,6 +5,8 @@ namespace App\Controllers;
 use Config\Services;
 
 use CodeIgniter\Controller;
+use CodeIgniter\Database\Query;
+
 
 class UsersController extends BaseController
 {
@@ -135,18 +137,32 @@ class UsersController extends BaseController
     }
 
     public function details($id)
-    {
-        $db = \Config\Database::connect();
-        $query = $db->query("SELECT * FROM users WHERE id = ?", [$id],);
-        $result = $query->getRowArray();
+{
+    $db = \Config\Database::connect();
 
+    // Fetch user
+    $query = $db->query("SELECT * FROM users WHERE id = ?", [$id]);
+    $result = $query->getRowArray();
 
-        if (!$result) {
-            return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
-        }
-
-        return $this->response->setJSON($result);
+    if (!$result) {
+        return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
     }
+
+    // Fetch next of kin
+    $kinQuery = $db->query("SELECT * FROM next_of_kin WHERE user_id = ?", [$id]);
+    $kinResult = $kinQuery->getRowArray();
+
+    // Append kin details to user result
+    $result['next_of_kin'] = $kinResult ?? [
+        'first_name' => '',
+        'last_name' => '',
+        'relationship' => '',
+        'phone_number' => ''
+    ];
+
+    return $this->response->setJSON($result);
+}
+
 
 
     // // Handle viewing user details in a modal
@@ -383,5 +399,92 @@ class UsersController extends BaseController
     public function failure()
     {
         return view('user/failure');
+    }
+
+    // Fetch user data for the details modal
+
+    public function fetchuserData()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
+            return redirect()->to('/login');
+        }
+
+        $userId = $this->request->getVar('user_id');
+
+        try {
+            $db = \Config\Database::connect();
+            $db->initialize(); // Triggers connection
+        } catch (\Exception $e) {
+            return $this->response->setJSON(['error' => 'Database connection failed: ' . $e->getMessage()]);
+        }
+
+        if (empty($userId)) {
+            return $this->response->setJSON(['error' => 'User ID is required']);
+        }
+
+
+        // Fetch user data
+        $builder = $db->table('users');
+        $user = $builder->where('id', $userId)->get()->getRowArray();
+
+        if (!$user) {
+            return $this->response->setJSON(['error' => 'Userddddd not found']);
+        }
+
+        // Fetch next of kin
+        $kin = $db->table('next_of_kin')
+            ->where('user_id', $userId)
+            ->get()
+            ->getRowArray();
+
+        // Optional: Fetch role name from a 'roles' table
+        // If your `role` field is just a string, you can skip this part
+        // But if it's an ID, join to get readable role name
+        // Let's assume it's just a string like 'admin', 'mechanic', etc.
+        $roleName = ucfirst($user['role']); // capitalize first letter
+
+        // Final response structure
+        $response = [
+            'id' => $user['id'],
+            'name' => $user['first_name'] . ' ' . $user['last_name'],
+            'phone' => $user['phone_number'],
+            'role' => $roleName,
+            'company_id' => $user['company_id'],
+            'profile_picture' => $user['profile_picture'],
+            'next_of_kin' => $kin ?? [
+                'first_name' => '',
+                'last_name' => '',
+                'relationship' => '',
+                'phone_number' => ''
+            ]
+        ];
+
+        return $this->response->setJSON($response);
+    }
+
+    public function fetchUsers()
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+        $query = $builder->get();
+        $result = $query->getResultArray();
+
+        //test database connection
+
+
+
+
+        $users = [];
+        foreach ($result as $user) {
+            $users[] = [
+                'id' => $user['id'],
+                'name' => $user['first_name'] . ' ' . $user['last_name'],
+                'phone' => $user['phone_number'],
+                'role' => $user['role'],
+                'company_id' => $user['company_id'],
+
+            ];
+        }
+        return $this->response->setJSON(['data' => $users]);
     }
 }

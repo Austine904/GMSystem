@@ -421,7 +421,6 @@
         </div>
     </div>
 
-
     <div class="row mt-5 g-4">
         <div class="col-md-8">
             <div class="card">
@@ -436,39 +435,25 @@
                 </div>
                 <ul class="list-group list-group-flush" id="recentActivityList">
                     <li class="list-group-item activity-item" data-type="jobs">
-                        <i class="bi bi-briefcase activity-icon"></i>
+                        <?php if (!empty($recentActivity)): ?>
+                            <?php foreach ($recentActivity as $activity): ?>
+                    <li class=" list-group-item activity-item" data-type="<?= esc($activity['type']) ?>">
+                        <i class="bi <?= esc($activity['icon']) ?> activity-icon"></i>
                         <div class="activity-details">
-                            <div class="activity-text">John Doe updated <a href="#" class="activity-link">Job #123</a> status to 'Completed'.</div>
-                            <div class="activity-meta">5 minutes ago</div>
+                            <div class="activity-text"><?= $activity['text'] ?></div>
+                            <div class="activity-meta"><?= $activity['time'] ?></div>
                         </div>
+
                     </li>
-                    <li class="list-group-item activity-item" data-type="users">
-                        <i class="bi bi-person-plus activity-icon"></i>
-                        <div class="activity-details">
-                            <div class="activity-text">New user <a href="#" class="activity-link">Jane Smith</a> (Mechanic) registered.</div>
-                            <div class="activity-meta">1 hour ago</div>
-                        </div>
-                    </li>
-                    <li class="list-group-item activity-item" data-type="vehicles">
-                        <i class="bi bi-car-front activity-icon"></i>
-                        <div class="activity-details">
-                            <div class="activity-text">New vehicle <a href="#" class="activity-link">Toyota Camry (ABC 123)</a> registered for Customer A.</div>
-                            <div class="activity-meta">3 hours ago</div>
-                        </div>
-                    </li>
-                    <li class="list-group-item activity-item" data-type="jobs">
-                        <i class="bi bi-briefcase activity-icon"></i>
-                        <div class="activity-details">
-                            <div class="activity-text">Admin created <a href="#" class="activity-link">Job #124</a> for Customer B.</div>
-                            <div class="activity-meta">Yesterday</div>
-                        </div>
-                    </li>
-                    <?php if (empty($recentActivity ?? [])): ?>
-                        <li class="list-group-item text-muted">No recent activity yet.</li>
-                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <li class="list-group-item text-muted">No recent activity yet.</li>
+            <?php endif; ?>
                 </ul>
             </div>
         </div>
+
+
 
         <div class="col-md-4">
             <div class="card">
@@ -600,7 +585,7 @@
 
         // Job Status Breakdown Chart
         const jobstatusData = <?= $jobStatusData ?? '{}' ?>;
-        
+
         const jobStatusCtx = document.getElementById('jobStatusChart');
         if (jobStatusCtx) {
             new Chart(jobStatusCtx, {
@@ -708,6 +693,16 @@
                 // You might want to add a temporary message here or handle it in PHP if data is empty
                 // For now, assuming some items are always present or handled by PHP's empty check
             }
+        });
+    });
+
+    document.getElementById('activityFilter').addEventListener('change', function() {
+        const selectedType = this.value;
+        const items = document.querySelectorAll('.activity-item');
+
+        items.forEach(item => {
+            const match = selectedType === 'all' || item.dataset.type === selectedType;
+            item.style.display = match ? 'flex' : 'none';
         });
     });
 </script>

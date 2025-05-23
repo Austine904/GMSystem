@@ -20,12 +20,58 @@ class DashboardController extends BaseController
 
     public function admin()
     {
+        helper('activity');
+        helper('time');
         // Check login and admin role
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
             return redirect()->to('/login');
         }
 
         $db = \Config\Database::connect();
+        
+
+
+        $recentActivity = [];
+
+        // Jobs
+        $jobs = $db->query("SELECT id, updated_at, status FROM jobs ORDER BY updated_at DESC LIMIT 3")->getResultArray();
+        foreach ($jobs as $job) {
+            $recentActivity[] = [
+                'type' => 'jobs',
+                'icon' => 'bi-briefcase',
+                'text' => "Job #{$job['id']} status updated to '{$job['status']}'",
+                'time' => timeAgo($job['updated_at']),
+            ];
+        }
+
+        // Users
+        $users = $db->query("SELECT id, first_name, last_name, role, created_at FROM users ORDER BY created_at DESC LIMIT 3")->getResultArray();
+        foreach ($users as $user) {
+            $name = esc($user['first_name'] . ' ' . $user['last_name']);
+            $recentActivity[] = [
+                'type' => 'users',
+                'icon' => 'bi-person-plus',
+                'text' => "New user <a href='#' class='activity-link'>{$name}</a> ({$user['role']}) registered.",
+                'time' => timeAgo($user['created_at']),
+            ];
+        }
+
+        // Vehicles
+        $vehicles = $db->query("SELECT registration_number, make, model, owner_id, created_at FROM vehicles ORDER BY created_at DESC LIMIT 3")->getResultArray();
+        foreach ($vehicles as $v) {
+            $vehicleText = "{$v['make']} {$v['model']} ({$v['registration_number']})";
+            $recentActivity[] = [
+                'type' => 'vehicles',
+                'icon' => 'bi-car-front',
+                'text' => "New vehicle <a href='#' class='activity-link'>{$vehicleText}</a> registered.",
+                'time' => timeAgo($v['created_at']),
+            ];
+        }
+
+        // Sort all activity by timestamp descending
+        usort($recentActivity, fn($a, $b) => strtotime($b['time']) - strtotime($a['time']));
+
+        return view('admin/dashboard', ['recentActivity' => $recentActivity]);
 
         // Count total users
         $userCount = $db->table('users')
@@ -94,7 +140,7 @@ class DashboardController extends BaseController
             'jobStatusData'   => json_encode($jobStatusData),
         ];
 
-        return view('admin/dashboard', $data);
+        return view('admin/dashboard', $data );
     }
 
 
@@ -124,8 +170,7 @@ class DashboardController extends BaseController
     }
 
     public function unauthorized()
-{
-    return view('errors/unauthorized');
-}
-
+    {
+        return view('errors/unauthorized');
+    }
 }
