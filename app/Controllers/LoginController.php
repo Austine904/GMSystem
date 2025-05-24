@@ -38,6 +38,9 @@ class LoginController extends BaseController
                     'user_id' => $user['id'],
                     'user_name' => $user['first_name'] . ' ' . $user['last_name'],
                     'role' => $user['role'],
+                    'company_id' => $user['company_id'],
+                    'profile_picture' => $user['profile_picture'],
+                    
                     'isLoggedIn' => true
                 ];
                 $session->set($sessionData);
