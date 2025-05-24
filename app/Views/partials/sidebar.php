@@ -98,6 +98,8 @@ function isActive($segment, $currentSegment)
         font-weight: 500;
         text-decoration: none;
         /* Remove underline */
+        
+
     }
 
     .sidebar .nav-link .bi {

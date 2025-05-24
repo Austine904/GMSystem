@@ -325,7 +325,7 @@
                         <div>
                             <h6>Total Users</h6>
                             <h3><?= $userCount ?? '0' ?></h3>
-                        </div>
+                        </div>                        
                         <i class="bi bi-people" style="font-size: 2.5rem;"></i>
                     </div>
                 </div>

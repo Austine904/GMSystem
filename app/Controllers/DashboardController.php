@@ -13,6 +13,7 @@ class DashboardController extends BaseController
         $data = [
             'name' => session()->get('user_name'),
             'role' => session()->get('role'),
+            'userId' => session()->get('user_id'),
         ];
 
         return view('dashboard', $data);
@@ -28,8 +29,6 @@ class DashboardController extends BaseController
         }
 
         $db = \Config\Database::connect();
-        
-
 
         $recentActivity = [];
 
@@ -51,7 +50,7 @@ class DashboardController extends BaseController
             $recentActivity[] = [
                 'type' => 'users',
                 'icon' => 'bi-person-plus',
-                'text' => "New user <a href='#' class='activity-link'>{$name}</a> ({$user['role']}) registered.",
+                'text' => "New user <a href='#' class='activity-link'>{$name}</a> ({$user['role']}) registered by admin.",
                 'time' => timeAgo($user['created_at']),
             ];
         }
@@ -71,7 +70,6 @@ class DashboardController extends BaseController
         // Sort all activity by timestamp descending
         usort($recentActivity, fn($a, $b) => strtotime($b['time']) - strtotime($a['time']));
 
-        return view('admin/dashboard', ['recentActivity' => $recentActivity]);
 
         // Count total users
         $userCount = $db->table('users')
@@ -140,10 +138,12 @@ class DashboardController extends BaseController
             'jobStatusData'   => json_encode($jobStatusData),
         ];
 
-        return view('admin/dashboard', $data );
+        // Merge the data arrays
+        $mergedData = array_merge($data, ['recentActivity' => $recentActivity]);
+
+        // Return the view with the combined data
+        return view('admin/dashboard', $mergedData);
     }
-
-
 
     public function mechanic()
     {
