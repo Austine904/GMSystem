@@ -503,9 +503,11 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+
         // --- openModal Function ---
         function openModal(url, title = 'Form') {
             const modalElement = document.getElementById('actionModal');
@@ -544,7 +546,7 @@
                     console.error('Error loading modal content:', error);
                 });
         }
-        window.openModal = openModal; // Make it globally accessible for onclick attributes
+        window.openModal = openModal;
 
 
         // --- Chart.js Initialization ---
@@ -582,6 +584,7 @@
                 pointHoverRadius: 7
             }]
         };
+
 
         // Job Status Breakdown Chart
         const jobstatusData = <?= $jobStatusData ?? '{}' ?>;

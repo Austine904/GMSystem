@@ -6,7 +6,6 @@
     <h3 class="mb-4">Vehicle Management</h3>
 
     <!-- Add Vehicle Button -->
-    <!-- <button class="btn btn-primary mb-3" onclick="openAddModal()">Add Vehicle</button> -->
     <button onclick="$('#addVehicleModal').modal('show')" class="btn btn-outline-primary mb-3">
         <i class="bi bi-plus-lg"></i> Add Vehicle
     </button>
