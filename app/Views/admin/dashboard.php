@@ -503,7 +503,6 @@
     </div>
 </div>
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -551,7 +550,6 @@
 
         // --- Chart.js Initialization ---
 
-        // Mock Data for Charts (replace with actual AJAX fetches to backend)
         const mockJobStatusData = {
             labels: ['Pending', 'In Progress', 'Awaiting Parts', 'Completed', 'Paid'],
             datasets: [{
