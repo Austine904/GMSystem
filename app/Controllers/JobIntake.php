@@ -3,7 +3,7 @@
 namespace App\Controllers;
 use CodeIgniter\Controller;
 
-class JobIntakeController extends Controller
+class JobIntake extends Controller
 {
     protected $db;
     protected $session;
@@ -23,11 +23,11 @@ class JobIntakeController extends Controller
         }
 
         $service_advisors = $this->db->table('users')
-            ->where('role', 'service_advisor')
+            ->where('role', 'admin')
             ->get()
             ->getResult();
 
-        return view('job_intake_form', ['service_advisors' => $service_advisors]);
+        return view('job/job_intake_form', ['service_advisors' => $service_advisors]);
     }
 
     public function search()
