@@ -12,10 +12,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= base_url('public/css/vehicles.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/sidebar.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/login.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('public/css/job_intake.css') ?>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

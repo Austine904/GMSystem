@@ -1,0 +1,69 @@
+ /* Add any specific styles for this form if needed, e.g., for input focus, button colors */
+    .form-group label {
+        font-weight: 500;
+        color: #343a40; /* text-dark */
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #007bff; /* primary-color */
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    .card-header {
+        background-color: #f8f9fa; /* bg-light */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 600;
+        color: #343a40;
+    }
+    .search-results-dropdown {
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background: white;
+        /* border: 1px solid #ced4da; */
+        border-top: none;
+        z-index: 1000;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .search-results-dropdown div {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    .search-results-dropdown div:last-child {
+        border-bottom: none;
+    }
+    .search-results-dropdown div:hover {
+        background-color: #e9ecef;
+    }
+    .search-results-dropdown .result-title {
+        font-weight: 600;
+        color: #007bff;
+    }
+    .search-results-dropdown .result-subtitle {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    .photo-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .photo-preview-container img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    .error-message {
+        color: #dc3545; /* danger-color */
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }

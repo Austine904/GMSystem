@@ -9,6 +9,9 @@
     <button onclick="openModal('<?= base_url('admin/users/add') ?>', 'Add New User')" class="btn btn-outline-primary d-flex align-items-center gap-2">
         <i class="bi bi-person-plus"></i> Add User
     </button>
+    <button onclick="openModal('<?= base_url('job/job_intake_form') ?>', 'Add Job')" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-person-plus"></i> Add new Job
+    </button>
 
     <!-- User Table -->
     <form method="POST" action="<?= base_url('admin/users/bulk_action') ?>" id="bulkActionForm">
