@@ -66,7 +66,7 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('users/bulk_action', 'UsersController::bulk_action');
     $routes->get('users/fetch/(:num)', 'UsersController::details/$1');
     $routes->get('users/fetch', 'UsersController::fetchUsers');
-    // $routes->get('users/fetch/(:num)', 'UsersController::fetchUserData/$1');
+   
 
 
     // Vehicles
