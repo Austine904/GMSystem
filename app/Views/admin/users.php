@@ -15,10 +15,12 @@
 
     <!-- User Table -->
     <form method="POST" action="<?= base_url('admin/users/bulk_action') ?>" id="bulkActionForm">
-        <button type="button" class="btn btn-danger mb-3" id="deleteSelectedBtn">
+        <?= csrf_field() ?>
+        <button type="button" class="btn btn-danger mb-3 mt-5 " id="deleteSelectedBtn">
             <i class="bi bi-trash me-1"></i> Delete Selected
         </button>
 
+        
         <div class="table-container">
             <div class="table-responsive rounded">
                 <table id="userTable" class="table table-striped table-bordered" style="width:100%">
@@ -150,7 +152,13 @@
 
         $(document).ready(function() {
             // Initialize DataTable
-            const table = $('#userTable').DataTable({
+
+            function ucfirst(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+
+
+            const userTable = $('#userTable').DataTable({
                 "processing": true,
                 "searching": true,
                 "ajax": {
@@ -249,13 +257,11 @@
 
         window.openModal = function(url, title = 'Form') { // Added title parameter
             actionModalTitle.textContent = title;
-            modalContentDiv.innerHTML = ` <
-                                div class = "spinner-border text-primary"
-                                role = "status" >
-                                <
-                                span class = "visually-hidden" > Loading... < /span> <
-                                /div>
-                                `; // Show loading spinner
+            modalContentDiv.innerHTML = `
+                                 <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                 </div>`;
+
             actionModal.show();
 
             fetch(url, {
