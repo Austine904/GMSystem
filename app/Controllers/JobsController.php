@@ -13,37 +13,44 @@ class JobsController extends BaseController
         $this->db = \Config\Database::connect();
     }
 
-  public function index()
+    public function index()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
             return redirect()->to('/login');
         }
 
         $db = \Config\Database::connect();
-        $query = $db->table('jobs')
+        $builder = $db->table('jobs')
             ->select('id, job_no, vehicle_id, description, status');
-        $role = $this->request->getVar('role');
 
         $search = $this->request->getVar('search');
-
         if (!empty($search)) {
-            $query->like('job_no', $search)
+            $builder->like('job_no', $search)
                 ->orLike('vehicle_id', $search);
-                
         }
+
+        // Optional: Fetching mechanics for dropdowns or filters
+        $service_advisors = $db->table('users')
+            ->where('role', 'mechanic')
+            ->select('company_id, first_name, last_name')
+            ->orderBy('first_name', 'ASC')
+            ->get()
+            ->getResultArray();
 
         $perPage = 10;
         $currentPage = $this->request->getVar('page') ?? 1;
 
-        $users = $query->limit($perPage, ($currentPage - 1) * $perPage)->get()->getResultArray();
+        $total = $builder->countAllResults(false);
+        $jobs = $builder->limit($perPage, ($currentPage - 1) * $perPage)->get()->getResultArray();
         $pager = \Config\Services::pager();
 
         if ($this->request->isAJAX()) {
-            return view('admin/jobs/jobs_list', ['jobs' => $users, 'pager' => $pager]);
+            return view('admin/jobs/jobs_list', ['jobs' => $jobs, 'pager' => $pager]);
         }
 
-        return view('admin/jobs', ['jobs' => $users, 'pager' => $pager]);
+        return view('job/index', ['jobs' => $jobs, 'pager' => $pager, 'service_advisors' => $service_advisors]);
     }
+
     public function fetchJobs()
     {
         $builder = $this->db->table('jobs');
@@ -72,7 +79,11 @@ class JobsController extends BaseController
 
     public function add()
     {
-        return view('jobs/add');
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
+            return redirect()->to('/login');
+        }
+
+       
     }
 
     public function store()
@@ -81,15 +92,15 @@ class JobsController extends BaseController
             'job_name' => 'required|min_length[3]',
             'description' => 'permit_empty|max_length[255]',
             'status' => 'required|in_list[pending,completed,cancelled]', // Example statuses
-            'assigned_to' => 'permit_empty|integer', // Assuming this is a user ID
+            'assigned_to' => 'permit_empty|integer', // This is a user ID
             'created_at' => 'required|valid_date',
             'updated_at' => 'permit_empty|valid_date',
         ];
 
         if (!$this->validate($rules)) {
             return redirect()->back()
-                             ->withInput()
-                             ->with('errors', $this->validator->getErrors());
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
         }
 
         $data = $this->request->getPost();
@@ -122,8 +133,8 @@ class JobsController extends BaseController
 
         if (!$this->validate($rules)) {
             return redirect()->back()
-                             ->withInput()
-                             ->with('errors', $this->validator->getErrors());
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
         }
 
         $data = $this->request->getPost();

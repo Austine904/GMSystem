@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered mt-3">
+<!-- <table class="table table-striped table-bordered mt-3">
     <tbody>
         <?php foreach ($users as $user): ?>
             <tr>
@@ -15,4 +15,4 @@
 <!-- Pagination Links -->
 <div id="pagination-links">
     <?= $pager->links('default', 'bootstrap_pagination') ?>
-</div>
+</div> -->

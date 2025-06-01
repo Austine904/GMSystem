@@ -5,18 +5,21 @@
 <div class="container mt-5">
     <h3 class="mb-4">Jobs Management</h3>
 
-    <!-- Add Job Button -->
-    <button onclick="openModal('<?= base_url('job/job_intake_form') ?>', 'Add Job')" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-        <i class="bi bi-person-plus"></i> Add new Job
-    </button>
-
     <!-- Vehicle Table -->
-    <div class="table-container">
+    <div class="table-container" style="margin-top: 20px;">
+        <div class="table-header d-flex justify-content-between align-items-center mb-3">
+            <h4>Job List</h4>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary d-flex align-items-center gap-2" onclick="$('#addJobModal').modal('show')">
+                    <i class="bi bi-wrench"></i> Add New Job
+                </button>
+            </div>
+        </div>
         <div class="table-responsive rounded">
             <table id="JobTable" class="table table-striped table-bordered" style="width:100%">
-                <thead>
+                <thead >
                     <tr>
-                        <th>Job Id</th>
+                        <th>Job No</th>
                         <th>Vehicle ID</th>
                         <th>Description</th>
                         <th>Status</th>
@@ -25,13 +28,13 @@
                 </thead>
             </table>
         </div>
-    </div>
 
+    </div>
 </div>
 
 
 <!-- Modals -->
-<!-- <?php include('modals.php'); ?> -->
+<?php include('modals.php'); ?>
 
 
 
@@ -41,19 +44,19 @@
         const table = $('#JobTable').DataTable({
             "ajax": "<?= base_url('admin/jobs/fetch') ?>",
             "columns": [{
-                    "data": "job_id"
+                    "data": "job_no"
                 },
                 {
                     "data": "vehicle_id"
                 },
-              
+
                 {
                     "data": "description"
                 },
                 {
                     "data": "status"
                 },
-               
+
                 {
                     "data": null,
                     "render": function(data, type, row) {
@@ -76,15 +79,6 @@
         });
     });
 
-
-    // // Add Vehicle AJAX
-    // $('#addVehicleForm').on('click', function() {
-    //     const formData = $('#addVehicleForm').serialize();
-    //     $.post("<?= base_url('admin/vehicles/add') ?>", formData, function(response) {
-    //         $('#vehicleModal').modal('hide');
-    //         table.ajax.reload();
-    //     });
-    // });
 
     // // Edit Vehicle AJAX
     // window.editVehicle = function(id) {
@@ -144,7 +138,7 @@
     //         method: 'GET',
     //         success: function(data) {
     //             $('#viewVehicleModal .modal-body').html(`
-                    
+
     //                 <p><strong>Make:</strong> ${data.make}</p>
     //                 <p><strong>Year of Manufacture:</strong> ${data.year_of_manufature}</p>
     //                 <p><strong>Registration Number:</strong> ${data.registration_number}</p>
@@ -153,7 +147,7 @@
     //                 <p><strong>Engine Number:</strong> ${data.engine_number}</p>
     //                 <p><strong>Chassis Number:</strong> ${data.chassis_number}</p>
     //                 <p><strong>Fuel Type:</strong> ${data.fuel_type}</p>
-                  
+
     //             `);
     //             $('#viewVehicleModal').modal('show');
     //         },

@@ -47,7 +47,7 @@ $(document).ready(function () {
         photoPreviewContainer.empty();
     }
 
-    // 🚀 Photo Upload Preview with validation
+    // Photo Upload Preview with validation
     photoUploadInput.on('change', function () {
         const files = this.files;
 
@@ -77,11 +77,11 @@ $(document).ready(function () {
         });
     });
 
-    // 💥 Cancel Buttons
+    // Cancel Buttons
     cancelCustomerBtn.on('click', resetCustomerSection);
     cancelVehicleBtn.on('click', resetVehicleSection);
 
-    // 👤 Customer Search
+    // Customer Search
     customerSearchInput.on('keyup', function () {
         const query = $(this).val().trim();
         if (!query) return;
@@ -116,7 +116,7 @@ $(document).ready(function () {
         });
     });
 
-    // 🚗 Vehicle Search
+    // Vehicle Search
     vehicleSearchInput.on('keyup', function () {
         const query = $(this).val().trim();
         if (!query) return;
@@ -152,7 +152,7 @@ $(document).ready(function () {
         });
 });
 
-// 🧠 Auto-fill customer from vehicle selection
+//  Auto-fill customer from vehicle selection
 function fetchCustomerById(customerId) {
     $.ajax({
         type: 'GET',
@@ -180,7 +180,7 @@ function fetchCustomerById(customerId) {
         });
     }
 
-// 🧾 Form Submit
+//  Form Submit
 jobForm.on('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(this);
