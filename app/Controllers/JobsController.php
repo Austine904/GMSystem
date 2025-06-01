@@ -13,14 +13,61 @@ class JobsController extends BaseController
         $this->db = \Config\Database::connect();
     }
 
-    public function index()
+  public function index()
     {
-        $jobs = $this->db->table('jobs')
-                         ->where('deleted_at', null) // Assuming soft delete, adjust as necessary
-                         ->get()
-                         ->getResultArray();
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
+            return redirect()->to('/login');
+        }
 
-        return view('jobs/index', ['jobs' => $jobs]);
+        $db = \Config\Database::connect();
+        $query = $db->table('jobs')
+            ->select('id, job_no, vehicle_id, description, status');
+        $role = $this->request->getVar('role');
+
+        $search = $this->request->getVar('search');
+
+        if (!empty($search)) {
+            $query->like('job_no', $search)
+                ->orLike('vehicle_id', $search);
+                
+        }
+
+        $perPage = 10;
+        $currentPage = $this->request->getVar('page') ?? 1;
+
+        $users = $query->limit($perPage, ($currentPage - 1) * $perPage)->get()->getResultArray();
+        $pager = \Config\Services::pager();
+
+        if ($this->request->isAJAX()) {
+            return view('admin/jobs/jobs_list', ['jobs' => $users, 'pager' => $pager]);
+        }
+
+        return view('admin/jobs', ['jobs' => $users, 'pager' => $pager]);
+    }
+    public function fetchJobs()
+    {
+        $builder = $this->db->table('jobs');
+        $query = $builder->get();
+        $result = $query->getResultArray();
+
+        $jobs = [];
+        foreach ($result as $row) {
+            $jobs[] = [
+                'id' => $row['id'],
+                'job_no' => $row['job_no'],
+                'vehicle_id' => $row['vehicle_id'],
+                'description' => $row['description'],
+                'status' => $row['status'],
+                'received_date' => $row['received_date'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                // 'assigned_to' => $row['assigned_to'],
+                'created_at' => $row['created_at'],
+                'updated_at' => $row['updated_at']
+            ];
+        }
+
+        return $this->response->setJSON(['data' => $jobs]);
     }
 
     public function add()

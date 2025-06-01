@@ -20,7 +20,7 @@
             <i class="bi bi-trash me-1"></i> Delete Selected
         </button>
 
-        
+
         <div class="table-container">
             <div class="table-responsive rounded">
                 <table id="userTable" class="table table-striped table-bordered" style="width:100%">
@@ -230,19 +230,48 @@
         const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalElement);
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-        deleteSelectedBtn.addEventListener('click', function() {
+        // deleteSelectedBtn.addEventListener('click', function() {
 
+        //     const checkedUsers = userTable.rows().nodes().to$().find('input[name="users[]"]:checked');
+
+        //     if (checkedUsers.length === 0) {
+        //         // Use a custom message box instead of alert
+        //         alert("Please select at least one user to delete."); // Temporary alert for demonstration
+
+        //         // showInfoModal("No Selection", "Please select at least one user to delete.");
+        //         return;
+        //     }
+        //     confirmDeleteModal.show();
+        // });
+
+        deleteSelectedBtn.addEventListener('click', function() {
             const checkedUsers = userTable.rows().nodes().to$().find('input[name="users[]"]:checked');
 
             if (checkedUsers.length === 0) {
-                // Use a custom message box instead of alert
-                alert("Please select at least one user to delete."); // Temporary alert for demonstration
-
-                // showInfoModal("No Selection", "Please select at least one user to delete.");
+                alert("Please select at least one user to delete.");
                 return;
             }
-            confirmDeleteModal.show();
+
+            const userIds = [];
+            checkedUsers.each(function() {
+                userIds.push($(this).val());
+            });
+
+            // Optional: confirm first
+            if (!confirm("Are you sure you want to delete the selected user(s)?")) {
+                return;
+            }
+
+            // Send AJAX to backend
+            $.post('/users/delete-multiple', {
+                user_ids: userIds
+            }, function(response) {
+                alert(response.message);
+                // Optionally reload the DataTable
+                userTable.ajax.reload();
+            }, 'json');
         });
+
 
         confirmDeleteBtn.addEventListener('click', function() {
             confirmDeleteModal.hide();
@@ -340,11 +369,11 @@
 
                 // Populate Employment Tab
                 document.getElementById('date_of_employment').innerText = data.date_of_employment || 'N/A';
-                document.getElementById('department').innerText = data.department || 'N/A'; // Assuming 'department' field
+                document.getElementById('department').innerText = data.department || 'N/A';
 
                 // Populate Next of Kin Tab
 
-                const kin = data.next_of_kin || {}; // Assuming 'kin' is an object in the response
+                const kin = data.next_of_kin || {};
 
                 document.getElementById('kin_first_name').innerText = `${kin.kin_first_name || ''} ${kin.kin_last_name || ''}`.trim() || 'N/A';
                 document.getElementById('kin_last_name').innerText = kin.kin_last_name || '';

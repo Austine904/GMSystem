@@ -117,24 +117,43 @@ class UsersController extends BaseController
     }
 
     // Handle bulk actions (delete)
-    public function bulk_action()
+    // public function bulk_action()
+    // {
+    //     if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
+    //         return redirect()->to('/login');
+    //     }
+
+    //     $userIds = $this->request->getPost('users');
+
+    //     if ($userIds) {
+    //         $db = \Config\Database::connect();
+    //         $builder = $db->table('users');
+    //         $builder->whereIn('id', $userIds)->delete();
+
+    //         return redirect()->to('/admin/users')->with('success', 'Selected users deleted successfully.');
+    //     } else {
+    //         return redirect()->to('/admin/users')->with('error', 'No users selected for deletion.');
+    //     }
+    // }
+
+
+    public function deleteMultiple()
     {
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
-            return redirect()->to('/login');
+        $userIds = $this->request->getPost('user_ids');
+
+        if (!is_array($userIds) || empty($userIds)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'No users selected.']);
         }
 
-        $userIds = $this->request->getPost('users');
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
 
-        if ($userIds) {
-            $db = \Config\Database::connect();
-            $builder = $db->table('users');
-            $builder->whereIn('id', $userIds)->delete();
+        $builder->whereIn('id', $userIds)
+            ->update(['deleted_at' => date('Y-m-d H:i:s')]);
 
-            return redirect()->to('/admin/users')->with('success', 'Selected users deleted successfully.');
-        } else {
-            return redirect()->to('/admin/users')->with('error', 'No users selected for deletion.');
-        }
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Users deleted successfully.']);
     }
+
 
     public function details($id)
     {
@@ -390,6 +409,9 @@ class UsersController extends BaseController
     {
         $db = \Config\Database::connect();
         $builder = $db->table('users');
+
+        $builder->where('deleted_at', null);
+
         $query = $builder->get();
         $result = $query->getResultArray();
 
@@ -401,9 +423,9 @@ class UsersController extends BaseController
                 'phone' => $user['phone_number'],
                 'role' => $user['role'],
                 'company_id' => $user['company_id'],
-
             ];
         }
+
         return $this->response->setJSON(['data' => $users]);
     }
 }

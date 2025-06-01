@@ -46,7 +46,8 @@ $routes->post('admin/users/bulk_action', 'UsersController::bulk_action');
 
 
 
-// --- Protected routes ---
+// Protected routes
+
 // Admin-only
 $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
 
@@ -83,6 +84,7 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
 
     // Jobs
     $routes->get('jobs', 'JobsController::index');
+    $routes->get('jobs/fetch', 'JobsController::fetchJobs');
     $routes->get('jobs/add', 'JobsController::add');
     $routes->post('jobs/create', 'JobsController::create');
     $routes->get('jobs/(:num)', 'JobsController::details/$1');
