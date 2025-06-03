@@ -92,7 +92,14 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('jobs/update/(:num)', 'JobsController::update/$1');
     $routes->get('jobs/delete/(:num)', 'JobsController::delete/$1');
     $routes->post('jobs/bulk_action', 'JobsController::bulk_action');
-    $routes->get('job/job_intake_form', 'JobIntake::index');
+    // $routes->get('job/job_intake_form', 'JobIntake::index');
+
+    // Job Intake
+    $routes->get('job_intake', 'JobIntake::index');
+    $routes->get('job_intake/search', 'JobIntake::search');
+    $routes->post('job_intake/create_job_card', 'JobIntake::create_job_card');
+    $routes->post('job_intake/fetch_vehicle_details', 'JobIntake::fetch_vehicle_details');
+    $routes->post('job_intake/fetch_customer_details', 'JobIntake::fetch_customer_details');
 });
 
 // Receptionist-only
@@ -127,4 +134,5 @@ $routes->group('job_card', ['filter' => 'auth:admin,receptionist'], function ($r
     $routes->post('update/(:num)', 'JobCardController::update/$1');
     $routes->get('delete/(:num)', 'JobCardController::delete/$1');
 });
+
 

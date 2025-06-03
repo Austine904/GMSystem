@@ -123,7 +123,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'GET',
-            url: 'job_intake/ vehicle_search',
+            url: 'job_intake/vehicle_search',
             data: { query },
             success: function (response) {
                 const data = JSON.parse(response);
@@ -150,71 +150,125 @@ $(document).ready(function () {
                 alert('Error searching vehicle.');
             }
         });
-});
+    });
 
-//  Auto-fill customer from vehicle selection
-function fetchCustomerById(customerId) {
-    $.ajax({
-        type: 'GET',
-        url: 'job_intake/get_customer_by_id',
-        data: { id: customerId },
-        success: function (response) {
-            const data = JSON.parse(response);
-            if (data.status) {
-                const customer = data.customer;
-                const nameParts = (customer.name || '').split(' ');
-                const firstName = nameParts[0] || '';
-                const lastName = nameParts[1] || '';
+    //  Auto-fill customer from vehicle selection
+    function fetchCustomerById(customerId) {
+        $.ajax({
+            type: 'GET',
+            url: 'job_intake/get_customer_by_id',
+            data: { id: customerId },
+            success: function (response) {
+                const data = JSON.parse(response);
+                if (data.status) {
+                    const customer = data.customer;
+                    const nameParts = (customer.name || '').split(' ');
+                    const firstName = nameParts[0] || '';
+                    const lastName = nameParts[1] || '';
 
-                customerIdField.val(customer.id);
-                customerFirstName.val(firstName);
-                customerLastName.val(lastName);
-                customerPhone.val(customer.phone_number);
-                customerEmail.val(customer.email);
-                customerSection.removeClass('d-none');
+                    customerIdField.val(customer.id);
+                    customerFirstName.val(firstName);
+                    customerLastName.val(lastName);
+                    customerPhone.val(customer.phone_number);
+                    customerEmail.val(customer.email);
+                    customerSection.removeClass('d-none');
+                }
+            },
+            error: function () {
+                console.warn('Failed to fetch customer by ID');
             }
-        },
-        error: function () {
-            console.warn('Failed to fetch customer by ID');
-        }
         });
     }
 
-//  Form Submit
-jobForm.on('submit', function (e) {
-    e.preventDefault();
-    const formData = new FormData(this);
+    //  Form Submit
+    jobForm.on('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
 
-    $.ajax({
-        type: 'POST',
-        url: 'job_intake/save',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            const data = JSON.parse(response);
+        $.ajax({
+            type: 'POST',
+            url: 'job_intake/save',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                const data = JSON.parse(response);
 
-            // 🔍 Clear previous errors
-            $('[id^="error_"]').text('');
+                // 🔍 Clear previous errors
+                $('[id^="error_"]').text('');
 
-            if (data.status === 'success') {
-                alert(data.message);
-                jobForm.trigger('reset');
-                resetFormState();
-            } else if (data.status === 'error') {
-                for (const [key, value] of Object.entries(data.errors)) {
-                    const errorDiv = $('#error_' + key);
-                    if (errorDiv.length) {
-                        errorDiv.text(value);
-                    } else {
-                        alert(`Form error: ${value}`);
+                if (data.status === 'success') {
+                    alert(data.message);
+                    jobForm.trigger('reset');
+                    resetFormState();
+                } else if (data.status === 'error') {
+                    for (const [key, value] of Object.entries(data.errors)) {
+                        const errorDiv = $('#error_' + key);
+                        if (errorDiv.length) {
+                            errorDiv.text(value);
+                        } else {
+                            alert(`Form error: ${value}`);
+                        }
                     }
                 }
+            },
+            error: function () {
+                alert('Something went wrong while saving job.');
             }
-        },
-        error: function () {
-            alert('Something went wrong while saving job.');
-        }
+        });
+    });
+
+    jobForm.on('reset', function () {
+        resetFormState();
+        photoPreviewContainer.empty();
+    }
+    );
+
+    $(document).ready(function () {
+        $('#search_input').on('keyup', function () {
+            let query = $(this).val().trim();
+            let resultBox = $('#search_results');
+
+            if (query.length < 2) {
+                resultBox.empty().hide();
+                return;
+            }
+
+            $.ajax({
+                url: '<?= base_url("admin/job_intake/search") ?>',
+                method: 'GET',
+                data: { search: query },
+                success: function (data) {
+                    resultBox.empty().show();
+
+                    if (data.length === 0) {
+                        resultBox.append('<div class="search-result-item disabled">No matches found</div>');
+                    } else {
+                        data.forEach(item => {
+                            resultBox.append(`<div class="search-result-item" data-id="${item.value}">${item.label}</div>`);
+                        });
+                    }
+                }
+            });
+        });
+
+        // When a result is clicked
+        $(document).on('click', '.search-result-item', function () {
+            const selectedLabel = $(this).text();
+            const selectedId = $(this).data('id');
+
+            $('#search_input').val(selectedLabel);
+            $('#search_results').hide();
+
+            // Optional: Store selected ID for later
+            console.log("Selected ID:", selectedId);
+        });
+
+        // Hide dropdown when clicking outside
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#search_input, #search_results').length) {
+                $('#search_results').hide();
+            }
         });
     });
 });

@@ -45,38 +45,38 @@ class JobIntake extends Controller
     }
 
 
-    // public function search()
-    // {
-    //     $search = $this->request->getGet('search');
-    //     $response = [];
+    public function search()
+    {
+        $search = $this->request->getGet('search');
+        $response = [];
 
-    //     $customers = $this->db->table('customers')
-    //         ->groupStart()
-    //         ->like('name', $search)
-    //         ->orLike('phone', $search)
-    //         ->groupEnd()
-    //         ->get()
-    //         ->getResult();
+        $customers = $this->db->table('customers')
+            ->groupStart()
+            ->like('name', $search)
+            ->orLike('phone', $search)
+            ->groupEnd()
+            ->get()
+            ->getResult();
 
-    //     foreach ($customers as $cust) {
-    //         $response[] = ['label' => $cust->name . ' - ' . $cust->phone, 'value' => $cust->id];
-    //     }
+        foreach ($customers as $cust) {
+            $response[] = ['label' => $cust->name . ' - ' . $cust->phone, 'value' => $cust->id];
+        }
 
-    //     $vehicles = $this->db->table('vehicles')
-    //         ->groupStart()
-    //         ->like('registration_number', $search)
-    //         ->orLike('chassis_number', $search)
-    //         ->orLike('vin', $search)
-    //         ->groupEnd()
-    //         ->get()
-    //         ->getResult();
+        // console.log($response);
 
-    //     foreach ($vehicles as $veh) {
-    //         $response[] = ['label' => $veh->registration_number . ' - ' . $veh->chassis_number, 'value' => $veh->id];
-    //     }
+        $vehicles = $this->db->table('vehicles')
+            ->groupStart()
+            ->like('registration_number', $search)
+            ->groupEnd()
+            ->get()
+            ->getResult();
 
-    //     return $this->response->setJSON($response);
-    // }
+        foreach ($vehicles as $veh) {
+            $response[] = ['label' => $veh->registration_number . ' - ' . $veh->chassis_number, 'value' => $veh->id];
+        }
+
+        return $this->response->setJSON($response);
+    }
 
     // public function create_job_card()
     // {
@@ -203,7 +203,7 @@ class JobIntake extends Controller
     }
 
     // AJAX endpoint for searching customers and vehicles
-    public function search()
+    public function seaarch()
     {
         if (!$this->session->get('logged_in')) {
             return $this->respond(['status' => 'error', 'message' => 'Unauthorized'], 401);
@@ -509,5 +509,20 @@ class JobIntake extends Controller
             $this->db->transRollback();
             return $this->fail(['message' => 'Unexpected server error', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    //gext customer by id
+    public function get_customer($id)
+    {
+        if (!$this->session->get('logged_in')) {
+            return $this->respond(['status' => 'error', 'message' => 'Unauthorized'], 401);
+        }
+
+        $customer = $this->db->table('customers')->where('id', $id)->get()->getRowArray();
+        if (!$customer) {
+            return $this->failNotFound('Customer not found');
+        }
+
+        return $this->respond($customer);
     }
 }
