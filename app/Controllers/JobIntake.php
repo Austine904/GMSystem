@@ -62,7 +62,6 @@ class JobIntake extends Controller
             $response[] = ['label' => $cust->name . ' - ' . $cust->phone, 'value' => $cust->id];
         }
 
-        // console.log($response);
 
         $vehicles = $this->db->table('vehicles')
             ->groupStart()

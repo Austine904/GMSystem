@@ -310,9 +310,9 @@
             if (!query) return;
 
             $.ajax({
-                type: 'GET',
-                url: '<?= base_url('job_intake/vehicle_search') ?>',
-                data: {
+                "type": 'GET',
+                "url": '<?= base_url('job_intake/vehicle_search') ?>',
+                "data": {
                     query
                 },
                 success: function(response) {
