@@ -1,26 +1,28 @@
-<!-- Add Vehicle Modal -->
-<div id="addJobModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<!-- Add Job Modal -->
+<div id="addJobModal" class="modal fade" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add New Job</h5>
+                <h5 class="modal-title" id="addJobModalLabel">Add New Job</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p class="text-muted">Please fill in the details below to create a new job card.</p>
-                <form id="jobIntakeForm" action="<?= base_url('admin/jobs/add') ?>" enctype="multipart/form-data" method="post">
-                    <div class="mb-4">
+                <form id="jobIntakeForm" action="<?= base_url('job_intake/create_job_card') ?>" enctype="multipart/form-data" method="post">
+                    <div class="mb-3 position-relative">
                         <label for="search_input" class="form-label">Search Customer/Vehicle</label>
                         <input type="text" class="form-control" id="search_input" placeholder="License Plate, VIN, or Phone Number">
-                        <div id="search_results" class="search-results-item"></div>
+                        <div class="error-message" id="error_search_input"></div>
+                        <div id="search_results" class="search-results-dropdown hidden"></div>
                     </div>
 
-                    <hr class="my-4">
-
-                    <div id="customer_section">
-                        <h5 class="mb-3 text-primary">Customer Details <span id="customer_status" class="badge bg-secondary ms-2">New</span></h5>
+                    <div class="my-4 border-top pt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <h5 class="text-primary mb-0">Customer Details</h5>
+                            <span id="customer_status" class="badge bg-secondary ms-2">New</span>
+                        </div>
                         <input type="hidden" id="customer_id" name="customer_id" value="new">
-                        <div class="row g-3 mb-3">
+                        <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 <label for="new_customer_first_name" class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="new_customer_first_name" name="new_customer_first_name" required>
@@ -49,12 +51,13 @@
                         </div>
                     </div>
 
-                    <hr class="my-4">
-
-                    <div id="vehicle_section">
-                        <h5 class="mb-3 text-primary">Vehicle Details <span id="vehicle_status" class="badge bg-secondary ms-2">New</span></h5>
+                    <div class="my-4 border-top pt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <h5 class="text-primary mb-0">Vehicle Details</h5>
+                            <span id="vehicle_status" class="badge bg-secondary ms-2">New</span>
+                        </div>
                         <input type="hidden" id="vehicle_id" name="vehicle_id" value="new">
-                        <div class="row g-3 mb-3">
+                        <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 <label for="new_vehicle_license_plate" class="form-label">Reg No.</label>
                                 <input type="text" class="form-control" id="new_vehicle_license_plate" name="new_vehicle_license_plate" required>
@@ -114,7 +117,6 @@
                                 <div class="error-message" id="error_new_vehicle_fuel_type"></div>
                             </div>
 
-
                             <div class="col-md-6">
                                 <label for="new_vehicle_color" class="form-label">Color (Optional)</label>
                                 <input type="text" class="form-control" id="new_vehicle_color" name="new_vehicle_color">
@@ -123,52 +125,52 @@
                         </div>
                     </div>
 
-                    <hr class="my-4">
-
-                    <h5 class="mb-3 text-primary">Job Details</h5>
-                    <div class="row g-3 mb-3">
-                        <div class="col-12">
-                            <label for="reported_problem" class="form-label">Customer Reported Problem</label>
-                            <textarea class="form-control" id="reported_problem" name="reported_problem" rows="3" required></textarea>
-                            <div class="error-message" id="error_reported_problem"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="mileage_in" class="form-label">Mileage In</label>
-                            <input type="number" class="form-control" id="mileage_in" name="mileage_in" required min="0">
-                            <div class="error-message" id="error_mileage_in"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="fuel_level" class="form-label">Fuel Level</label>
-                            <select class="form-select" id="fuel_level" name="fuel_level" required>
-                                <option value="">Select Fuel Level</option>
-                                <option value="Empty">Empty</option>
-                                <option value="1/4">1/4</option>
-                                <option value="1/2">1/2</option>
-                                <option value="3/4">3/4</option>
-                                <option value="Full">Full</option>
-                            </select>
-                            <div class="error-message" id="error_fuel_level"></div>
-                        </div>
-                        <div class="col-12">
-                            <label for="initial_damage_notes" class="form-label">Initial Visible Damage Notes (Optional)</label>
-                            <textarea class="form-control" id="initial_damage_notes" name="initial_damage_notes" rows="2"></textarea>
-                            <div class="error-message" id="error_initial_damage_notes"></div>
-                        </div>
-                        <div class="col-12">
-                            <label for="job_card_photos" class="form-label">Upload Job Card Photos (Optional)</label>
-                            <input type="file" class="form-control" id="job_card_photos" name="job_card_photos[]" multiple accept="image/*">
-                            <div class="photo-preview-container" id="photo_preview_container"></div>
-                            <div class="error-message" id="error_job_card_photos"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="assigned_service_advisor_id" class="form-label">Assigned Service Advisor</label>
-                            <select class="form-select" id="assigned_service_advisor_id" name="assigned_service_advisor_id" required>
-                                <option value="">Select Advisor</option>
-                                <?php foreach ($service_advisors as $advisor): ?>
-                                    <option value="<?= esc($advisor['company_id']) ?>"><?= esc($advisor['first_name'] . ' ' . $advisor['last_name'] . ' ' . $advisor['company_id']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div class="error-message" id="error_assigned_service_advisor_id"></div>
+                    <div class="my-4 border-top pt-4">
+                        <h5 class="mb-3 text-primary">Job Details</h5>
+                        <div class="row g-2 mb-3">
+                            <div class="col-12">
+                                <label for="reported_problem" class="form-label">Customer Reported Problem</label>
+                                <textarea class="form-control" id="reported_problem" name="reported_problem" rows="3" required></textarea>
+                                <div class="error-message" id="error_reported_problem"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mileage_in" class="form-label">Mileage In</label>
+                                <input type="number" class="form-control" id="mileage_in" name="mileage_in" required min="0">
+                                <div class="error-message" id="error_mileage_in"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fuel_level" class="form-label">Fuel Level</label>
+                                <select class="form-select" id="fuel_level" name="fuel_level" required>
+                                    <option value="">Select Fuel Level</option>
+                                    <option value="Empty">Empty</option>
+                                    <option value="1/4">1/4</option>
+                                    <option value="1/2">1/2</option>
+                                    <option value="3/4">3/4</option>
+                                    <option value="Full">Full</option>
+                                </select>
+                                <div class="error-message" id="error_fuel_level"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="initial_damage_notes" class="form-label">Initial Visible Damage Notes (Optional)</label>
+                                <textarea class="form-control" id="initial_damage_notes" name="initial_damage_notes" rows="2"></textarea>
+                                <div class="error-message" id="error_initial_damage_notes"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="job_card_photos" class="form-label">Upload Job Card Photos (Optional)</label>
+                                <input type="file" class="form-control" id="job_card_photos" name="job_card_photos[]" multiple accept="image/*">
+                                <div class="photo-preview-container" id="photo_preview_container"></div>
+                                <div class="error-message" id="error_job_card_photos"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="assigned_service_advisor_id" class="form-label">Assigned Service Advisor</label>
+                                <select class="form-select" id="assigned_service_advisor_id" name="assigned_service_advisor_id" required>
+                                    <option value="">Select Advisor</option>
+                                    <?php foreach ($service_advisors as $advisor): ?>
+                                        <option value="<?= esc($advisor['company_id']) ?>"><?= esc($advisor['first_name'] . ' ' . $advisor['last_name'] . ' (' . $advisor['company_id'] . ')') ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div class="error-message" id="error_assigned_service_advisor_id"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -185,284 +187,478 @@
 
 <script>
     $(document).ready(function() {
-        const customerModal = $('#customerModal');
-        const vehicleModal = $('#vehicleModal');
-        const jobForm = $('#jobForm');
-        const vehicleSection = $('#vehicleSection');
-        const customerSection = $('#customerSection');
-        const photoPreviewContainer = $('#photoPreview');
-        const customerSearchInput = $('#search_input');
-        const vehicleSearchInput = $('#vehicle_search_input');
+        // --- Element References ---
+        const addJobModal = $('#addJobModal');
+        const jobIntakeForm = $('#jobIntakeForm');
+        const searchInput = $('#search_input');
+        const searchResults = $('#search_results'); // This is where searchResults is defined
+        const customerStatusBadge = $('#customer_status');
+        const vehicleStatusBadge = $('#vehicle_status');
+        const photoPreviewContainer = $('#photo_preview_container');
+        const photoUploadInput = $('#job_card_photos');
 
-        const customerIdField = $('#customer_id');
-        const customerFirstName = $('#customer_first_name');
-        const customerLastName = $('#customer_last_name');
-        const customerPhone = $('#customer_phone');
-        const customerEmail = $('#customer_email');
+        // Customer Fields
+        const customerId = $('#customer_id');
+        const newCustomerFirstName = $('#new_customer_first_name');
+        const newCustomerLastName = $('#new_customer_last_name');
+        const newCustomerPhone = $('#new_customer_phone_number');
+        const newCustomerEmail = $('#new_customer_email');
+        const newCustomerAddress = $('#new_customer_address');
+        const allCustomerInputs = [newCustomerFirstName, newCustomerLastName, newCustomerPhone, newCustomerEmail, newCustomerAddress];
 
-        const vehicleIdField = $('#vehicle_id');
-        const vehicleMake = $('#vehicle_make');
-        const vehicleModel = $('#vehicle_model');
-        const vehicleRegNo = $('#vehicle_reg_no');
+        // Vehicle Fields
+        const vehicleId = $('#vehicle_id');
+        const newVehicleLicensePlate = $('#new_vehicle_license_plate');
+        const newVehicleVIN = $('#new_vehicle_vin');
+        const newVehicleMake = $('#new_vehicle_make');
+        const newVehicleModel = $('#new_vehicle_model');
+        const newVehicleYear = $('#new_vehicle_year');
+        const newVehicleEngineNumber = $('#new_vehicle_engine_number');
+        const newVehicleChassisNumber = $('#new_vehicle_chassis_number');
+        const newVehicleFuelType = $('#new_vehicle_fuel_type');
+        const newVehicleColor = $('#new_vehicle_color');
+        const allVehicleInputs = [newVehicleLicensePlate, newVehicleVIN, newVehicleMake, newVehicleModel, newVehicleYear, newVehicleEngineNumber, newVehicleChassisNumber, newVehicleFuelType, newVehicleColor];
 
-        const photoUploadInput = $('#photoUpload');
-        const cancelCustomerBtn = $('#cancelCustomerBtn');
-        const cancelVehicleBtn = $('#cancelVehicleBtn');
+        // Job Details Fields (for auto-population from existing vehicle)
+        const reportedProblem = $('#reported_problem');
+        const mileageIn = $('#mileage_in');
 
+
+        // --- Helper Functions ---
+
+        // Function to display form-specific error messages
+        function displayFormError(fieldId, message) {
+            const errorDiv = $('#error_' + fieldId);
+            if (errorDiv.length) {
+                errorDiv.text(message);
+            } else {
+                // Fallback for general errors or if error div is missing
+                console.error(`Error div not found for ${fieldId}: ${message}`);
+            }
+        }
+
+        // Function to clear all form error messages
+        function clearFormErrors() {
+            $('.error-message').text('');
+        }
+
+        // Function to reset customer section to 'new' state
         function resetCustomerSection() {
-            customerIdField.val('');
-            customerFirstName.val('');
-            customerLastName.val('');
-            customerPhone.val('');
-            customerEmail.val('');
-            customerSection.addClass('d-none');
+            customerId.val('new');
+            customerStatusBadge.text('New').removeClass('bg-success').addClass('bg-secondary');
+            allCustomerInputs.forEach(input => {
+                input.val('');
+                input.prop('disabled', false);
+            });
         }
 
+        // Function to reset vehicle section to 'new' state
         function resetVehicleSection() {
-            vehicleIdField.val('');
-            vehicleMake.val('');
-            vehicleModel.val('');
-            vehicleRegNo.val('');
-            vehicleSection.addClass('d-none');
+            vehicleId.val('new');
+            vehicleStatusBadge.text('New').removeClass('bg-success').addClass('bg-secondary');
+            allVehicleInputs.forEach(input => {
+                input.val('');
+                input.prop('disabled', false);
+            });
         }
 
-        function resetFormState() {
+        // Function to populate customer fields from search result data
+        function populateCustomerFields(customerData) {
+            resetCustomerSection(); // Always reset before populating
+            customerId.val(customerData.id);
+            customerStatusBadge.text('Existing').removeClass('bg-secondary').addClass('bg-success');
+
+            const nameParts = (customerData.name || '').split(' ');
+            newCustomerFirstName.val(nameParts[0] || '').prop('disabled', true);
+            newCustomerLastName.val(nameParts[1] || '').prop('disabled', true);
+            newCustomerPhone.val(customerData.phone || '').prop('disabled', true);
+            newCustomerEmail.val(customerData.email || '').prop('disabled', true);
+            newCustomerAddress.val(customerData.address || '').prop('disabled', true);
+        }
+
+        // Function to populate vehicle fields from search result data
+        function populateVehicleFields(vehicleData) {
+            resetVehicleSection(); // Always reset before populating
+            vehicleId.val(vehicleData.id);
+            vehicleStatusBadge.text('Existing').removeClass('bg-secondary').addClass('bg-success');
+
+            newVehicleLicensePlate.val(vehicleData.registration_number || '').prop('disabled', true);
+            newVehicleVIN.val(vehicleData.vin || '').prop('disabled', true);
+            newVehicleMake.val(vehicleData.make || '').prop('disabled', true);
+            newVehicleModel.val(vehicleData.model || '').prop('disabled', true);
+            newVehicleYear.val(vehicleData.year_of_manufacture || '').prop('disabled', true);
+            newVehicleEngineNumber.val(vehicleData.engine_number || '').prop('disabled', true);
+            newVehicleChassisNumber.val(vehicleData.chassis_number || '').prop('disabled', true);
+            newVehicleFuelType.val(vehicleData.fuel_type || '').prop('disabled', true);
+            newVehicleColor.val(vehicleData.color || '').prop('disabled', true);
+
+            // Auto-populate job details from existing vehicle data
+            mileageIn.val(vehicleData.mileage || 0);
+            reportedProblem.val(vehicleData.reported_problem || '');
+        }
+
+        // Reset entire form state on modal close or successful submission
+        function resetEntireForm() {
+            jobIntakeForm[0].reset(); // Resets all form fields
             resetCustomerSection();
             resetVehicleSection();
-            photoUploadInput.val('');
             photoPreviewContainer.empty();
+            photoPreviewContainer.addClass('empty-state'); // Add empty state class
+            searchResults.empty().hide();
+            clearFormErrors();
         }
 
-        // Photo Upload Preview with validation
-        photoUploadInput.on('change', function() {
-            const files = this.files;
+        // --- Event Listeners ---
 
-            if (files.length > 10) {
-                alert("You can upload a maximum of 10 images.");
-                this.value = '';
-                photoPreviewContainer.empty();
+        // Handle modal hidden event to reset form
+        addJobModal.on('hidden.bs.modal', function() {
+            resetEntireForm();
+        });
+
+        // Photo Upload Preview
+        photoUploadInput.on('change', function() {
+            photoPreviewContainer.empty();
+            photoPreviewContainer.removeClass('empty-state');
+
+            const files = this.files;
+            if (files.length === 0) {
+                photoPreviewContainer.addClass('empty-state');
                 return;
             }
 
-            photoPreviewContainer.empty();
+            if (files.length > 10) {
+                displayFormError('job_card_photos', "You can upload a maximum of 10 images.");
+                this.value = ''; // Clear the input
+                photoPreviewContainer.addClass('empty-state');
+                return;
+            }
 
+            let allFilesValid = true;
             Array.from(files).forEach(file => {
                 if (file.size > 2 * 1024 * 1024) { // 2MB
-                    alert(`File "${file.name}" is too large. Max 2MB allowed.`);
-                    this.value = '';
+                    displayFormError('job_card_photos', `File "${file.name}" is too large. Max 2MB allowed.`);
+                    this.value = ''; // Clear the input
                     photoPreviewContainer.empty();
+                    photoPreviewContainer.addClass('empty-state');
+                    allFilesValid = false;
+                    return;
+                }
+                if (!file.type.startsWith('image/')) {
+                    displayFormError('job_card_photos', `File "${file.name}" is not an image.`);
+                    this.value = ''; // Clear the input
+                    photoPreviewContainer.empty();
+                    photoPreviewContainer.addClass('empty-state');
+                    allFilesValid = false;
                     return;
                 }
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const imageHtml = `<img src="${e.target.result}" class="preview-thumb" alt="Photo Preview">`;
-                    photoPreviewContainer.append(imageHtml);
+                    photoPreviewContainer.append(`<img src="${e.target.result}" class="preview-thumb" alt="Photo Preview">`);
                 };
                 reader.readAsDataURL(file);
             });
+
+            if (!allFilesValid) {
+                // If any file was invalid, ensure the input is cleared and no previews are shown
+                this.value = '';
+                photoPreviewContainer.empty();
+                photoPreviewContainer.addClass('empty-state');
+            }
         });
 
-        // Cancel Buttons
-        cancelCustomerBtn.on('click', resetCustomerSection);
-        cancelVehicleBtn.on('click', resetVehicleSection);
-
-        // Customer Search
-        customerSearchInput.on('keyup', function() {
+        // Customer/Vehicle Search
+        let searchTimeout;
+        searchInput.on('keyup', function() {
+            clearTimeout(searchTimeout);
             const query = $(this).val().trim();
-            if (!query) return;
+            clearFormErrors(); // Clear errors on new search input
 
-            $.ajax({
-                "type": 'GET',
-                "url": '<?= base_url('job_intake/search') ?>',
-                "data": {
-                    query
-                },
-                success: function(response) {
-                    const data = JSON.parse(response);
-                    if (data.status && data.customers.length > 0) {
-                        const customer = data.customers[0];
-                        const nameParts = (customer.name || '').split(' ');
-                        const firstName = nameParts[0] || '';
-                        const lastName = nameParts[1] || '';
+            if (query.length < 2) {
+                searchResults.empty().hide();
+                resetCustomerSection(); // Reset sections if search query is too short
+                resetVehicleSection();
+                return;
+            }
 
-                        customerIdField.val(customer.id);
-                        customerFirstName.val(firstName);
-                        customerLastName.val(lastName);
-                        customerPhone.val(customer.phone_number);
-                        customerEmail.val(customer.email);
-                        customerSection.removeClass('d-none');
-                        customerModal.modal('hide');
-                    } else {
-                        alert('Customer not found.');
-                        resetCustomerSection();
-                    }
-                },
-                error: function() {
-                    alert('Error searching customer.');
-                }
-            });
-        });
-
-        // Vehicle Search
-        vehicleSearchInput.on('keyup', function() {
-            const query = $(this).val().trim();
-            if (!query) return;
-
-            $.ajax({
-                "type": 'GET',
-                "url": '<?= base_url('job_intake/vehicle_search') ?>',
-                "data": {
-                    query
-                },
-                success: function(response) {
-                    const data = JSON.parse(response);
-                    if (data.status && data.vehicles.length > 0) {
-                        const vehicle = data.vehicles[0];
-
-                        vehicleIdField.val(vehicle.id);
-                        vehicleMake.val(vehicle.make);
-                        vehicleModel.val(vehicle.model);
-                        vehicleRegNo.val(vehicle.registration_number);
-                        vehicleSection.removeClass('d-none');
-                        vehicleModal.modal('hide');
-
-                        // 🧠 Auto-fill customer too (nice touch for UX!)
-                        if (vehicle.owner_id) {
-                            fetchCustomerById(vehicle.owner_id);
-                        }
-                    } else {
-                        alert('Vehicle not found.');
-                        resetVehicleSection();
-                    }
-                },
-                error: function() {
-                    alert('Error searching vehicle.');
-                }
-            });
-        });
-
-        //  Auto-fill customer from vehicle selection
-        function fetchCustomerById(customerId) {
-            $.ajax({
-                "type": 'GET',
-                "url": '<?= base_url('job_intake/get_customer_by_id') ?>',
-                "data": {
-                    "id": customerId
-                },
-                success: function(response) {
-                    const data = JSON.parse(response);
-                    if (data.status) {
-                        const customer = data.customer;
-                        const nameParts = (customer.name || '').split(' ');
-                        const firstName = nameParts[0] || '';
-                        const lastName = nameParts[1] || '';
-
-                        customerIdField.val(customer.id);
-                        customerFirstName.val(firstName);
-                        customerLastName.val(lastName);
-                        customerPhone.val(customer.phone_number);
-                        customerEmail.val(customer.email);
-                        customerSection.removeClass('d-none');
-                    }
-                },
-                error: function() {
-                    console.warn('Failed to fetch customer by ID');
-                }
-            });
-        }
-
-        //  Form Submit
-        jobForm.on('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            $.ajax({
-                type: 'POST',
-                url: '<?= base_url('job_intake/save') ?>',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    const data = JSON.parse(response);
-
-                    // 🔍 Clear previous errors
-                    $('[id^="error_"]').text('');
-
-                    if (data.status === 'success') {
-                        alert(data.message);
-                        jobForm.trigger('reset');
-                        resetFormState();
-                    } else if (data.status === 'error') {
-                        for (const [key, value] of Object.entries(data.errors)) {
-                            const errorDiv = $('#error_' + key);
-                            if (errorDiv.length) {
-                                errorDiv.text(value);
-                            } else {
-                                alert(`Form error: ${value}`);
-                            }
-                        }
-                    }
-                },
-                error: function() {
-                    alert('Something went wrong while saving job.');
-                }
-            });
-        });
-
-        jobForm.on('reset', function() {
-            resetFormState();
-            photoPreviewContainer.empty();
-        });
-
-        $(document).ready(function() {
-            $('#search_input').on('keyup', function() {
-                let query = $(this).val().trim();
-                let resultBox = $('#search_results');
-
-                if (query.length < 2) {
-                    resultBox.empty().hide();
-                    return;
-                }
+            searchTimeout = setTimeout(function() {
+                // --- DEBUGGING LOG 1: Before AJAX call ---
+                console.log('DEBUG (1): searchResults variable at AJAX start:', searchResults);
+                console.log('DEBUG (1): Does #search_results element exist?', $('#search_results').length > 0);
 
                 $.ajax({
-                    "url": '<?= base_url("admin/job_intake/search") ?>',
-                    "method": 'GET',
-                    "data": {
-                        "search": query
-                    },
-                    success: function(data) {
-                        resultBox.empty().show();
+                    url: '<?= base_url("job_intake/search") ?>', // Corrected URL
+                    method: 'GET',
+                    data: { search: query },
+                    dataType: 'json', // EXPECT JSON RESPONSE
+                    success: function(response) {
+                        // --- DEBUGGING LOG 2: Inside AJAX success, before DOM manipulation ---
+                        console.log('DEBUG (2): searchResults variable inside success callback:', searchResults);
+                        console.log('DEBUG (2): Does #search_results element exist in success callback?', $('#search_results').length > 0);
 
-                        if (data.length === 0) {
-                            resultBox.append('<div class="search-result-item disabled">No matches found</div>');
+                        searchResults.empty();
+                        if (response.customers.length === 0 && response.vehicles.length === 0) {
+                            searchResults.append('<div class="search-result-item disabled">No existing matches. Will create new.</div>');
                         } else {
-                            data.forEach(item => {
-                                resultBox.append(`<div class="search-result-item" data-id="${item.value}">${item.label}</div>`);
+                            response.customers.forEach(customer => {
+                                searchResults.append(`
+                                    <div class="search-result-item" data-type="customer" data-id="${customer.id}"
+                                        data-name="${customer.name}" data-phone="${customer.phone}"
+                                        data-email="${customer.email || ''}" data-address="${customer.address || ''}">
+                                        <div class="result-title">Customer: ${customer.name}</div>
+                                        <div class="result-subtitle">Phone: ${customer.phone}</div>
+                                    </div>
+                                `);
+                            });
+                            // IMPORTANT: Pass the full customer object along with vehicle data
+                            response.vehicles.forEach(vehicle => {
+                                searchResults.append(`
+                                    <div class="search-result-item" data-type="vehicle" data-id="${vehicle.id}"
+                                        data-registration_number="${vehicle.registration_number}" <!-- Corrected name -->
+                                        data-vin="${vehicle.vin || ''}" data-make="${vehicle.make}" data-model="${vehicle.model}"
+                                        data-year_of_manufacture="${vehicle.year_of_manufacture}" <!-- Corrected name -->
+                                        data-color="${vehicle.color || ''}" data-mileage="${vehicle.mileage || 0}"
+                                        data-reported_problem="${vehicle.reported_problem || ''}"
+                                        data-engine_number="${vehicle.engine_number || ''}" data-chassis_number="${vehicle.chassis_number || ''}"
+                                        data-fuel_type="${vehicle.fuel_type || ''}" data-transmission="${vehicle.transmission || ''}"
+                                        data-owner-id="${vehicle.owner_id}" data-owner-name="${vehicle.owner_name || ''}"
+                                        data-owner-phone="${(vehicle.owner && vehicle.owner.phone) ? vehicle.owner.phone : ''}" <!-- Added owner phone -->
+                                        data-owner-email="${(vehicle.owner && vehicle.owner.email) ? vehicle.owner.email : ''}" <!-- Added owner email -->
+                                        data-owner-address="${(vehicle.owner && vehicle.owner.address) ? vehicle.owner.address : ''}"> <!-- Added owner address -->
+                                        <div class="result-title">Vehicle: ${vehicle.registration_number} (${vehicle.make} ${vehicle.model})</div>
+                                        <div class="result-subtitle">Owner: ${vehicle.owner_name}</div>
+                                    </div>
+                                `);
                             });
                         }
+                        // --- DEBUGGING LOG 3: Before showing searchResults ---
+                        console.log('DEBUG (3): About to call searchResults.show()');
+                        console.log('DEBUG (3): searchResults is:', searchResults);
+                        console.log('DEBUG (3): searchResults.length is:', searchResults.length);
+
+                        searchResults.show();
+                    },
+                    error: function(xhr, status, error) {
+                        // --- DEBUGGING LOG 4: Inside AJAX error ---
+                        console.log('DEBUG (4): searchResults variable inside error callback:', searchResults);
+                        console.log('DEBUG (4): Does #search_results element exist in error callback?', $('#search_results').length > 0);
+
+                        searchResults.empty().hide();
+                        console.error("Search error:", xhr.responseText);
+                        displayFormError('search_input', 'Error performing search. Please try again.');
                     }
                 });
-            });
+            }, 300); // 300ms debounce
+        });
 
-            // When a result is clicked
-            $(document).on('click', '.search-result-item', function() {
-                const selectedLabel = $(this).text();
-                const selectedId = $(this).data('id');
+        // Handle selection from search results
+        searchResults.on('click', '.search-result-item:not(.disabled)', function() {
+            const itemType = $(this).data('type');
+            const itemData = $(this).data(); // Get all data- attributes as an object
 
-                $('#search_input').val(selectedLabel);
-                $('#search_results').hide();
+            searchResults.empty().hide();
+            searchInput.val($(this).find('.result-title').text()); // Set search input to selected item's title
 
-                // Optional: Store selected ID for later
-                console.log("Selected ID:", selectedId);
-            });
+            clearFormErrors(); // Clear errors on selection
 
-            // Hide dropdown when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('#search_input, #search_results').length) {
-                    $('#search_results').hide();
+            if (itemType === 'customer') {
+                resetCustomerSection();
+                populateCustomerFields({
+                    id: itemData.id,
+                    name: itemData.name,
+                    phone: itemData.phone,
+                    email: itemData.email,
+                    address: itemData.address
+                });
+                // Ensure vehicle section is reset to new if only customer is selected
+                resetVehicleSection();
+            } else if (itemType === 'vehicle') {
+                resetVehicleSection();
+                // Pass data directly to populateVehicleFields, using the original names
+                populateVehicleFields(itemData);
+
+                // If vehicle has an owner, populate customer section with full details
+                if (itemData.ownerId) {
+                    populateCustomerFields({
+                        id: itemData.ownerId,
+                        name: itemData.ownerName,
+                        phone: itemData.ownerPhone,    // Use the actual phone from data-attribute
+                        email: itemData.ownerEmail,    // Use the actual email from data-attribute
+                        address: itemData.ownerAddress // Use the actual address from data-attribute
+                    });
+                    // Disable customer fields when linked to an existing vehicle
+                    allCustomerInputs.forEach(input => input.prop('disabled', true));
+                } else {
+                    // If vehicle has no owner, reset customer section to new
+                    resetCustomerSection();
+                }
+            }
+        });
+
+        // Hide dropdown when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#search_input, #search_results').length) {
+                searchResults.hide();
+            }
+        });
+
+        // Form Submission
+        jobIntakeForm.on('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+            clearFormErrors(); // Clear all previous errors
+
+            const formData = new FormData(this); // Create FormData object for AJAX file upload
+
+            // Add loading state to button
+            const submitButton = $(this).find('button[type="submit"]');
+            submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...');
+
+            $.ajax({
+                url: '<?= base_url('job_intake/create_job_card') ?>', // Corrected URL
+                method: 'POST',
+                data: formData,
+                processData: false, // Important for FormData
+                contentType: false, // Important for FormData
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Use a custom modal/notification instead of alert for success
+                        alert(response.message + ' Job No: ' + response.job_no); // Temporary alert
+                        resetEntireForm(); // Reset form and sections
+                        addJobModal.modal('hide'); // Close the modal
+                        // Optionally, trigger a table reload if this modal is part of a DataTables page
+                        // $('#userTable').DataTable().ajax.reload(); // Example for DataTables
+                    } else if (response.status === 'error') {
+                        // Display validation errors
+                        if (response.errors) {
+                            $.each(response.errors, function(key, value) {
+                                displayFormError(key, value);
+                            });
+                        } else {
+                            // General error message
+                            alert('Error: ' + (response.message || 'An unknown error occurred.')); // Temporary alert
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    let errorMessage = 'An unexpected error occurred. Please try again.';
+                    try {
+                        const responseJson = JSON.parse(xhr.responseText);
+                        if (responseJson.message) {
+                            errorMessage = 'Error: ' + responseJson.message;
+                        } else if (responseJson.errors) {
+                            // Join all error messages for a more comprehensive alert
+                            errorMessage = 'Validation Error: ' + Object.values(responseJson.errors).join('; ');
+                            $.each(responseJson.errors, function(key, value) {
+                                displayFormError(key, value);
+                            });
+                        }
+                    } catch (e) {
+                        // If response is not JSON, use generic message
+                    }
+                    alert(errorMessage); // Temporary alert
+                    console.error("AJAX error:", xhr.responseText);
+                },
+                complete: function() {
+                    submitButton.prop('disabled', false).html('<i class="bi bi-plus-circle"></i> Create Job Card');
                 }
             });
         });
     });
 </script>
+
+<style>
+    /* Add any specific styles for this form if needed, e.g., for input focus, button colors */
+    .form-group label {
+        font-weight: 500;
+        color: #343a40; /* text-dark */
+    }
+    .form-control:focus, .form-select:focus, .form-control:focus-within {
+        border-color: #007bff; /* primary-color */
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    .card-header {
+        background-color: #f8f9fa; /* bg-light */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 600;
+        color: #343a40;
+        padding: 1rem 1.5rem; /* Slightly reduced padding */
+    }
+
+    /* Search Results Dropdown */
+    .search-results-dropdown {
+        position: absolute;
+        width: calc(100% - 2rem); /* Account for card padding */
+        max-height: 200px;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ced4da;
+        border-top: none;
+        z-index: 1000;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        left: 1rem; /* Align with card padding */
+        right: 1rem;
+    }
+    .search-results-dropdown div {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    .search-results-dropdown div:last-child {
+        border-bottom: none;
+    }
+    .search-results-dropdown div:hover {
+        background-color: #e9ecef;
+    }
+    .search-results-dropdown .result-title {
+        font-weight: 600;
+        color: #007bff;
+    }
+    .search-results-dropdown .result-subtitle {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    .search-results-dropdown .disabled {
+        cursor: not-allowed;
+        color: #999;
+        font-style: italic;
+    }
+
+    /* Photo Preview */
+    .photo-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+        min-height: 110px; /* Give it a minimum height to avoid layout shifts */
+        border: 1px dashed #ced4da; /* Visual cue for drop area */
+        border-radius: 8px;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    .photo-preview-container.empty-state::before {
+        content: "No photos selected. Click or drag to add.";
+    }
+    .photo-preview-container img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    .error-message {
+        color: #dc3545; /* danger-color */
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+</style>
