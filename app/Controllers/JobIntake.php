@@ -16,23 +16,23 @@ class JobIntake extends BaseController
     protected $session;
     protected $form_validation;
     protected $upload;
-    protected $helpers;
+    protected $helpers = ['url', 'form']; // Ensure this is initialized as an array
 
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
         parent::initController($request, $response, $logger);
-
         $this->db = \Config\Database::connect();
         $this->session = session();
         $this->form_validation = \Config\Services::validation();
         $this->upload = \Config\Services::upload();
-
     }
+
     // Displays the initial job intake form
     public function index()
     {
-        if (!$this->session->get('logged_in')) {
-            return redirect()->to ('/login');
+        // Check for 'isLoggedIn' for consistency with LoginController
+        if (!$this->session->get('isLoggedIn')) {
+            return redirect()->to('auth/login');
         }
 
         $user_role = $this->session->get('role');
@@ -41,37 +41,34 @@ class JobIntake extends BaseController
         }
 
         // Fetch active service advisors for assignment dropdown
-        // Assuming 'id' is the primary key in 'users' table
-        $service_advisors = $this->db->table('users')->whereIn('role', ['admin', 'receptionist', 'mechanic'])->get()->getResultArray();
-        $data['mechanic'] = $service_advisors;
+        $service_advisors = $this->db->table('users')->whereIn('role', ['admin', 'receptionist', 'service_advisor'])->get()->getResultArray();
+        $data['service_advisors'] = $service_advisors;
         return view('job_intake_form', $data);
     }
 
     // AJAX endpoint for searching customers and vehicles
     public function search()
     {
-        if (!$this->session->get('logged_in')) {
+        // Check for 'isLoggedIn' for consistency with LoginController
+        if (!$this->session->get('isLoggedIn')) {
             return $this->respond(['status' => 'error', 'message' => 'Unauthorized'], 401);
         }
 
-        
-
-        $query = $this->request->getVar('search');
+        $query = $this->request->getVar('query'); 
 
         $results = [
-            'status' => 'success',
             'customers' => [],
             'vehicles' => []
         ];
 
-        if (!empty($query)) {
-            // Search customers by phone or name
+        $sanitizedQuery = (string)$query;
+
+        if (!empty($sanitizedQuery)) {
             $customerModel = $this->db->table('customers');
-            $customerModel->like('phone', $query);
-            $customerModel->orLike('name', $query);
+            $customerModel->like('phone', $sanitizedQuery);
+            $customerModel->orLike('name', $sanitizedQuery);
             $customers = $customerModel->get()->getResultArray();
 
-            // Coalesce NULLs to empty strings for customer results
             foreach ($customers as &$customer) {
                 $customer['name'] = $customer['name'] ?? '';
                 $customer['phone'] = $customer['phone'] ?? '';
@@ -80,19 +77,15 @@ class JobIntake extends BaseController
             }
             $results['customers'] = $customers;
 
-
-            // Search vehicles by registration number, or chassis number
             $vehicleModel = $this->db->table('vehicles');
-            $vehicleModel->like('registration_number', $query);
-            // $vehicleModel->orLike('vin', $query);
-            $vehicleModel->orLike('chassis_number', $query);
+            $vehicleModel->like('registration_number', $sanitizedQuery);
+            $vehicleModel->orLike('vin', $sanitizedQuery);
+            $vehicleModel->orLike('chassis_number', $sanitizedQuery);
             $vehicles = $vehicleModel->get()->getResultArray();
 
-            // For vehicles, also fetch owner details (phone, email, address) and robustly coalesce NULLs
             foreach ($vehicles as &$vehicle) {
                 $owner = $this->db->table('customers')->where('id', $vehicle['owner_id'])->get()->getRowArray();
 
-                // Ensure processedOwner is always a structured array, even if the owner is null
                 $processedOwner = [
                     'id'      => $owner['id'] ?? null,
                     'name'    => $owner['name'] ?? '',
@@ -101,10 +94,9 @@ class JobIntake extends BaseController
                     'address' => $owner['address'] ?? '',
                 ];
 
-                $vehicle['owner_name'] = $processedOwner['name']; // For display label
-                $vehicle['owner'] = $processedOwner; // Send the fully structured owner object
+                $vehicle['owner_name'] = $processedOwner['name'];
+                $vehicle['owner'] = $processedOwner;
 
-                // Coalesce vehicle string fields
                 $vehicle['registration_number'] = $vehicle['registration_number'] ?? '';
                 $vehicle['vin'] = $vehicle['vin'] ?? '';
                 $vehicle['make'] = $vehicle['make'] ?? '';
@@ -125,7 +117,8 @@ class JobIntake extends BaseController
     // AJAX endpoint for creating a new job card
     public function create_job_card()
     {
-        if (!$this->session->get('logged_in')) {
+        // Check for 'isLoggedIn' for consistency with LoginController
+        if (!$this->session->get('isLoggedIn')) {
             return $this->respond(['status' => 'error', 'message' => 'Unauthorized'], 401);
         }
 
@@ -134,6 +127,12 @@ class JobIntake extends BaseController
             return $this->respond(['status' => 'error', 'message' => 'Forbidden: Insufficient permissions.'], 403);
         }
 
+        // --- DEBUGGING LINE START ---
+        // This will dump the value of 'assigned_service_advisor_id' to your PHP error log or server console
+        // Remove this line once debugging is complete.
+        log_message('debug', 'Assigned Service Advisor ID received: ' . var_export($this->request->getPost('assigned_service_advisor_id'), true));
+        // --- DEBUGGING LINE END ---
+
         $rules = [
             'customer_id' => 'required|integer',
             'vehicle_id' => 'required|integer',
@@ -141,7 +140,7 @@ class JobIntake extends BaseController
             'mileage_in' => 'required|integer|greater_than_equal_to[0]',
             'fuel_level' => 'required|in_list[Empty,1/4,1/2,3/4,Full]',
             'initial_damage_notes' => 'permit_empty|max_length[500]',
-            'assigned_service_advisor_id' => 'required|integer',
+            'assigned_service_advisor_id' => 'required', // Ensure this is a valid service advisor
         ];
 
         // Rules for new customer/vehicle, only if customer_id/vehicle_id is 'new'
@@ -175,10 +174,11 @@ class JobIntake extends BaseController
         $this->db->transStart();
 
         try {
-            $customer_id = $this->request->getPost('customer_id');
-            $vehicle_id = $this->request->getPost('vehicle_id');
+            $customer_id = (int)$this->request->getPost('customer_id'); // Cast to int
+            $vehicle_id = (int)$this->request->getPost('vehicle_id');   // Cast to int
 
-            if ($customer_id === 'new') {
+            // Handle new customer creation
+            if ($this->request->getPost('customer_id') === 'new') { // Check original string 'new'
                 $customer_data = [
                     'name' => $this->request->getPost('new_customer_first_name') . ' ' . $this->request->getPost('new_customer_last_name'),
                     'phone' => $this->request->getPost('new_customer_phone_number'),
@@ -192,9 +192,10 @@ class JobIntake extends BaseController
                 }
             }
 
-            if ($vehicle_id === 'new') {
+            // Handle new vehicle creation or update existing one
+            if ($this->request->getPost('vehicle_id') === 'new') { // Check original string 'new'
                 $vehicle_data = [
-                    'owner_id' => $customer_id,
+                    'owner_id' => $customer_id, // Use the (possibly newly generated) customer_id
                     'registration_number' => $this->request->getPost('new_vehicle_license_plate'),
                     'vin' => $this->request->getPost('new_vehicle_vin'),
                     'make' => $this->request->getPost('new_vehicle_make'),
@@ -204,9 +205,9 @@ class JobIntake extends BaseController
                     'chassis_number' => $this->request->getPost('new_vehicle_chassis_number'),
                     'fuel_type' => $this->request->getPost('new_vehicle_fuel_type'),
                     'color' => $this->request->getPost('new_vehicle_color'),
-                    'status' => 'On Job',
-                    'mileage' => $this->request->getPost('mileage_in'),
-                    'reported_problem' => $this->request->getPost('reported_problem')
+                    'status' => 'On Job', // Default for new vehicle entering the system
+                    'mileage' => $this->request->getPost('mileage_in'), // Mileage from job card form
+                    'reported_problem' => $this->request->getPost('reported_problem') // Reported problem from job card form
                 ];
                 $this->db->table('vehicles')->insert($vehicle_data);
                 $vehicle_id = $this->db->insertID();
@@ -214,12 +215,14 @@ class JobIntake extends BaseController
                     throw new \Exception('Failed to create new vehicle.');
                 }
             } else {
+                // If existing vehicle, update its mileage and reported problem
                 $this->db->table('vehicles')->where('id', $vehicle_id)->update([
                     'mileage' => $this->request->getPost('mileage_in'),
                     'reported_problem' => $this->request->getPost('reported_problem')
                 ]);
             }
 
+            // Create Job Card
             $job_no = $this->_generate_job_no();
             $job_card_data = [
                 'job_no' => $job_no,
@@ -229,8 +232,8 @@ class JobIntake extends BaseController
                 'time_in' => date('H:i:s'),
                 'reported_problem' => $this->request->getPost('reported_problem'),
                 'initial_damage_notes' => $this->request->getPost('initial_damage_notes'),
-                'assigned_service_advisor_id' => $this->request->getPost('assigned_service_advisor_id'),
-                'job_status' => 'Awaiting Diagnosis',
+                'assigned_service_advisor_id' => $this->request->getPost('assigned_service_advisor_id'), // Cast here too
+                'job_status' => 'Awaiting Diagnosis', // Initial status
                 'mileage_in' => $this->request->getPost('mileage_in'),
                 'fuel_level' => $this->request->getPost('fuel_level')
             ];
@@ -240,6 +243,7 @@ class JobIntake extends BaseController
                 throw new \Exception('Failed to create job card.');
             }
 
+            // Handle photo uploads
             $files = $this->request->getFiles();
 
             if (isset($files['job_card_photos'])) {
@@ -247,6 +251,7 @@ class JobIntake extends BaseController
                     if ($file->isValid() && !$file->hasMoved()) {
                         $newName = $file->getRandomName();
                         $uploadPath = ROOTPATH . 'public/uploads/job_card_photos/';
+                        // Ensure directory exists and is writable
                         if (!is_dir($uploadPath)) {
                             mkdir($uploadPath, 0777, true);
                         }
@@ -258,7 +263,7 @@ class JobIntake extends BaseController
                             'file_name' => $file->getClientName()
                         ];
                         $this->db->table('job_card_photos')->insert($photo_data);
-                    } elseif ($file->getError() !== 4) {
+                    } elseif ($file->getError() !== 4) { // UPLOAD_ERR_NO_FILE is 4, ignore it
                         log_message('error', 'Photo upload failed for job ID ' . $job_card_id . ': ' . $file->getErrorString());
                     }
                 }
@@ -272,12 +277,14 @@ class JobIntake extends BaseController
             } else {
                 return $this->respond(['status' => 'success', 'message' => 'Job Card created successfully!', 'job_id' => $job_card_id, 'job_no' => $job_no]);
             }
+
         } catch (\Exception $e) {
             $this->db->transRollback();
             return $this->fail(['message' => $e->getMessage()], 500);
         }
     }
 
+    // Helper to generate a unique Job Number
     private function _generate_job_no()
     {
         $today = date('Ymd');
@@ -290,7 +297,8 @@ class JobIntake extends BaseController
     // Display the mechanic's diagnosis and estimation form
     public function mechanic_view($job_id)
     {
-        if (!$this->session->get('logged_in') || $this->session->get('role') !== 'mechanic') {
+        // Check for 'isLoggedIn' for consistency with LoginController
+        if (!$this->session->get('isLoggedIn') || $this->session->get('role') !== 'mechanic') {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Unauthorized');
         }
 
@@ -318,7 +326,8 @@ class JobIntake extends BaseController
     // AJAX endpoint to search for parts
     public function search_parts()
     {
-        if (!$this->session->get('logged_in') || $this->session->get('role') !== 'mechanic') {
+        // Check for 'isLoggedIn' for consistency with LoginController
+        if (!$this->session->get('isLoggedIn') || $this->session->get('role') !== 'mechanic') {
             return $this->respond(['status' => 'error', 'message' => 'Unauthorized'], 401);
         }
 
@@ -338,7 +347,8 @@ class JobIntake extends BaseController
     // AJAX endpoint to save the mechanic's diagnosis and estimate
     public function save_diagnosis()
     {
-        if (!$this->session->get('logged_in') || $this->session->get('role') !== 'mechanic') {
+        // Check for 'isLoggedIn' for consistency with LoginController
+        if (!$this->session->get('isLoggedIn') || $this->session->get('role') !== 'mechanic') {
             return $this->respond(['status' => 'error', 'message' => 'Unauthorized'], 401);
         }
 
@@ -413,6 +423,7 @@ class JobIntake extends BaseController
             } else {
                 return $this->respond(['status' => 'success', 'message' => 'Diagnosis and estimate saved successfully!']);
             }
+
         } catch (\Exception $e) {
             $this->db->transRollback();
             return $this->fail(['message' => $e->getMessage()], 500);

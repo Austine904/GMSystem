@@ -185,13 +185,18 @@
     </div>
 </div>
 
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+
 <script>
     $(document).ready(function() {
         // --- Element References ---
         const addJobModal = $('#addJobModal');
         const jobIntakeForm = $('#jobIntakeForm');
         const searchInput = $('#search_input');
-        const searchResults = $('#search_results'); // This is where searchResults is defined
+        const searchResults = $('#search_results');
         const customerStatusBadge = $('#customer_status');
         const vehicleStatusBadge = $('#vehicle_status');
         const photoPreviewContainer = $('#photo_preview_container');
@@ -231,15 +236,15 @@
             const errorDiv = $('#error_' + fieldId);
             if (errorDiv.length) {
                 errorDiv.text(message);
-            } else {
-                // Fallback for general errors or if error div is missing
-                console.error(`Error div not found for ${fieldId}: ${message}`);
+                // Optionally add a class to the input for visual feedback
+                $('#' + fieldId).addClass('is-invalid');
             }
         }
 
-        // Function to clear all form error messages
+        // Function to clear all form error messages and invalid states
         function clearFormErrors() {
             $('.error-message').text('');
+            $('input, select, textarea').removeClass('is-invalid');
         }
 
         // Function to reset customer section to 'new' state
@@ -293,8 +298,8 @@
             newVehicleColor.val(vehicleData.color || '').prop('disabled', true);
 
             // Auto-populate job details from existing vehicle data
-            mileageIn.val(vehicleData.mileage || 0);
-            reportedProblem.val(vehicleData.reported_problem || '');
+            // mileageIn.val(vehicleData.mileage || 0);
+            // reportedProblem.val(vehicleData.reported_problem || '');
         }
 
         // Reset entire form state on modal close or successful submission
@@ -319,6 +324,7 @@
         photoUploadInput.on('change', function() {
             photoPreviewContainer.empty();
             photoPreviewContainer.removeClass('empty-state');
+            clearFormErrors(); // Clear errors for job_card_photos specifically
 
             const files = this.files;
             if (files.length === 0) {
@@ -360,7 +366,6 @@
             });
 
             if (!allFilesValid) {
-                // If any file was invalid, ensure the input is cleared and no previews are shown
                 this.value = '';
                 photoPreviewContainer.empty();
                 photoPreviewContainer.addClass('empty-state');
@@ -382,20 +387,12 @@
             }
 
             searchTimeout = setTimeout(function() {
-                // --- DEBUGGING LOG 1: Before AJAX call ---
-                console.log('DEBUG (1): searchResults variable at AJAX start:', searchResults);
-                console.log('DEBUG (1): Does #search_results element exist?', $('#search_results').length > 0);
-
                 $.ajax({
-                    url: '<?= base_url("job_intake/search") ?>', // Corrected URL
+                    url: '<?= base_url("job_intake/search") ?>',
                     method: 'GET',
-                    data: { search: query },
-                    dataType: 'json', // EXPECT JSON RESPONSE
+                    data: { query: query },
+                    dataType: 'json',
                     success: function(response) {
-                        // --- DEBUGGING LOG 2: Inside AJAX success, before DOM manipulation ---
-                        console.log('DEBUG (2): searchResults variable inside success callback:', searchResults);
-                        console.log('DEBUG (2): Does #search_results element exist in success callback?', $('#search_results').length > 0);
-
                         searchResults.empty();
                         if (response.customers.length === 0 && response.vehicles.length === 0) {
                             searchResults.append('<div class="search-result-item disabled">No existing matches. Will create new.</div>');
@@ -407,44 +404,34 @@
                                         data-email="${customer.email || ''}" data-address="${customer.address || ''}">
                                         <div class="result-title">Customer: ${customer.name}</div>
                                         <div class="result-subtitle">Phone: ${customer.phone}</div>
+                                        
                                     </div>
                                 `);
                             });
-                            // IMPORTANT: Pass the full customer object along with vehicle data
                             response.vehicles.forEach(vehicle => {
                                 searchResults.append(`
                                     <div class="search-result-item" data-type="vehicle" data-id="${vehicle.id}"
-                                        data-registration_number="${vehicle.registration_number}" <!-- Corrected name -->
+                                        data-registration_number="${vehicle.registration_number}"
                                         data-vin="${vehicle.vin || ''}" data-make="${vehicle.make}" data-model="${vehicle.model}"
-                                        data-year_of_manufacture="${vehicle.year_of_manufacture}" <!-- Corrected name -->
+                                        data-year_of_manufacture="${vehicle.year_of_manufacture}"
                                         data-color="${vehicle.color || ''}" data-mileage="${vehicle.mileage || 0}"
                                         data-reported_problem="${vehicle.reported_problem || ''}"
                                         data-engine_number="${vehicle.engine_number || ''}" data-chassis_number="${vehicle.chassis_number || ''}"
                                         data-fuel_type="${vehicle.fuel_type || ''}" data-transmission="${vehicle.transmission || ''}"
                                         data-owner-id="${vehicle.owner_id}" data-owner-name="${vehicle.owner_name || ''}"
-                                        data-owner-phone="${(vehicle.owner && vehicle.owner.phone) ? vehicle.owner.phone : ''}" <!-- Added owner phone -->
-                                        data-owner-email="${(vehicle.owner && vehicle.owner.email) ? vehicle.owner.email : ''}" <!-- Added owner email -->
-                                        data-owner-address="${(vehicle.owner && vehicle.owner.address) ? vehicle.owner.address : ''}"> <!-- Added owner address -->
+                                        data-owner-phone="${(vehicle.owner && vehicle.owner.phone) ? vehicle.owner.phone : ''}"
+                                        data-owner-email="${(vehicle.owner && vehicle.owner.email) ? vehicle.owner.email : ''}"
+                                        data-owner-address="${(vehicle.owner && vehicle.owner.address) ? vehicle.owner.address : ''}">
                                         <div class="result-title">Vehicle: ${vehicle.registration_number} (${vehicle.make} ${vehicle.model})</div>
                                         <div class="result-subtitle">Owner: ${vehicle.owner_name}</div>
                                     </div>
                                 `);
                             });
                         }
-                        // --- DEBUGGING LOG 3: Before showing searchResults ---
-                        console.log('DEBUG (3): About to call searchResults.show()');
-                        console.log('DEBUG (3): searchResults is:', searchResults);
-                        console.log('DEBUG (3): searchResults.length is:', searchResults.length);
-
                         searchResults.show();
                     },
                     error: function(xhr, status, error) {
-                        // --- DEBUGGING LOG 4: Inside AJAX error ---
-                        console.log('DEBUG (4): searchResults variable inside error callback:', searchResults);
-                        console.log('DEBUG (4): Does #search_results element exist in error callback?', $('#search_results').length > 0);
-
                         searchResults.empty().hide();
-                        console.error("Search error:", xhr.responseText);
                         displayFormError('search_input', 'Error performing search. Please try again.');
                     }
                 });
@@ -482,9 +469,9 @@
                     populateCustomerFields({
                         id: itemData.ownerId,
                         name: itemData.ownerName,
-                        phone: itemData.ownerPhone,    // Use the actual phone from data-attribute
-                        email: itemData.ownerEmail,    // Use the actual email from data-attribute
-                        address: itemData.ownerAddress // Use the actual address from data-attribute
+                        phone: itemData.ownerPhone,
+                        email: itemData.ownerEmail,
+                        address: itemData.ownerAddress
                     });
                     // Disable customer fields when linked to an existing vehicle
                     allCustomerInputs.forEach(input => input.prop('disabled', true));
@@ -514,7 +501,7 @@
             submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...');
 
             $.ajax({
-                url: '<?= base_url('job_intake/create_job_card') ?>', // Corrected URL
+                url: '<?= base_url('job_intake/create_job_card') ?>',
                 method: 'POST',
                 data: formData,
                 processData: false, // Important for FormData
@@ -522,33 +509,44 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status === 'success') {
-                        // Use a custom modal/notification instead of alert for success
-                        alert(response.message + ' Job No: ' + response.job_no); // Temporary alert
-                        resetEntireForm(); // Reset form and sections
-                        addJobModal.modal('hide'); // Close the modal
-                        // Optionally, trigger a table reload if this modal is part of a DataTables page
-                        // $('#userTable').DataTable().ajax.reload(); // Example for DataTables
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.message + ' Job No: ' + response.job_no,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            resetEntireForm(); // Reset form and sections
+                            addJobModal.modal('hide'); // Close the modal
+                            // Optionally, trigger a table reload if this modal is part of a DataTables page
+                            // if (typeof $('#userTable').DataTable !== 'undefined') {
+                            //     $('#userTable').DataTable().ajax.reload();
+                            // }
+                            window.location.reload(); // Reload the page to reflect new job
+                        });
                     } else if (response.status === 'error') {
-                        // Display validation errors
+                        let errorMessage = 'Error: ' + (response.message || 'An unknown error occurred.');
                         if (response.errors) {
+                            errorMessage = 'Validation failed. Please check the form.';
                             $.each(response.errors, function(key, value) {
                                 displayFormError(key, value);
                             });
-                        } else {
-                            // General error message
-                            alert('Error: ' + (response.message || 'An unknown error occurred.')); // Temporary alert
                         }
+                        Swal.fire({
+                            title: 'Error!',
+                            text: errorMessage,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
-                    let errorMessage = 'An unexpected error occurred. Please try again.';
+                    let errorMessage = 'An unexpected server error occurred. Please try again.';
                     try {
                         const responseJson = JSON.parse(xhr.responseText);
                         if (responseJson.message) {
-                            errorMessage = 'Error: ' + responseJson.message;
+                            errorMessage = 'Server Error: ' + responseJson.message;
                         } else if (responseJson.errors) {
-                            // Join all error messages for a more comprehensive alert
-                            errorMessage = 'Validation Error: ' + Object.values(responseJson.errors).join('; ');
+                            errorMessage = 'Validation Error: Please correct the following issues:<br>' + Object.values(responseJson.errors).join('<br>');
                             $.each(responseJson.errors, function(key, value) {
                                 displayFormError(key, value);
                             });
@@ -556,8 +554,12 @@
                     } catch (e) {
                         // If response is not JSON, use generic message
                     }
-                    alert(errorMessage); // Temporary alert
-                    console.error("AJAX error:", xhr.responseText);
+                    Swal.fire({
+                        title: 'Server Error!',
+                        html: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 },
                 complete: function() {
                     submitButton.prop('disabled', false).html('<i class="bi bi-plus-circle"></i> Create Job Card');
@@ -660,5 +662,8 @@
         color: #dc3545; /* danger-color */
         font-size: 0.875rem;
         margin-top: 0.25rem;
+    }
+    .form-control.is-invalid, .form-select.is-invalid, textarea.is-invalid {
+        border-color: #dc3545 !important;
     }
 </style>
