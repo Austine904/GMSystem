@@ -163,10 +163,13 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="assigned_service_advisor_id" class="form-label">Assigned Service Advisor</label>
+
+
                                 <select class="form-select" id="assigned_service_advisor_id" name="assigned_service_advisor_id" required>
                                     <option value="">Select Advisor</option>
                                     <?php foreach ($service_advisors as $advisor): ?>
-                                        <option value="<?= esc($advisor['company_id']) ?>"><?= esc($advisor['first_name'] . ' ' . $advisor['last_name'] . ' (' . $advisor['company_id'] . ')') ?></option>
+                                        <option value="<?= esc($advisor['id'] ?? '') ?>">
+                                            <?= esc(($advisor['first_name'] ?? '') . ' ' . ($advisor['last_name'] ?? '') . ' (' . ($advisor['company_id'] ?? '') . ')') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="error-message" id="error_assigned_service_advisor_id"></div>
@@ -227,6 +230,7 @@
         // Job Details Fields (for auto-population from existing vehicle)
         const reportedProblem = $('#reported_problem');
         const mileageIn = $('#mileage_in');
+        const fuelLevel = $('#fuel_level');
 
 
         // --- Helper Functions ---
@@ -236,7 +240,6 @@
             const errorDiv = $('#error_' + fieldId);
             if (errorDiv.length) {
                 errorDiv.text(message);
-                // Optionally add a class to the input for visual feedback
                 $('#' + fieldId).addClass('is-invalid');
             }
         }
@@ -298,8 +301,8 @@
             newVehicleColor.val(vehicleData.color || '').prop('disabled', true);
 
             // Auto-populate job details from existing vehicle data
-            // mileageIn.val(vehicleData.mileage || 0);
-            // reportedProblem.val(vehicleData.reported_problem || '');
+            mileageIn.val(vehicleData.mileage || 0);
+            reportedProblem.val(vehicleData.reported_problem || '');
         }
 
         // Reset entire form state on modal close or successful submission
@@ -404,7 +407,6 @@
                                         data-email="${customer.email || ''}" data-address="${customer.address || ''}">
                                         <div class="result-title">Customer: ${customer.name}</div>
                                         <div class="result-subtitle">Phone: ${customer.phone}</div>
-                                        
                                     </div>
                                 `);
                             });
@@ -517,10 +519,6 @@
                         }).then(() => {
                             resetEntireForm(); // Reset form and sections
                             addJobModal.modal('hide'); // Close the modal
-                            // Optionally, trigger a table reload if this modal is part of a DataTables page
-                            // if (typeof $('#userTable').DataTable !== 'undefined') {
-                            //     $('#userTable').DataTable().ajax.reload();
-                            // }
                             window.location.reload(); // Reload the page to reflect new job
                         });
                     } else if (response.status === 'error') {

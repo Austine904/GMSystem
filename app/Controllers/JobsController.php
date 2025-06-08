@@ -29,13 +29,13 @@ class JobsController extends BaseController
                 ->orLike('vehicle_id', $search);
         }
 
-        // Optional: Fetching mechanics for dropdowns or filters
         $service_advisors = $db->table('users')
             ->where('role', 'mechanic')
-            ->select('company_id, first_name, last_name')
-            ->orderBy('first_name', 'ASC')
+            ->select('id, company_id, first_name, last_name')
+            ->orderBy('first_name', 'ASC')   
             ->get()
             ->getResultArray();
+
 
         $perPage = 10;
         $currentPage = $this->request->getVar('page') ?? 1;
@@ -45,7 +45,7 @@ class JobsController extends BaseController
         $pager = \Config\Services::pager();
 
         if ($this->request->isAJAX()) {
-            return view('admin/jobs/jobs_list', ['jobs' => $jobs, 'pager' => $pager]);
+            return view('admin/jobs/jobs_list', ['jobs' => $jobs, 'pager' => $pager, ]);
         }
 
         return view('job/index', ['jobs' => $jobs, 'pager' => $pager, 'service_advisors' => $service_advisors]);
@@ -82,36 +82,44 @@ class JobsController extends BaseController
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
             return redirect()->to('/login');
         }
+        $db = \Config\Database::connect();
+        $service_advisors = $db->table('users')
+            ->where('role', 'mechanic')
+            ->select('id, company_id, first_name, last_name')
+            ->orderBy('first_name', 'ASC')   
+            ->get()
+            ->getResultArray();
+        return view('jobs/add', ['service_advisors' => $service_advisors]);
 
-       
+        
     }
 
-    public function store()
-    {
-        $rules = [
-            'job_name' => 'required|min_length[3]',
-            'description' => 'permit_empty|max_length[255]',
-            'status' => 'required|in_list[pending,completed,cancelled]', // Example statuses
-            'assigned_to' => 'permit_empty|integer', // This is a user ID
-            'created_at' => 'required|valid_date',
-            'updated_at' => 'permit_empty|valid_date',
-        ];
+    // public function store()
+    // {
+    //     $rules = [
+    //         'job_name' => 'required|min_length[3]',
+    //         'description' => 'permit_empty|max_length[255]',
+    //         'status' => 'required|in_list[pending,completed,cancelled]', // Example statuses
+    //         'assigned_to' => 'permit_empty|integer', // This is a user ID
+    //         'created_at' => 'required|valid_date',
+    //         'updated_at' => 'permit_empty|valid_date',
+    //     ];
 
-        if (!$this->validate($rules)) {
-            return redirect()->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
-        }
+    //     if (!$this->validate($rules)) {
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->with('errors', $this->validator->getErrors());
+    //     }
 
-        $data = $this->request->getPost();
+    //     $data = $this->request->getPost();
 
-        try {
-            $this->db->table('jobs')->insert($data);
-            return redirect()->to('/admin/jobs')->with('success', 'Job added successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
-        }
-    }
+    //     try {
+    //         $this->db->table('jobs')->insert($data);
+    //         return redirect()->to('/admin/jobs')->with('success', 'Job added successfully!');
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
+    //     }
+    // }
 
     public function edit($id)
     {

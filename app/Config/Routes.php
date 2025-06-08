@@ -44,7 +44,8 @@ $routes->get('user/failure', 'UsersController::failure');
 
 $routes->post('admin/users/bulk_action', 'UsersController::bulk_action');
 
-
+$routes->post('job_intake/create_job_card', 'JobIntake::create_job_card');
+$routes->get('job_intake/create_job_card', 'JobIntake::create_job_card');
 
 // Protected routes
 
@@ -98,9 +99,11 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('job_intake', 'JobIntake::index');
     $routes->get('job_intake/search', 'JobIntake::search');
     $routes->post('job_intake/create_job_card', 'JobIntake::create_job_card');
+    $routes->get('job_intake/create_job_card', 'JobIntake::create_job_card');
     $routes->post('job_intake/fetch_vehicle_details', 'JobIntake::fetch_vehicle_details');
     $routes->post('job_intake/fetch_customer_details', 'JobIntake::fetch_customer_details');
 });
+
 
 // Receptionist-only
 $routes->group('receptionist', ['filter' => 'auth:receptionist'], function ($routes) {
