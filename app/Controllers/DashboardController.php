@@ -67,6 +67,24 @@ class DashboardController extends BaseController
             ];
         }
 
+        //New Job card
+        $jobCards = $db->query("SELECT id, vehicle_id, diagnosis, created_at FROM job_cards ORDER BY created_at DESC LIMIT 3")->getResultArray();
+        foreach ($jobCards as $jobCard) {
+            $vehicleregistration = $db->table('vehicles')
+                ->select('registration_number')
+                ->where('id', $jobCard['vehicle_id'])
+                ->get()
+                ->getRow();
+            $vehicleregistration = esc($vehicleregistration->registration_number ?? 'Unknown Vehicle');
+            $diagnosis = esc($jobCard['diagnosis']);
+            $recentActivity[] = [
+                'type' => 'job_cards',
+                'icon' => 'bi-file-earmark-text',
+                'text' => "New job card added for vehicle <a href='#' class='activity-link'>{$vehicleregistration}</a> with description: {$diagnosis}",
+                'time' => timeAgo($jobCard['created_at']),
+            ];
+        }
+
         // Sort all activity by timestamp descending
         usort($recentActivity, fn($a, $b) => strtotime($b['time']) - strtotime($a['time']));
 
