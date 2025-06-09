@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\Database\Exceptions\DatabaseException; // Import specific database exception
 use Exception;
+use CodeIgniter\Exceptions\PageNotFoundException; // Import for 404 handling
 
 class CustomersController extends BaseController
 {
@@ -42,6 +43,8 @@ class CustomersController extends BaseController
         $total = $builder->countAllResults(false);
         $customers = $builder->limit($perpage, ($currentPage - 1) * $perpage)->get()->getResultArray();
         $pager = \Config\Services::pager();
+
+        // If the request is AJAX, return a partial view for DataTables
         if ($this->request->isAJAX()) {
             return view('customers/customers_list', ['customers' => $customers, 'pager' => $pager]);
         }
@@ -59,7 +62,6 @@ class CustomersController extends BaseController
      */
     public function load()
     {
-        // Basic authorization check for AJAX request
         if (!$this->session->get('isLoggedIn') || $this->session->get('role') !== 'admin') {
             return $this->failUnauthorized('Unauthorized access.');
         }
@@ -74,7 +76,6 @@ class CustomersController extends BaseController
 
         $builder = $this->db->table('customers');
 
-        // Apply search filter if provided
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('name', $search)

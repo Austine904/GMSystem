@@ -112,15 +112,16 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('job_intake/fetch_customer_details', 'JobIntake::fetch_customer_details');
 
     //customers
-    
+    $routes->get('customers', 'CustomersController::index');
     $routes->post('customers/load', 'Admin\CustomersController::load');
-    $routes->get('customers/details/(:num)', 'Admin\CustomersController::details/$1');
-    $routes->get('customers/add', 'Admin\CustomersController::add'); // For loading add form in modal
-    $routes->get('customers/edit/(:num)', 'Admin\CustomersController::edit/$1'); // For loading edit form in modal
-    $routes->post('customers/bulk_action', 'Admin\CustomersController::bulk_action');
+    $routes->get('customers/load', 'CustomersController::load');
+    $routes->get('customers/details/(:num)', 'CustomersController::details/$1');
+    $routes->get('customers/add', 'CustomersController::add'); // For loading add form in modal
+    $routes->get('customers/edit/(:num)', 'CustomersController::edit/$1'); // For loading edit form in modal
+    $routes->post('customers/bulk_action', 'CustomersController::bulk_action');
 });
 
-$routes->get('customers', 'CustomersController::index');
+$routes->post('customers/load', 'CustomersController::load');
 
 // Receptionist-only
 $routes->group('receptionist', ['filter' => 'auth:receptionist'], function ($routes) {
