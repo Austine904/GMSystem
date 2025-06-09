@@ -121,6 +121,8 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('customers/bulk_action', 'CustomersController::bulk_action');
 });
 
+    $routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');
+
 $routes->post('customers/load', 'CustomersController::load');
 
 // Receptionist-only

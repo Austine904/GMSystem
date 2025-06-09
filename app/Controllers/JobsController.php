@@ -21,8 +21,8 @@ class JobsController extends BaseController
         }
 
         $db = \Config\Database::connect();
-        $builder = $db->table('jobs')
-            ->select('id, job_no, vehicle_id, description, status');
+        $builder = $db->table('job_cards')
+            ->select('id, job_no, vehicle_id, diagnosis, job_status');
 
         $search = $this->request->getVar('search');
         if (!empty($search)) {

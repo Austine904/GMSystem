@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
+   
+ 
 
 
     <!-- Custom CSS -->
@@ -19,6 +22,7 @@
     <link rel="stylesheet" href="<?= base_url('public/css/login.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/dashboard.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/job_intake.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('public/css/customers.css') ?>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
