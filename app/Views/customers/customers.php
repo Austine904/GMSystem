@@ -1,6 +1,3 @@
-<?= $this->extend('layouts/main') ?>
-
-<?= $this->section('content') ?>
 
 <div class="container mt-5">
     <h3 class="mb-4">Jobs Management</h3>
@@ -16,7 +13,7 @@
             </div>
         </div>
         <div class="table-responsive rounded">
-            <table id="JobTable" class="table table-striped table-bordered" style="width:100%">
+            <table id="CustomersTable" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>
                         <th>Job No</th>
@@ -41,8 +38,8 @@
 <script>
     $(document).ready(function() {
         // Initialize DataTable
-        const table = $('#JobTable').DataTable({
-            "ajax": "<?= base_url('admin/jobs/fetch') ?>",
+        const table = $('#CustomersTable').DataTable({
+            "ajax": "<?= base_url('admin/customers/load') ?>",
             "columns": [{
                     "data": "job_no"
                 },

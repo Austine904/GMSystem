@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 
 class JobsController extends BaseController
 {
+    use \CodeIgniter\API\ResponseTrait;
     protected $db;
 
     public function __construct()
@@ -32,7 +33,7 @@ class JobsController extends BaseController
         $service_advisors = $db->table('users')
             ->where('role', 'mechanic')
             ->select('id, company_id, first_name, last_name')
-            ->orderBy('first_name', 'ASC')   
+            ->orderBy('first_name', 'ASC')
             ->get()
             ->getResultArray();
 
@@ -45,7 +46,7 @@ class JobsController extends BaseController
         $pager = \Config\Services::pager();
 
         if ($this->request->isAJAX()) {
-            return view('admin/jobs/jobs_list', ['jobs' => $jobs, 'pager' => $pager, ]);
+            return view('admin/jobs/jobs_list', ['jobs' => $jobs, 'pager' => $pager,]);
         }
 
         return view('job/index', ['jobs' => $jobs, 'pager' => $pager, 'service_advisors' => $service_advisors]);
@@ -53,7 +54,17 @@ class JobsController extends BaseController
 
     public function fetchJobs()
     {
-        $builder = $this->db->table('jobs');
+        // Check for 'isLoggedIn' if this endpoint requires authentication
+        if (!session()->get('isLoggedIn')) {
+            return $this->respond(['status' => 'error', 'message' => 'Unauthorized'], 401);
+        }
+
+        // Join job_cards with vehicles table to get the registration_number
+        $builder = $this->db->table('job_cards')
+            ->select('job_cards.id, job_cards.job_no, job_cards.diagnosis, job_cards.job_status, job_cards.date_in, job_cards.start_date, job_cards.end_date, job_cards.created_at, job_cards.updated_at, vehicles.registration_number')
+            ->join('vehicles', 'vehicles.id = job_cards.vehicle_id');
+
+
         $query = $builder->get();
         $result = $query->getResultArray();
 
@@ -62,13 +73,12 @@ class JobsController extends BaseController
             $jobs[] = [
                 'id' => $row['id'],
                 'job_no' => $row['job_no'],
-                'vehicle_id' => $row['vehicle_id'],
-                'description' => $row['description'],
-                'status' => $row['status'],
-                'received_date' => $row['received_date'],
+                'registration_number' => $row['registration_number'], 
+                'diagnosis' => $row['diagnosis'],
+                'job_status' => $row['job_status'],
+                'date_in' => $row['date_in'],
                 'start_date' => $row['start_date'],
                 'end_date' => $row['end_date'],
-                // 'assigned_to' => $row['assigned_to'],
                 'created_at' => $row['created_at'],
                 'updated_at' => $row['updated_at']
             ];
@@ -86,12 +96,10 @@ class JobsController extends BaseController
         $service_advisors = $db->table('users')
             ->where('role', 'mechanic')
             ->select('id, company_id, first_name, last_name')
-            ->orderBy('first_name', 'ASC')   
+            ->orderBy('first_name', 'ASC')
             ->get()
             ->getResultArray();
         return view('jobs/add', ['service_advisors' => $service_advisors]);
-
-        
     }
 
     // public function store()

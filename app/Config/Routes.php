@@ -44,8 +44,16 @@ $routes->get('user/failure', 'UsersController::failure');
 
 $routes->post('admin/users/bulk_action', 'UsersController::bulk_action');
 
-$routes->post('job_intake/create_job_card', 'JobIntake::create_job_card');
-$routes->get('job_intake/create_job_card', 'JobIntake::create_job_card');
+// --- Job Intake routes ---
+$routes->group('job_intake', ['filter' => 'auth:admin,receptionist'], function ($routes) {
+    $routes->get('/', 'JobIntake::index');
+    $routes->get('search', 'JobIntake::search');
+    $routes->post('create_job_card', 'JobIntake::create_job_card');
+    $routes->get('create_job_card', 'JobIntake::create_job_card');
+    $routes->post('fetch_vehicle_details', 'JobIntake::fetch_vehicle_details');
+    $routes->post('fetch_customer_details', 'JobIntake::fetch_customer_details');
+});
+
 
 // Protected routes
 
@@ -68,7 +76,7 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('users/bulk_action', 'UsersController::bulk_action');
     $routes->get('users/fetch/(:num)', 'UsersController::details/$1');
     $routes->get('users/fetch', 'UsersController::fetchUsers');
-   
+
 
 
     // Vehicles
@@ -102,8 +110,17 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('job_intake/create_job_card', 'JobIntake::create_job_card');
     $routes->post('job_intake/fetch_vehicle_details', 'JobIntake::fetch_vehicle_details');
     $routes->post('job_intake/fetch_customer_details', 'JobIntake::fetch_customer_details');
+
+    //customers
+    
+    $routes->post('customers/load', 'Admin\CustomersController::load');
+    $routes->get('customers/details/(:num)', 'Admin\CustomersController::details/$1');
+    $routes->get('customers/add', 'Admin\CustomersController::add'); // For loading add form in modal
+    $routes->get('customers/edit/(:num)', 'Admin\CustomersController::edit/$1'); // For loading edit form in modal
+    $routes->post('customers/bulk_action', 'Admin\CustomersController::bulk_action');
 });
 
+$routes->get('customers', 'CustomersController::index');
 
 // Receptionist-only
 $routes->group('receptionist', ['filter' => 'auth:receptionist'], function ($routes) {
@@ -119,23 +136,3 @@ $routes->group('mechanic', ['filter' => 'auth:mechanic'], function ($routes) {
 $routes->group('customer', ['filter' => 'auth:customer'], function ($routes) {
     $routes->get('/', 'DashboardController::customer');
 });
-
-// Job Intake
-$routes->group('job_intake', ['filter' => 'auth:admin,receptionist'], function ($routes) {
-    $routes->get('/', 'JobIntake::index');
-    $routes->get('search', 'JobIntake::search');
-    $routes->post('create_job_card', 'JobIntake::create_job_card');
-    $routes->post('fetch_vehicle_details', 'JobIntake::fetch_vehicle_details');
-    $routes->post('fetch_customer_details', 'JobIntake::fetch_customer_details');
-});
-// Job Card
-$routes->group('job_card', ['filter' => 'auth:admin,receptionist'], function ($routes) {
-    $routes->get('/', 'JobCardController::index');
-    $routes->get('create', 'JobCardController::create');
-    $routes->post('store', 'JobCardController::store');
-    $routes->get('edit/(:num)', 'JobCardController::edit/$1');
-    $routes->post('update/(:num)', 'JobCardController::update/$1');
-    $routes->get('delete/(:num)', 'JobCardController::delete/$1');
-});
-
-

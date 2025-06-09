@@ -95,6 +95,7 @@
                                 <input type="number" class="form-control" id="new_vehicle_year" name="new_vehicle_year" min="1900" max="<?= date('Y') + 1 ?>" required>
                                 <div class="error-message" id="error_new_vehicle_year"></div>
                             </div>
+
                             <div class="col-md-6">
                                 <label for="new_vehicle_engine_number" class="form-label">Engine Number</label>
                                 <input type="text" class="form-control" id="new_vehicle_engine_number" name="new_vehicle_engine_number" required>
@@ -104,6 +105,16 @@
                                 <label for="new_vehicle_chassis_number" class="form-label">Chassis Number</label>
                                 <input type="text" class="form-control" id="new_vehicle_chassis_number" name="new_vehicle_chassis_number" required>
                                 <div class="error-message" id="error_new_vehicle_chassis_number"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="new_vehicle_transmission" class="form-label">Transmission</label>
+                                <select class="form-select" id="new_vehicle_transmission" name="new_vehicle_transmission" required>
+                                    <option value="">Select Transmission</option>
+                                    <option value="Manual">Manual</option>
+                                    <option value="Automatic">Automatic</option>
+                                    <option value="Semi-Automatic">Semi-Automatic</option>
+                                </select>
+                                <div class="error-message" id="error_new_vehicle_transmission"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="new_vehicle_fuel_type" class="form-label">Fuel Type</label>
@@ -223,9 +234,10 @@
         const newVehicleYear = $('#new_vehicle_year');
         const newVehicleEngineNumber = $('#new_vehicle_engine_number');
         const newVehicleChassisNumber = $('#new_vehicle_chassis_number');
+        const newVehicleTransmission = $('#new_vehicle_transmission');
         const newVehicleFuelType = $('#new_vehicle_fuel_type');
         const newVehicleColor = $('#new_vehicle_color');
-        const allVehicleInputs = [newVehicleLicensePlate, newVehicleVIN, newVehicleMake, newVehicleModel, newVehicleYear, newVehicleEngineNumber, newVehicleChassisNumber, newVehicleFuelType, newVehicleColor];
+        const allVehicleInputs = [newVehicleLicensePlate, newVehicleVIN, newVehicleMake, newVehicleModel, newVehicleYear, newVehicleEngineNumber, newVehicleChassisNumber, newVehicleTransmission, newVehicleFuelType, newVehicleColor];
 
         // Job Details Fields (for auto-population from existing vehicle)
         const reportedProblem = $('#reported_problem');
@@ -297,6 +309,7 @@
             newVehicleYear.val(vehicleData.year_of_manufacture || '').prop('disabled', true);
             newVehicleEngineNumber.val(vehicleData.engine_number || '').prop('disabled', true);
             newVehicleChassisNumber.val(vehicleData.chassis_number || '').prop('disabled', true);
+            newVehicleTransmission.val(vehicleData.transmission || '').prop('disabled', true);
             newVehicleFuelType.val(vehicleData.fuel_type || '').prop('disabled', true);
             newVehicleColor.val(vehicleData.color || '').prop('disabled', true);
 
@@ -393,7 +406,9 @@
                 $.ajax({
                     url: '<?= base_url("job_intake/search") ?>',
                     method: 'GET',
-                    data: { query: query },
+                    data: {
+                        query: query
+                    },
                     dataType: 'json',
                     success: function(response) {
                         searchResults.empty();
@@ -571,29 +586,39 @@
     /* Add any specific styles for this form if needed, e.g., for input focus, button colors */
     .form-group label {
         font-weight: 500;
-        color: #343a40; /* text-dark */
+        color: #343a40;
+        /* text-dark */
     }
-    .form-control:focus, .form-select:focus, .form-control:focus-within {
-        border-color: #007bff; /* primary-color */
+
+    .form-control:focus,
+    .form-select:focus,
+    .form-control:focus-within {
+        border-color: #007bff;
+        /* primary-color */
         box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
     }
+
     .card {
         border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         border: none;
     }
+
     .card-header {
-        background-color: #f8f9fa; /* bg-light */
+        background-color: #f8f9fa;
+        /* bg-light */
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         font-weight: 600;
         color: #343a40;
-        padding: 1rem 1.5rem; /* Slightly reduced padding */
+        padding: 1rem 1.5rem;
+        /* Slightly reduced padding */
     }
 
     /* Search Results Dropdown */
     .search-results-dropdown {
         position: absolute;
-        width: calc(100% - 2rem); /* Account for card padding */
+        width: calc(100% - 2rem);
+        /* Account for card padding */
         max-height: 200px;
         overflow-y: auto;
         background: white;
@@ -601,29 +626,36 @@
         border-top: none;
         z-index: 1000;
         border-radius: 0 0 8px 8px;
-        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-        left: 1rem; /* Align with card padding */
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        left: 1rem;
+        /* Align with card padding */
         right: 1rem;
     }
+
     .search-results-dropdown div {
         padding: 0.75rem 1rem;
         cursor: pointer;
         border-bottom: 1px solid #f0f2f5;
     }
+
     .search-results-dropdown div:last-child {
         border-bottom: none;
     }
+
     .search-results-dropdown div:hover {
         background-color: #e9ecef;
     }
+
     .search-results-dropdown .result-title {
         font-weight: 600;
         color: #007bff;
     }
+
     .search-results-dropdown .result-subtitle {
         font-size: 0.85rem;
         color: #6c757d;
     }
+
     .search-results-dropdown .disabled {
         cursor: not-allowed;
         color: #999;
@@ -636,8 +668,10 @@
         flex-wrap: wrap;
         gap: 10px;
         margin-top: 10px;
-        min-height: 110px; /* Give it a minimum height to avoid layout shifts */
-        border: 1px dashed #ced4da; /* Visual cue for drop area */
+        min-height: 110px;
+        /* Give it a minimum height to avoid layout shifts */
+        border: 1px dashed #ced4da;
+        /* Visual cue for drop area */
         border-radius: 8px;
         padding: 10px;
         justify-content: center;
@@ -646,9 +680,11 @@
         color: #6c757d;
         font-size: 0.9rem;
     }
+
     .photo-preview-container.empty-state::before {
         content: "No photos selected. Click or drag to add.";
     }
+
     .photo-preview-container img {
         width: 100px;
         height: 100px;
@@ -656,12 +692,17 @@
         border-radius: 8px;
         border: 1px solid #ddd;
     }
+
     .error-message {
-        color: #dc3545; /* danger-color */
+        color: #dc3545;
+        /* danger-color */
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
-    .form-control.is-invalid, .form-select.is-invalid, textarea.is-invalid {
+
+    .form-control.is-invalid,
+    .form-select.is-invalid,
+    textarea.is-invalid {
         border-color: #dc3545 !important;
     }
 </style>
