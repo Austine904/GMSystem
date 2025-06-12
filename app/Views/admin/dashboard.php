@@ -325,7 +325,7 @@
                         <div>
                             <h6>Total Users</h6>
                             <h3><?= $userCount ?? '0' ?></h3>
-                        </div>                        
+                        </div>
                         <i class="bi bi-people" style="font-size: 2.5rem;"></i>
                     </div>
                 </div>
@@ -550,21 +550,11 @@
 
         // --- Chart.js Initialization ---
 
-        const mockJobStatusData = {
-            labels: ['Pending', 'In Progress', 'Awaiting Parts', 'Completed', 'Paid'],
-            datasets: [{
-                data: [15, 25, 10, 40, 10], // Example counts
-                backgroundColor: [
-                    'rgba(255, 193, 7, 0.8)', // Warning (yellow)
-                    'rgba(0, 123, 255, 0.8)', // Primary (blue)
-                    'rgba(23, 162, 184, 0.8)', // Info (teal)
-                    'rgba(40, 167, 69, 0.8)', // Success (green)
-                    'rgba(108, 117, 125, 0.8)' // Secondary (grey)
-                ],
-                borderColor: 'white',
-                borderWidth: 2
-            }]
-        };
+        const ctx = document.getElementById('jobStatusChart');
+        if (!ctx) {
+            console.error('Job Status Chart canvas not found');
+            return;
+        }
 
         const mockRevenueTrendsData = {
             labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
@@ -586,12 +576,45 @@
 
         // Job Status Breakdown Chart
         const jobstatusData = <?= $jobStatusData ?? '{}' ?>;
+        if (Object.keys(jobstatusData).length === 0) {
+            console.warn('No job status data available');
+            return;
+        }
+        // Ensure jobstatusData is an object with expected keys
+        if (typeof jobstatusData !== 'object' || Array.isArray(jobstatusData)) {
+            console.error('Invalid job status data format');
+            return;
+        }
+        //log if jobstatusData is not empty
+        console.log('Job Status Data:', jobstatusData);
+
 
         const jobStatusCtx = document.getElementById('jobStatusChart');
         if (jobStatusCtx) {
             new Chart(jobStatusCtx, {
                 type: 'doughnut', // Doughnut chart for job status
-                data: mockJobStatusData,
+                data: {
+                    labels: Object.keys(jobstatusData),
+                    datasets: [{
+                        data: Object.values(jobstatusData),
+                        backgroundColor: [
+                            'rgba(255, 193, 7, 0.8)', // Warning (yellow)
+                            'rgba(220, 53, 69, 0.8)', // Danger (red)
+                            'rgba(255, 255, 255, 0.8)', // White for empty or unknown status
+                            'rgba(52, 58, 64, 0.8)', // Dark (grey)
+                            'rgb(186, 85, 255)',
+                            'rgb(255, 99, 255)',
+                            'rgba(255, 159, 64, 0.8)', // Orange
+                            'rgba(0, 123, 255, 0.8)', // Primary (blue)
+                            'rgba(23, 162, 184, 0.8)', // Info (teal)
+                            'rgba(40, 167, 69, 0.8)', // Success (green)
+                            'rgba(108, 117, 125, 0.8)' // Secondary (grey)
+                        ],
+                        borderColor: 'white',
+                        borderWidth: 2
+                    }]
+                },
+
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -624,6 +647,7 @@
                         }
                     }
                 }
+
             });
         }
 

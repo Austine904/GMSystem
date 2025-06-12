@@ -33,12 +33,12 @@ class DashboardController extends BaseController
         $recentActivity = [];
 
         // Jobs
-        $jobs = $db->query("SELECT id, updated_at, status FROM jobs ORDER BY updated_at DESC LIMIT 3")->getResultArray();
+        $jobs = $db->query("SELECT id, updated_at, job_status FROM job_cards ORDER BY updated_at DESC LIMIT 3")->getResultArray();
         foreach ($jobs as $job) {
             $recentActivity[] = [
                 'type' => 'jobs',
                 'icon' => 'bi-briefcase',
-                'text' => "Job #{$job['id']} status updated to '{$job['status']}'",
+                'text' => "Job #{$job['id']} status updated to '{$job['job_status']}'",
                 'time' => timeAgo($job['updated_at']),
             ];
         }
@@ -120,22 +120,63 @@ class DashboardController extends BaseController
             ->getResultArray();
 
         // Get job status counts in a single query
-        $jobStatusQuery = $db->table('jobs')
-            ->select("status, COUNT(*) as count")
-            ->groupBy("status")
+        $jobStatusQuery = $db->table('job_cards')
+            ->select("job_status, COUNT(*) as count")
+            ->groupBy("job_status")
             ->get()
             ->getResult();
 
+
+        // Prepare job status data
+        // $jobStatusData = [];
+        $jobStatusQuery = array_map(function ($row) {
+            return (object)[
+                'job_status' => $row->job_status,
+                'count' => $row->count,
+            ];
+        }, $jobStatusQuery);
+
+        //statusColors
+        $statusColors = [
+            'Awaiting Diagnosis' => '#007bff', // Bootstrap Primary Blue
+            'Diagnosis Complete' => '#ffc107', // Bootstrap Warning Yellow
+            'Approved' => '#17a2b8',           // Bootstrap Info Cyan
+            'In Progress' => '#6f42c1',         // Bootstrap Purple
+            'Awaiting Parts' => '#fd7e14',      // Bootstrap Orange
+            'Quality Check' => '#20c997',       // Bootstrap Teal
+            'Ready for Invoice' => '#e83e8c',   // Bootstrap Pink
+            'Paid' => '#28a745',                // Bootstrap Success Green
+            'Completed' => '#28a745',           // Bootstrap Success Green (same as Paid, or a shade different)
+            'Cancelled' => '#dc3545',           // Bootstrap Danger Red
+            'Rework' => '#6c757d',              // Bootstrap Secondary Gray
+            'On Hold' => '#343a40',             // Bootstrap Dark Gray
+            'Quote Sent' => '#6610f2'           // Bootstrap Indigo (if you have this status)
+            // Add more statuses and their desired colors here
+        ];
+
+        $defaultColor = '#999999'; // Fallback color for undefined statuses
+        $defaultBorderColor = '#ffffff'; // White border for doughnut segments
+
+
+
         // Initialize default values
         $jobStatusData = [
-            'active' => 0,
-            'completed' => 0,
-            'pending' => 0,
-            'cancelled' => 0,
+
+            'Awaiting Diagnosis' => 0,
+            'Diagnosis Complete' => 0,
+            'Approved' => 0,
+            'In Progress' => 0,
+            'Awaiting Parts' => 0,
+            'Quality Check' => 0,
+            'Ready for Invoice' => 0,
+            'Paid' => 0,
+            'Completed' => 0,
+            'Cancelled' => 0,
+            'Rework' => 0,
         ];
 
         foreach ($jobStatusQuery as $row) {
-            $status = strtolower($row->status);
+            $status = $row->job_status;
             if (array_key_exists($status, $jobStatusData)) {
                 $jobStatusData[$status] = (int)$row->count;
             }
@@ -149,12 +190,26 @@ class DashboardController extends BaseController
             'vehicleCount'    => $vehicleCount,
             'latestUsers'     => $latestUsers,
             'latestVehicles'  => $latestVehicles,
-            'activeJobs'      => $jobStatusData['active'],
-            'completedJobs'   => $jobStatusData['completed'],
-            'pendingJobs'     => $jobStatusData['pending'],
+
+            'awaitingDiagnosisJobs' => $jobStatusData['Awaiting Diagnosis'],
+            'diagnosedJobs' => $jobStatusData['Diagnosis Complete'],
+            'approvedJobs'    => $jobStatusData['Approved'],
+            'inProgressJobs'  => $jobStatusData['In Progress'],
+            'awaitingPartsJobs' => $jobStatusData['Awaiting Parts'],
+            'qualityCheckJobs' => $jobStatusData['Quality Check'],
+            'readyForInvoiceJobs' => $jobStatusData['Ready for Invoice'],
+            'paidJobs'        => $jobStatusData['Paid'],
+            'completedJobs'   => $jobStatusData['Completed'],
+            'cancelledJobs'   => $jobStatusData['Cancelled'],
+            'reworkJobs'      => $jobStatusData['Rework'],
+            'activeJobs'      => $jobStatusData['In Progress'] + $jobStatusData['Awaiting Parts'] + $jobStatusData['Quality Check'] + $jobStatusData['Ready for Invoice'],
             'totalJobs'       => $totalJobsQuery,
             'jobStatusData'   => json_encode($jobStatusData),
+
+            'recentActivity'  => $recentActivity,
         ];
+
+
 
         // Merge the data arrays
         $mergedData = array_merge($data, ['recentActivity' => $recentActivity]);
