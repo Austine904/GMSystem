@@ -202,6 +202,14 @@ function isActive($segment, $currentSegment)
                     <span>Dashboard</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link nav-hover <?= isActive('jobs', $currentSegment) ?>"
+                    href="<?= base_url('admin/jobs') ?>"
+                    <?= isActive('jobs', $currentSegment) ? 'aria-current="page"' : '' ?>>
+                    <i class="bi bi-briefcase fs-6"></i>
+                    <span>Jobs</span>
+                </a>
+            </li>
             <?php if ($role == 'admin'): ?>
                 <li class="nav-item">
                     <a class="nav-link nav-hover <?= isActive('users', $currentSegment) ?>"
@@ -228,14 +236,7 @@ function isActive($segment, $currentSegment)
                     <span>Vehicles</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link nav-hover <?= isActive('jobs', $currentSegment) ?>"
-                    href="<?= base_url('admin/jobs') ?>"
-                    <?= isActive('jobs', $currentSegment) ? 'aria-current="page"' : '' ?>>
-                    <i class="bi bi-briefcase fs-6"></i>
-                    <span>Jobs</span>
-                </a>
-            </li>
+            
             <li class="nav-item">
                 <a class="nav-link nav-hover <?= isActive('sublets', $currentSegment) ?>"
                     href="<?= base_url('admin/sublets') ?>"

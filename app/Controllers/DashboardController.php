@@ -100,7 +100,7 @@ class DashboardController extends BaseController
         $vehicleCount = $db->table('vehicles')
             // ->selectCount('id', 'total_vehicles')
             ->selectCount('status', 'total_vehicles')
-            ->where('status', 'Available')
+            ->where('status', 'On Job')
             ->get()
             ->getRow()
             ->total_vehicles ?? 0;
@@ -135,6 +135,12 @@ class DashboardController extends BaseController
                 'count' => $row->count,
             ];
         }, $jobStatusQuery);
+
+        $labels = [];
+        $counts = [];
+        $backgroundColors = [];
+        $borderColors = [];
+
 
         //statusColors
         $statusColors = [
@@ -176,6 +182,17 @@ class DashboardController extends BaseController
         ];
 
         foreach ($jobStatusQuery as $row) {
+            $currentStatus = $row->job_status;
+            $count= (int)$row->count;
+
+              $labels[] = $currentStatus;
+            $counts[] = $count;
+            
+            // Assign specific color or default
+            $backgroundColors[] = $statusColors[$currentStatus] ?? $defaultColor;
+            $borderColor[] = $defaultBorderColor;
+
+            $jobStatusTotals[$currentStatus] = $count;
             $status = $row->job_status;
             if (array_key_exists($status, $jobStatusData)) {
                 $jobStatusData[$status] = (int)$row->count;
