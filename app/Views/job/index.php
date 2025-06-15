@@ -33,6 +33,26 @@
 </div>
 
 
+<!-- Re-using existing actionModal for Add/Edit forms -->
+<div id="actionModal" class="modal fade" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="actionModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Modals -->
 <?php include('modals.php'); ?>
 
@@ -65,9 +85,9 @@
                 <button class="icon-btn text-info" title="Edit" onclick="editJob(${data.id})">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="icon-btn text-primary" title="View" onclick="viewJobDetails(${data.id})">
-                    <i class="fas fa-eye"></i>
-                </button>
+                <button class="icon-btn text-primary view-job" title="View Details" data-id="${row.id}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
                 <button class="icon-btn text-danger" title="Delete" onclick="deleteJob(${data.id})">
                     <i class="fas fa-trash-alt"></i>
                 </button>

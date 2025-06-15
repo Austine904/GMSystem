@@ -24,6 +24,15 @@
     <link rel="stylesheet" href="<?= base_url('public/css/job_intake.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/customers.css') ?>">
 
+    <!-- javascript -->
+     <script>
+        const BASE_URL = "<?= base_url() ?>";
+    </script>
+   
+    <script src="<?= base_url('public/assets/js/customers.js') ?>"></script>
+
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">

@@ -1,3 +1,92 @@
+<style>
+    /* Job Details Modal Specifics */
+    #jobDetailsModal .modal-dialog {
+        max-width: 900px;
+    }
+
+    #jobDetailsModal .modal-header {
+        background: linear-gradient(90deg, var(--primary-color), var(--primary-hover-color)) !important;
+        color: white !important;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
+    #jobDetailsModal .modal-header .modal-title {
+        color: white !important;
+    }
+
+    #jobDetailsModal .modal-header .btn-close {
+        filter: invert(1);
+    }
+
+    #jobDetailsModal .info-item {
+        margin-bottom: 0.75rem;
+        text-align: left;
+    }
+
+    #jobDetailsModal .info-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    #jobDetailsModal .info-value {
+        color: #555;
+        font-size: 1rem;
+    }
+
+    /* Tab Styling within Job Details Modal */
+    #jobDetailsModal .nav-tabs {
+        border-bottom: none;
+        margin-bottom: 1.5rem;
+    }
+
+    #jobDetailsModal .nav-tabs .nav-item .nav-link {
+        border: none;
+        border-radius: 8px 8px 0 0;
+        background-color: transparent;
+        color: var(--text-dark);
+        font-weight: 500;
+        padding: 0.75rem 1.25rem;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    #jobDetailsModal .nav-tabs .nav-item .nav-link:hover {
+        color: var(--primary-color);
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+
+    #jobDetailsModal .nav-tabs .nav-item .nav-link.active {
+        color: var(--primary-color);
+        background-color: var(--card-bg);
+        font-weight: 600;
+    }
+
+    #jobDetailsModal .nav-tabs .nav-item .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: 2px 2px 0 0;
+    }
+
+    #jobDetailsModal .tab-content {
+        background-color: var(--card-bg);
+        border-radius: 0 0 15px 15px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-top: none;
+    }
+</style>
+
+
 <!-- Add Job Modal -->
 <div id="addJobModal" class="modal fade" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -199,15 +288,174 @@
     </div>
 </div>
 
-<!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+<!-- Job details modal -->
+<div class="modal fade" id="jobDetailsModal" tabindex="-1" aria-labelledby="jobDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="jobDetailsModalLabel">
+                    <i class="bi bi-briefcase me-2"></i> Job Details - <span id="detail_job_no"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="card p-3 mb-3">
+                            <h6 class="mb-3 text-primary">Job Card Summary</h6>
+                            <div class="info-item"><span class="info-label">Status:</span> <span class="info-value" id="detail_job_status"></span></div>
+                            <div class="info-item"><span class="info-label">Reported Problem:</span> <span class="info-value" id="detail_reported_problem"></span></div>
+                            <div class="info-item"><span class="info-label">Initial Damage Notes:</span> <span class="info-value" id="detail_initial_damage_notes"></span></div>
+                            <div class="info-item"><span class="info-label">Mileage In:</span> <span class="info-value" id="detail_mileage_in"></span></div>
+                            <div class="info-item"><span class="info-label">Fuel Level:</span> <span class="info-value" id="detail_fuel_level"></span></div>
+                            <div class="info-item"><span class="info-label">Date In:</span> <span class="info-value" id="detail_date_in"></span></div>
+                            <div class="info-item"><span class="info-label">Time In:</span> <span class="info-value" id="detail_time_in"></span></div>
+                            <div class="info-item"><span class="info-label">Estimated Labor Hours:</span> <span class="info-value" id="detail_estimated_labor_hours"></span></div>
+                            <div class="info-item"><span class="info-label">Quote Status:</span> <span class="info-value" id="detail_quote_status"></span></div>
+                            <div class="info-item"><span class="info-label">Quote Amount:</span> <span class="info-value" id="detail_quote_amount"></span></div>
+                            <div class="info-item"><span class="info-label">Assigned Service Advisor:</span> <span class="info-value" id="detail_assigned_service_advisor"></span></div>
+                            <div class="info-item"><span class="info-label">Diagnosis:</span> <span class="info-value" id="detail_diagnosis"></span></div>
+                            <div class="info-item"><span class="info-label">Job Summary:</span> <span class="info-value" id="detail_job_summary"></span></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <ul class="nav nav-tabs mb-3" id="jobDetailsTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="customer-vehicle-tab" data-bs-toggle="tab" data-bs-target="#customer-vehicle" type="button" role="tab" aria-controls="customer-vehicle" aria-selected="true">Customer & Vehicle</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="parts-tasks-tab" data-bs-toggle="tab" data-bs-target="#parts-tasks" type="button" role="tab" aria-controls="parts-tasks" aria-selected="false">Parts & Tasks</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="photos-tab" data-bs-toggle="tab" data-bs-target="#photos" type="button" role="tab" aria-controls="photos" aria-selected="false">Photos</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="jobDetailsTabContent">
+                            <div class="tab-pane fade show active" id="customer-vehicle" role="tabpanel" aria-labelledby="customer-vehicle-tab">
+                                <h6 class="mb-3 text-secondary">Customer Info</h6>
+                                <div class="info-item"><span class="info-label">Name:</span> <span class="info-value" id="detail_customer_name"></span></div>
+                                <div class="info-item"><span class="info-label">Phone:</span> <span class="info-value" id="detail_customer_phone"></span></div>
+                                <div class="info-item"><span class="info-label">Email:</span> <span class="info-value" id="detail_customer_email"></span></div>
+                                <div class="info-item"><span class="info-label">Address:</span> <span class="info-value" id="detail_customer_address"></span></div>
+
+                                <h6 class="mb-3 mt-4 text-secondary">Vehicle Info</h6>
+                                <div class="info-item"><span class="info-label">Registration No.:</span> <span class="info-value" id="detail_vehicle_reg_no"></span></div>
+                                <div class="info-item"><span class="info-label">Make & Model:</span> <span class="info-value" id="detail_vehicle_make_model"></span></div>
+                                <div class="info-item"><span class="info-label">Year:</span> <span class="info-value" id="detail_vehicle_year"></span></div>
+                                <div class="info-item"><span class="info-label">VIN:</span> <span class="info-value" id="detail_vehicle_vin"></span></div>
+                                <div class="info-item"><span class="info-label">Engine No.:</span> <span class="info-value" id="detail_vehicle_engine_no"></span></div>
+                                <div class="info-item"><span class="info-label">Chassis No.:</span> <span class="info-value" id="detail_vehicle_chassis_no"></span></div>
+                                <div class="info-item"><span class="info-label">Fuel Type:</span> <span class="info-value" id="detail_vehicle_fuel_type"></span></div>
+                                <div class="info-item"><span class="info-label">Transmission:</span> <span class="info-value" id="detail_vehicle_transmission"></span></div>
+                                <div class="info-item"><span class="info-label">Color:</span> <span class="info-value" id="detail_vehicle_color"></span></div>
+                            </div>
+
+                            <div class="tab-pane fade" id="parts-tasks" role="tabpanel" aria-labelledby="parts-tasks-tab">
+                                <h6 class="mb-3 text-secondary">Parts Required</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Part Name</th>
+                                                <th>Qty.</th>
+                                                <th>Est. Unit Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detail_parts_list">
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted">No parts recorded.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h6 class="mb-3 mt-4 text-secondary">Labor Tasks</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Task Name</th>
+                                                <th>Est. Hours</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detail_tasks_list">
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted">No tasks recorded.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+                                <h6 class="mb-3 text-secondary">Job Card Photos</h6>
+                                <div id="detail_photos_gallery" class="row g-2">
+                                    <div class="col-12 text-center text-muted">No photos available.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
+    // Function to open a modal with dynamic content
+    function openModal(url, title = 'Form') {
+        const modalElement = document.getElementById('actionModal');
+        const modal = new bootstrap.Modal(modalElement);
+        const modalTitle = modalElement.querySelector('.modal-title');
+        const modalContent = document.getElementById('modalContent');
+
+        modalContent.innerHTML = `
+            <div class="d-flex justify-content-center align-items-center" style="min-height: 100px;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        `;
+        modalTitle.textContent = title;
+
+        modal.show();
+
+        fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                modalContent.innerHTML = data;
+            })
+            .catch(error => {
+                modalTitle.textContent = 'Error';
+                modalContent.innerHTML = `<div class="alert alert-danger" role="alert">Error loading content: ${error.message}. Please try again.</div>`;
+                console.error('Error loading modal content:', error);
+            });
+    }
+    window.openModal = openModal;
+
+
     $(document).ready(function() {
         // --- Element References ---
         const addJobModal = $('#addJobModal');
+        const jobDetailsModalElement = document.getElementById('jobDetailsModal');
+        const jobDetailsModal = new bootstrap.Modal(jobDetailsModalElement);
+
         const jobIntakeForm = $('#jobIntakeForm');
         const searchInput = $('#search_input');
         const searchResults = $('#search_results');
@@ -245,7 +493,130 @@
         const fuelLevel = $('#fuel_level');
 
 
+        $('#jobsTable tbody').on('click', '.view-job', async function() {
+            const jobId = $(this).data('id'); // Get job ID from data attribute
+
+            // Clear previous data and show loading spinners/placeholders
+            $('#detail_job_no').text('Loading...');
+            // ... clear all other detail spans/elements ...
+            jobDetailsModalElement.querySelectorAll('.info-value').forEach(el => el.textContent = '');
+            $('#detail_parts_list').html('<tr><td colspan="3" class="text-center text-muted">Loading parts...</td></tr>');
+            $('#detail_tasks_list').html('<tr><td colspan="3" class="text-center text-muted">Loading tasks...</td></tr>');
+            $('#detail_photos_gallery').html('<div class="col-12 text-center text-muted">Loading photos...</div>');
+
+
+            jobDetailsModal.show();
+
+            try {
+                const response = await fetch(`<?= base_url('admin/jobs/details/') ?>${jobId}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch job details (Status: ${response.status})`);
+                }
+
+                const data = await response.json();
+
+                // Populate Job Card Summary
+                $('#detail_job_no').text(data.job_no || 'N/A');
+                $('#detail_job_status').text(data.job_status || 'N/A');
+                $('#detail_reported_problem').text(data.reported_problem || 'N/A');
+                $('#detail_initial_damage_notes').text(data.initial_damage_notes || 'N/A');
+                $('#detail_mileage_in').text(data.mileage_in ? `${data.mileage_in} km` : 'N/A');
+                $('#detail_fuel_level').text(data.fuel_level || 'N/A');
+                $('#detail_date_in').text(data.date_in || 'N/A');
+                $('#detail_time_in').text(data.time_in || 'N/A');
+                $('#detail_estimated_labor_hours').text(data.estimated_labor_hours ? `${data.estimated_labor_hours} hrs` : 'N/A');
+                $('#detail_quote_status').text(data.quote_status || 'N/A');
+                $('#detail_quote_amount').text(data.quote_amount ? `Ksh ${parseFloat(data.quote_amount).toLocaleString('en-US', {minimumFractionDigits: 2})}` : 'N/A');
+                $('#detail_assigned_service_advisor').text(data.assigned_service_advisor_name || 'N/A'); // Assuming backend provides name
+                $('#detail_diagnosis').text(data.diagnosis || 'N/A');
+                $('#detail_job_summary').text(data.job_summary || 'N/A'); // From merged `jobs` table
+
+                // Populate Customer & Vehicle Tab
+                $('#detail_customer_name').text(data.customer.name || 'N/A');
+                $('#detail_customer_phone').text(data.customer.phone || 'N/A');
+                $('#detail_customer_email').text(data.customer.email || 'N/A');
+                $('#detail_customer_address').text(data.customer.address || 'N/A');
+
+                $('#detail_vehicle_reg_no').text(data.vehicle.registration_number || 'N/A');
+                $('#detail_vehicle_make_model').text(`${data.vehicle.make || ''} ${data.vehicle.model || ''}`.trim() || 'N/A');
+                $('#detail_vehicle_year').text(data.vehicle.year_of_manufacture || 'N/A');
+                $('#detail_vehicle_vin').text(data.vehicle.vin || 'N/A');
+                $('#detail_vehicle_engine_no').text(data.vehicle.engine_number || 'N/A');
+                $('#detail_vehicle_chassis_no').text(data.vehicle.chassis_number || 'N/A');
+                $('#detail_vehicle_fuel_type').text(data.vehicle.fuel_type || 'N/A');
+                $('#detail_vehicle_transmission').text(data.vehicle.transmission || 'N/A');
+                $('#detail_vehicle_color').text(data.vehicle.color || 'N/A');
+
+                // Populate Parts & Tasks Tab
+                const partsList = $('#detail_parts_list');
+                partsList.empty();
+                if (data.parts && data.parts.length > 0) {
+                    data.parts.forEach(part => {
+                        partsList.append(`
+                            <tr>
+                                <td>${part.name || 'N/A'} (${part.part_number || 'N/A'})</td>
+                                <td>${part.quantity_required || '0'}</td>
+                                <td>Ksh ${parseFloat(part.unit_price_at_estimate || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    partsList.append('<tr><td colspan="3" class="text-center text-muted">No parts recorded.</td></tr>');
+                }
+
+                const tasksList = $('#detail_tasks_list');
+                tasksList.empty();
+                if (data.tasks && data.tasks.length > 0) {
+                    data.tasks.forEach(task => {
+                        tasksList.append(`
+                            <tr>
+                                <td>${task.task_name || 'N/A'}</td>
+                                <td>${task.estimated_hours || '0'}</td>
+                                <td>${task.notes || 'N/A'}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    tasksList.append('<tr><td colspan="3" class="text-center text-muted">No tasks recorded.</td></tr>');
+                }
+
+                // Populate Photos Tab
+                const photosGallery = $('#detail_photos_gallery');
+                photosGallery.empty();
+                if (data.photos && data.photos.length > 0) {
+                    data.photos.forEach(photo => {
+                        photosGallery.append(`
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <a href="<?= base_url() ?>/${photo.file_path}" target="_blank">
+                                    <img src="<?= base_url() ?>/${photo.file_path}" alt="${photo.file_name}" class="img-fluid rounded shadow-sm" style="max-height: 150px; object-fit: cover; width: 100%;">
+                                </a>
+                            </div>
+                        `);
+                    });
+                } else {
+                    photosGallery.append('<div class="col-12 text-center text-muted">No photos available.</div>');
+                }
+
+
+            } catch (error) {
+                const modalBody = jobDetailsModalElement.querySelector('.modal-body');
+                modalBody.innerHTML = `<div class="alert alert-danger" role="alert">
+                                            <i class="bi bi-exclamation-circle me-2"></i> Failed to load job details: ${error.message}
+                                        </div>`;
+                console.error('Error fetching job details:', error);
+            }
+        });
+
+
         // --- Helper Functions ---
+
+
+
 
         // Function to display form-specific error messages
         function displayFormError(fieldId, message) {
