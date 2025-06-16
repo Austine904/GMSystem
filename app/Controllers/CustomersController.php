@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\Database\Exceptions\DatabaseException; // Import specific database exception
+use CodeIgniter\Database\Exceptions\DatabaseException;
 use Exception;
 use CodeIgniter\Exceptions\PageNotFoundException; // Import for 404 handling
 
@@ -132,54 +132,58 @@ class CustomersController extends BaseController
      * AJAX endpoint to fetch details for a specific customer, including their vehicles.
      * @param int $id Customer ID
      */
+
     public function details($id)
     {
-        // Basic authorization check
-        if (!$this->session->get('isLoggedIn') || $this->session->get('role') !== 'admin') {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'admin') {
             return $this->failUnauthorized('Unauthorized access.');
         }
 
+        if (!is_numeric($id)) {
+            return $this->failValidationErrors('Invalid customer ID.');
+        }
+
         try {
-            // Fetch customer details
-            $customer = $this->db->table('customers')
-                ->where('id', $id)
-                ->get()
-                ->getRowArray();
+            $customer = $this->db->table('customers')->where('id', $id)->get()->getRowArray();
 
             if (!$customer) {
                 return $this->failNotFound('Customer not found.');
             }
 
-            // Fetch vehicles owned by this customer
-            $vehicles = $this->db->table('vehicles')
-                ->where('owner_id', $id)
-                ->get()
-                ->getResultArray();
-
-            // Prepare data for response
+            $vehicles = $this->db->table('vehicles')->where('owner_id', $id)->get()->getResultArray();
             $customer['vehicles'] = $vehicles;
+
+            $jobs = $this->db->table('job_cards')->where('customer_id', $id)->get()->getResultArray();
+            //fetch vehicle registration numbers for each job
+            foreach ($jobs as &$job) {
+                $vehicle = $this->db->table('vehicles')
+                    ->select('registration_number')
+                    ->where('id', $job['vehicle_id'])
+                    ->get()
+                    ->getRowArray();
+                $job['registration_number'] = $vehicle ? $vehicle['registration_number'] : 'Unknown';
+            }
+           
+            $customer['jobs'] = $jobs;
 
             return $this->respond($customer);
         } catch (DatabaseException $e) {
-            log_message('error', 'Database error fetching customer details: ' . $e->getMessage());
-            return $this->failServerError('Database error: Could not retrieve customer details.');
-        } catch (Exception $e) {
-            log_message('error', 'Error fetching customer details: ' . $e->getMessage());
-            return $this->failServerError('An unexpected error occurred while fetching customer details.');
+            log_message('error', 'Database error: ' . $e->getMessage());
+            return $this->failServerError('Database error.');
+        } catch (\Exception $e) {
+            log_message('error', 'Unexpected error: ' . $e->getMessage());
+            return $this->failServerError('Unexpected error occurred.');
         }
     }
 
-    /**
-     * Placeholder for loading the 'Add New Customer' form.
-     * This method would typically return a view segment for a modal.
-     */
+
     public function add()
     {
         if (!$this->session->get('isLoggedIn') || $this->session->get('role') !== 'admin') {
             return $this->failForbidden('Forbidden: Insufficient permissions.');
         }
         // You would load your add customer form view here
-        return view('admin/forms/add_customer_form'); // Create this view file
+        return view('admin/forms/add_customer_form');
     }
 
     /**

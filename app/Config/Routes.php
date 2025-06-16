@@ -82,6 +82,9 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     // Vehicles
     $routes->get('vehicles', 'VehicleController::index');
     $routes->get('vehicles/fetch', 'VehicleController::fetchVehicles');
+    $routes->get('vehicles/fetch/(:num)', 'VehicleController::fetchVehicles');
+
+    $routes->get('vechicles/edit/(:num)', 'VehicleController::edit/$1');
     $routes->post('vehicles/store', 'VehicleController::store');
     $routes->post('vehicles/update/(:num)', 'VehicleController::update/$1');
     $routes->post('vehicles/delete/(:num)', 'VehicleController::delete/$1');
@@ -119,9 +122,13 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('customers/add', 'CustomersController::add'); // For loading add form in modal
     $routes->get('customers/edit/(:num)', 'CustomersController::edit/$1'); // For loading edit form in modal
     $routes->post('customers/bulk_action', 'CustomersController::bulk_action');
+
+    // Calendar
+    $routes->get('calendar', 'CalendarController::index');
+    $routes->get('calendar/getEvents', 'CalendarController::getEvents');
 });
 
-    $routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');
+$routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');
 
 $routes->post('customers/load', 'CustomersController::load');
 

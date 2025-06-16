@@ -12,8 +12,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
-   
- 
+
+
 
 
     <!-- Custom CSS -->
@@ -25,13 +25,12 @@
     <link rel="stylesheet" href="<?= base_url('public/css/customers.css') ?>">
 
     <!-- javascript -->
-     <script>
+    <script>
         const BASE_URL = "<?= base_url() ?>";
     </script>
-   
-    <script src="<?= base_url('public/assets/js/customers.js') ?>"></script>
 
-
+    
+    <script src="<?= base_url('public/assets/js/vehicles.js') ?>"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,10 +62,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script>
 
 
 
-
+    <script src="<?= base_url('public/assets/js/customers.js') ?>"></script>
 </body>
 
 <footer class="bg-light text-dark text-center py-3" style="margin-left: 200px;">

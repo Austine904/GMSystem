@@ -58,16 +58,18 @@ class VehicleController extends Controller
 
         return $this->response->setJSON(['status' => 'success']);
     }
+    public function edit($id)
+    {
+        $db = \Config\Database::connect();
+        $vehicle = $db->table('vehicles')->where('id', $id)->get()->getRowArray();
 
-    // public function update($id)
-    // {
-    //     $data = $this->request->getPost();
-    //     $db = \Config\Database::connect();
-    //     $db->table('vehicles')->where('id', $id)->update($data);
-
-    //     return $this->response->setJSON(['status' => 'success']);
-    // }
-
+        if ($vehicle) {
+            return view('vehicles/edit', ['vehicle' => $vehicle]);
+        } else {
+            return redirect()->to('/vehicles')->with('error', 'Vehicle not found');
+        }
+    }
+    
     public function delete($id)
     {
         $db = \Config\Database::connect();
@@ -98,7 +100,7 @@ class VehicleController extends Controller
     return $this->response->setJSON($vehicle);
 }
 
-public function update()
+public function update($id) 
 {
     $data = $this->request->getPost();
 

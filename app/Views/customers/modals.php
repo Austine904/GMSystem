@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Left Column: Customer Summary -->
-                    <div class="col-md-4 text-center">
+                    <div class="col-md-3 text-center">
                         <img id="customer-profile-picture" src="https://placehold.co/100x100/cccccc/333333?text=CS" class="customer-profile-picture mb-3" alt="Customer Photo">
                         <h5 class="customer-name-heading" id="customer-fullname-modal"></h5>
                         <div class="profile-contact-info">
@@ -26,7 +26,7 @@
                     </div>
 
                     <!-- Right Column: Tabs for Detailed Info -->
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <ul class="nav nav-tabs mb-3" id="customerDetailsTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="customer-overview-tab" data-bs-toggle="tab" data-bs-target="#customer-overview" type="button" role="tab" aria-controls="customer-overview" aria-selected="true">Overview</button>
@@ -41,7 +41,7 @@
                                 <button class="nav-link" id="customer-invoices-tab" data-bs-toggle="tab" data-bs-target="#customer-invoices" type="button" role="tab" aria-controls="customer-invoices" aria-selected="false">Invoices</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="customer-communication-tab" data-bs-toggle="tab" data-bs-target="#customer-communication" type="button" role="tab" aria-controls="customer-communication" aria-selected="false">Communication Log</button>
+                                <button class="nav-link" id="customer-communication-tab" data-bs-toggle="tab" data-bs-target="#customer-communication" type="button" role="tab" aria-controls="customer-communication" aria-selected="false">Comms</button>
                             </li>
                         </ul>
                         <div class="tab-content" id="customerDetailsTabContent">
@@ -87,7 +87,7 @@
                                 <p id="no-vehicles-message" class="text-muted text-center" style="display: none;">No vehicles registered for this customer.</p>
                             </div>
 
-                            <!-- Job History Tab (Placeholder) -->
+                            <!-- Job History Tab  -->
                             <div class="tab-pane fade" id="customer-jobs" role="tabpanel" aria-labelledby="customer-jobs-tab">
                                 <h6 class="mb-3 text-secondary">Job History</h6>
                                 <div class="table-responsive">
@@ -110,7 +110,7 @@
                                 </div>
                             </div>
 
-                            <!-- Invoices Tab (Placeholder) -->
+                            <!-- Invoices Tab -->
                             <div class="tab-pane fade" id="customer-invoices" role="tabpanel" aria-labelledby="customer-invoices-tab">
                                 <h6 class="mb-3 text-secondary">Invoices & Payments</h6>
                                 <div class="table-responsive">
@@ -132,7 +132,7 @@
                                 </div>
                             </div>
 
-                            <!-- Communication Log Tab (Placeholder) -->
+                            <!-- Communication Log Tab -->
                             <div class="tab-pane fade" id="customer-communication" role="tabpanel" aria-labelledby="customer-communication-tab">
                                 <h6 class="mb-3 text-secondary">Communication Log</h6>
                                 <div class="list-group">
@@ -189,3 +189,5 @@
         </div>
     </div>
 </div>
+
+<script src="<?= base_url('public/assets/js/vehicles.js') ?>"></script>

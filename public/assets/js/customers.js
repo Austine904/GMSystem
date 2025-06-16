@@ -108,7 +108,13 @@ $(document).ready(function () {
 
     // --- Customer Details Modal ---
     const customerDetailsModalElement = document.getElementById('customerDetailsModal');
-    const customerDetailsModal = new bootstrap.Modal(customerDetailsModalElement);
+
+    let customerDetailsModal = null;
+
+    if (customerDetailsModalElement) {
+        customerDetailsModal = new bootstrap.Modal(customerDetailsModalElement);
+    }
+
 
     $('#customerTable tbody').on('click', '.view-customer', async function () {
         const customerId = $(this).data('id');
@@ -138,7 +144,10 @@ $(document).ready(function () {
         $('#customer-communication-list').html('<div class="text-center text-muted py-3">Loading communication log...</div>');
 
 
-        customerDetailsModal.show();
+        if (customerDetailsModal) {
+            customerDetailsModal.show();
+        }
+
 
         try {
             const response = await fetch(`${BASE_URL}admin/customers/details/${customerId}`, {
@@ -199,10 +208,10 @@ $(document).ready(function () {
                     jobsList.append(`
                             <tr>
                                 <td>${job.job_no || 'N/A'}</td>
-                                <td>${job.vehicle_reg_no || 'N/A'}</td>
+                                <td>${job.registration_number || 'N/A'}</td>
                                 <td>${job.date_in || 'N/A'}</td>
-                                <td>${job.status || 'N/A'}</td>
-                                <td>${job.problem || 'N/A'}</td>
+                                <td>${job.job_status || 'N/A'}</td>
+                                <td>${job.diagnosis || 'N/A'}</td>
                             </tr>
                         `);
                 });
@@ -260,11 +269,11 @@ $(document).ready(function () {
     // --- Edit Customer Logic ---
     $('#customerTable tbody').on('click', '.edit-customer', function () {
         const customerId = $(this).data('id');
-        openModal(`BASE_URL +'admin/customers/edit/'${customerId}`, 'Edit Customer Details');
+        openModal(`${BASE_URL}admin/customers/edit/${customerId}`, 'Edit Customer Details');
     });
 
     // --- Delete Customer Logic ---
-    let customerIdToDelete = null; // Store ID for confirmation
+    let customerIdToDelete = null;
     const confirmDeleteModalElement = document.getElementById('confirmDeleteModal');
     const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalElement);
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
@@ -278,12 +287,11 @@ $(document).ready(function () {
         confirmDeleteModal.hide(); // Hide the confirmation modal
         if (customerIdToDelete) {
             try {
-                // Using POST for deletion as good practice, sending ID in body
-                const response = await fetch(`BASE_URL +'admin/customers/bulk_action'`, { // Re-using bulk_action for single delete for simplicity, or create a specific delete endpoint
+                const response = await fetch(`${BASE_URL}admin/customers/bulk_action`, {
                     method: 'POST',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json' // Assuming your bulk_action can handle JSON payload
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ customers: [customerIdToDelete] }) // Send as an array of IDs
                 });
