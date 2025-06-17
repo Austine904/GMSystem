@@ -52,32 +52,32 @@ class CalendarController extends BaseController
         try {
             // --- Fetch Job Card Events ---
             // Fetch jobs that are within the calendar's visible range.
-            // Simplified the select and joins to avoid potential issues with multiple mechanics per job.
             // Mechanic details will be fetched when viewing the event modal.
             $jobs = $this->db->table('job_cards')
-                             ->select('
+                ->select('
                                  job_cards.id,
                                  job_cards.job_no,
-                                 job_cards.reported_problem,
+                                 job_cards.diagnosis,
                                  job_cards.job_status,
                                  job_cards.date_in,
                                  job_cards.time_in,
-                                 job_cards.estimated_completion_date,
+                                 job_cards.end_date,
                                  job_cards.job_summary,
                                  vehicles.registration_number,
                                  customers.name as customer_name
                              ')
-                             ->join('vehicles', 'vehicles.id = job_cards.vehicle_id', 'left')
-                             ->join('customers', 'customers.id = job_cards.customer_id', 'left')
-                             ->where('job_cards.date_in >=', $start_str)
-                             ->where('job_cards.date_in <=', $end_str)
-                             // Use orGroupStart/orGroupEnd for correct OR logic for estimated_completion_date
-                             ->orGroupStart()
-                                 ->where('job_cards.estimated_completion_date >=', $start_str)
-                                 ->where('job_cards.estimated_completion_date <=', $end_str)
-                             ->groupEnd()
-                             ->get()
-                             ->getResultArray();
+                ->join('vehicles', 'vehicles.id = job_cards.vehicle_id', 'left')
+                ->join('customers', 'customers.id = job_cards.customer_id', 'left')
+                ->where('job_cards.date_in >=', $start_str)
+                ->where('job_cards.date_in <=', $end_str)
+
+
+                ->orGroupStart()
+                ->where('job_cards.end_date >=', $start_str)
+                ->where('job_cards.end_date <=', $end_str)
+                ->groupEnd()
+                ->get()
+                ->getResultArray();
 
             foreach ($jobs as $job) {
                 // Event for Job Drop-off
@@ -97,58 +97,58 @@ class CalendarController extends BaseController
                             'type' => 'Job Drop-off',
                             'job_no' => $job['job_no'],
                             'status' => $job['job_status'],
-                            'reported_problem' => $job['reported_problem'],
+                            'diagnosis' => $job['diagnosis'],
                             'vehicle' => $job['registration_number'],
                             'customer' => $job['customer_name'],
                             // Mechanic details will be fetched in the modal via job_details endpoint
                             'mechanic' => 'Loading...', // Placeholder
-                            'description' => $job['job_summary'] ?: $job['reported_problem'],
+                            'description' => $job['job_summary'] ?: $job['diagnosis'],
                             'job_card_id' => $job['id'], // Pass job ID for modal fetching
                         ]
                     ];
                 }
 
                 // Event for Estimated Completion Date
-                if (!empty($job['estimated_completion_date']) && $job['job_status'] !== 'Completed' && $job['job_status'] !== 'Cancelled') {
+                if (!empty($job['end_date']) && $job['job_status'] !== 'Completed' && $job['job_status'] !== 'Cancelled') {
                     $events[] = [
                         'id'    => 'job-est-' . $job['id'],
                         'title' => 'Est. Complete: ' . ($job['registration_number'] ?: 'N/A'),
-                        'start' => $job['estimated_completion_date'],
+                        'start' => $job['end_date'],
                         'allDay' => true, // Assuming estimated completion is usually a whole day
                         'color' => '#ffc107', // Warning yellow for estimated completion
                         'extendedProps' => [
                             'type' => 'Estimated Completion',
                             'job_no' => $job['job_no'],
                             'status' => $job['job_status'],
-                            'reported_problem' => $job['reported_problem'],
+                            'diagnosis' => $job['diagnosis'],
                             'vehicle' => $job['registration_number'],
                             'customer' => $job['customer_name'],
                             // Mechanic details will be fetched in the modal via job_details endpoint
                             'mechanic' => 'Loading...', // Placeholder
-                            'description' => 'Estimated completion for: ' . ($job['job_summary'] ?: $job['reported_problem']),
+                            'description' => 'Estimated completion for: ' . ($job['job_summary'] ?: $job['diagnosis']),
                             'job_card_id' => $job['id'], // Pass job ID for modal fetching
                         ]
                     ];
                 }
 
                 // Event for Completed Jobs (optional, to show recent completions)
-                if ($job['job_status'] === 'Completed' && !empty($job['estimated_completion_date'])) {
+                if ($job['job_status'] === 'Completed' && !empty($job['end_date'])) {
                     $events[] = [
                         'id'    => 'job-comp-' . $job['id'],
                         'title' => 'Completed: ' . ($job['registration_number'] ?: 'N/A'),
-                        'start' => $job['estimated_completion_date'], // Or actual_completion_date if available
+                        'start' => $job['end_date'], // Or actual_completion_date if available
                         'allDay' => true,
                         'color' => '#28a745', // Success green
                         'extendedProps' => [
                             'type' => 'Job Completed',
                             'job_no' => $job['job_no'],
                             'status' => $job['job_status'],
-                            'reported_problem' => $job['reported_problem'],
+                            'diagnosis' => $job['diagnosis'],
                             'vehicle' => $job['registration_number'],
                             'customer' => $job['customer_name'],
                             // Mechanic details will be fetched in the modal via job_details endpoint
                             'mechanic' => 'Loading...', // Placeholder
-                            'description' => 'Job successfully completed: ' . ($job['job_summary'] ?: $job['reported_problem']),
+                            'description' => 'Job successfully completed: ' . ($job['job_summary'] ?: $job['diagnosis']),
                             'job_card_id' => $job['id'], // Pass job ID for modal fetching
                         ]
                     ];
@@ -157,10 +157,10 @@ class CalendarController extends BaseController
 
             // --- Fetch events from `calendar_events` table (if implemented) ---
             $calendarEvents = $this->db->table('calendar_events')
-                                       ->where('start_time >=', $start_str)
-                                       ->where('start_time <=', $end_str)
-                                       ->get()
-                                       ->getResultArray();
+                ->where('start_time >=', $start_str)
+                ->where('start_time <=', $end_str)
+                ->get()
+                ->getResultArray();
 
             foreach ($calendarEvents as $calEvent) {
                 $events[] = [
@@ -183,7 +183,6 @@ class CalendarController extends BaseController
 
 
             return $this->respond($events);
-
         } catch (DatabaseException $e) {
             // Log the specific database error for debugging
             log_message('error', 'Database error fetching calendar events: ' . $e->getMessage());
