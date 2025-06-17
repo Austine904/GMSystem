@@ -23,21 +23,20 @@
     <link rel="stylesheet" href="<?= base_url('public/css/dashboard.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/job_intake.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/customers.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('public/css/calendar.css') ?>">
 
     <!-- javascript -->
     <script>
         const BASE_URL = "<?= base_url() ?>";
     </script>
-
-    
     <script src="<?= base_url('public/assets/js/vehicles.js') ?>"></script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
 
 
     <title>GarageMS</title>
@@ -62,11 +61,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
 
 
 
     <script src="<?= base_url('public/assets/js/customers.js') ?>"></script>
+    <script src="<?= base_url('public/assets/js/job_intake.js') ?>"></script>
+    <script src="<?= base_url('public/assets/js/calendar.js') ?>"></script>
+    
 </body>
 
 <footer class="bg-light text-dark text-center py-3" style="margin-left: 200px;">
