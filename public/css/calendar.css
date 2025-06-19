@@ -1,154 +1,218 @@
 :root {
-        --primary-color: #007bff;
-        --primary-hover-color: #0056b3;
-        --text-dark: #343a40;
-        --bg-light: #f8f9fa;
-        --card-bg: #ffffff;
-        --shadow-light: rgba(0, 0, 0, 0.1);
-        --shadow-medium: rgba(0, 0, 0, 0.15);
-        --success-color: #28a745;
-        --danger-color: #dc3545;
-        --warning-color: #ffc107;
-        --info-color: #17a2b8;
-    }
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --text-dark: #343a40;
+    --bg-light: #f8f9fa;
+    --card-bg: #ffffff;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
 
-    body {
-        font-family: 'Inter', sans-serif;
-        color: var(--text-dark);
-    }
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    padding: 2rem;
+    background-color: #f0f2f5;
+}
 
-    .container.mt-5 {
-        margin-top: 3rem !important;
-    }
+.container.mt-5 {
+    margin-top: 3rem !important;
+}
 
-    h3 {
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 2rem !important;
-    }
+h3 {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 2rem !important;
+}
 
-    /* Card styling for the calendar container */
-    .calendar-card {
-        background-color: var(--card-bg);
-        border-radius: 15px;
-        box-shadow: 0 10px 30px var(--shadow-medium);
-        padding: 2rem;
-        position: relative;
-        
-        /* Needed for responsive FullCalendar */
-    }
+/* Card styling for the calendar container */
+.calendar-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
 
-    /* FullCalendar specific styling */
-    .fc {
-        /* FullCalendar container */
-        font-family: 'Inter', sans-serif;
-        max-width: 100%;
-        /* Ensure it doesn't overflow */
-    }
+    /* Needed for responsive FullCalendar */
+}
 
-    .fc .fc-toolbar-title {
-        font-weight: 600;
-        color: var(--text-dark);
-        font-size: 1.5rem;
-        /* Larger title for calendar header */
-    }
+/* FullCalendar specific styling */
+.fc {
+    /* FullCalendar container */
+    font-family: 'Inter', sans-serif;
+    max-width: 100%;
+    /* Ensure it doesn't overflow */
+}
 
-    .fc .fc-button {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-        border-radius: 8px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        padding: 0.5rem 1rem;
-        /* Adjust button padding */
-    }
+.fc .fc-toolbar-title {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1.5rem;
+    /* Larger title for calendar header */
+}
 
-    .fc .fc-button:hover {
-        background-color: var(--primary-hover-color);
-        border-color: var(--primary-hover-color);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
-    }
+.fc .fc-button {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    /* Adjust button padding */
+}
 
-    .fc .fc-button-primary:not(:disabled).fc-button-active {
-        background-color: var(--primary-hover-color);
-        border-color: var(--primary-hover-color);
-    }
+.fc .fc-button:hover {
+    background-color: var(--primary-hover-color);
+    border-color: var(--primary-hover-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+}
 
-    .fc-event {
-        border-radius: 5px;
-        font-size: 0.85rem;
-        padding: 2px 5px;
-        margin-bottom: 2px;
-        cursor: pointer;
-        /* Indicate events are clickable */
-    }
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: var(--primary-hover-color);
+    border-color: var(--primary-hover-color);
+}
 
-    .fc-event-title {
-        font-weight: 500;
-    }
+.fc-event {
+    border-radius: 5px;
+    font-size: 0.85rem;
+    padding: 2px 5px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    border: none;
+    /* Indicate events are clickable */
+}
 
-    .fc-daygrid-event {
-        white-space: normal;
-        /* Allow event text to wrap */
-    }
+.fc-event-title {
+    font-weight: 500;
+}
 
-    .fc-daygrid-day-number {
-        color: var(--text-dark);
-        font-weight: 500;
-    }
+.fc-daygrid-event {
+    white-space: normal;
+    /* Allow event text to wrap */
+}
 
-    /* Specific event colors (optional, can be passed from backend) */
-    .fc-event[data-status="In Progress"] {
-        background-color: var(--info-color);
-        border-color: var(--info-color);
-    }
+.fc-daygrid-day-number {
+    color: var(--text-dark);
+    font-weight: 500;
+}
 
-    .fc-event[data-status="Completed"] {
-        background-color: var(--success-color);
-        border-color: var(--success-color);
-    }
+/* Specific event colors (optional, can be passed from backend) */
+.fc-event[data-status="In Progress"] {
+    background-color: var(--info-color);
+    border-color: var(--info-color);
+}
 
-    .fc-event[data-status="Awaiting Parts"] {
-        background-color: var(--warning-color);
-        border-color: var(--warning-color);
-    }
+.fc-event[data-status="Completed"] {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
 
-    .fc-event[data-status="Cancelled"] {
-        background-color: var(--danger-color);
-        border-color: var(--danger-color);
-    }
+.fc-event[data-status="Awaiting Parts"] {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+}
 
-    /* Modal Styling for Event Details */
-    #actionModal .modal-header {
-        background: var(--primary-hover-color) !important;
-        color: white !important;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-    }
+.fc-event[data-status="Cancelled"] {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
 
-    #actionModal .modal-header .modal-title {
-        color: white !important;
-    }
+.fc-day-today {
+    background: #ffeeba !important;
+}
 
-    #actionModal .modal-header .btn-close {
-        filter: invert(1);
-    }
+.legend span {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 5px;
+    border-radius: 3px;
+}
 
-    #actionModal .info-item {
-        margin-bottom: 0.75rem;
-        text-align: left;
-    }
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+}
 
-    #actionModal .info-label {
-        font-weight: 600;
-        color: var(--text-dark);
-        display: block;
-        margin-bottom: 0.25rem;
-        font-size: 0.9rem;
-    }
+/* Modal Styling for Event Details */
+#actionModal .modal-header {
+    background: var(--primary-hover-color) !important;
+    color: white !important;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
 
-    #actionModal .info-value {
-        color: #555;
-        font-size: 1rem;
-    }
+#actionModal .modal-header .modal-title {
+    color: white !important;
+}
+
+#actionModal .modal-header .btn-close {
+    filter: invert(1);
+}
+
+#actionModal .info-item {
+    margin-bottom: 0.75rem;
+    text-align: left;
+}
+
+#actionModal .info-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+#actionModal .info-value {
+    color: #555;
+    font-size: 1rem;
+}
+
+
+
+
+.modal-body .info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.modal-content {
+    font-size: 0.95rem;
+}
+
+.section-box {
+    background-color: #f9fafb;
+    border: 1px solid #e1e5ea;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+}
+
+.section-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.4rem;
+}
+
+.modal-body div:not(.section-box) {
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    font-size: 0.88rem;
+}

@@ -11,52 +11,65 @@ document.addEventListener('DOMContentLoaded', function () {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            editable: true, // Set to true if you want to allow dragging/resizing events
-            selectable: true, // Allow date selection for new events (if implemented)
-            dayMaxEvents: true, // Allow "more" link when too many events
-            eventDidMount: function (info) {
-                // Add custom data attributes for styling/identification if needed
-                if (info.event.extendedProps.status) {
-                    info.el.setAttribute('data-status', info.event.extendedProps.status);
-                }
-                if (info.event.extendedProps.type) {
-                    info.el.setAttribute('data-type', info.event.extendedProps.type);
-                }
+            editable: true,
+            selectable: true,
+            dayMaxEvents: true,
+            
 
-            },
+            // Fetch events from server
             events: {
                 url: `${BASE_URL}admin/calendar/getEvents`,
                 method: 'GET',
                 failure: function () {
                     Swal.fire('Error', 'There was an error while fetching events!', 'error');
-                },
-
-                // You can add more parameters here if your backend needs them
-                // extraParams: function() { return { custom_param: 'something' }; }
-
+                }
             },
-            eventClick: function (info) {
-                // Populate and show the modal with event details
-                document.getElementById('event_type').textContent = info.event.extendedProps.type || 'N/A';
-                document.getElementById('event_title').textContent = info.event.title || 'N/A';
-                document.getElementById('event_start').textContent = info.event.start ? info.event.start.toLocaleString() : 'N/A';
-                document.getElementById('event_end').textContent = info.event.end ? info.event.end.toLocaleString() : 'N/A';
-                document.getElementById('event_status').textContent = info.event.extendedProps.status || 'N/A';
-                document.getElementById('event_job_no').textContent = info.event.extendedProps.job_no || 'N/A';
-                document.getElementById('event_vehicle').textContent = info.event.extendedProps.vehicle || 'N/A';
-                document.getElementById('event_customer').textContent = info.event.extendedProps.customer || 'N/A';
-                document.getElementById('event_mechanic').textContent = info.event.extendedProps.mechanic || 'N/A';
-                document.getElementById('event_description').textContent = info.event.extendedProps.description || 'N/A';
 
+            // Handle rendering extra data
+            eventDidMount: function (info) {
+                const { status, type } = info.event.extendedProps;
+
+                // For styling or identification
+                if (status) {
+                    info.el.setAttribute('data-status', status);
+                }
+                if (type) {
+                    info.el.setAttribute('data-type', type);
+                }
+            },
+
+            // When an event is clicked
+            eventClick: function (info) {
+                info.jsEvent.preventDefault(); // prevent default browser behavior
+                populateEventModal(info.event);
                 actionModal.show();
             },
-            // If you implement selectable: true, you might add:
+
+            // When a date is selected
             select: function (info) {
-                // Open a modal to add a new event
-                openModal(`${BASE_URL}admin/calendar/addEventForm?start=${info.startStr}&end=${info.endStr}`, 'Add New Event');
-            },
+                const url = `${BASE_URL}admin/calendar/addEventForm?start=${info.startStr}&end=${info.endStr}`;
+                openModal(url, 'Add New Event');
+            }
         });
+
         calendar.render();
+    }
+
+    // Helper function to populate the event details modal
+    function populateEventModal(event) {
+        const props = event.extendedProps;
+        const safe = (val) => val ?? 'N/A';
+
+        document.getElementById('event_type').textContent = safe(props.type);
+        document.getElementById('event_title').textContent = safe(event.title);
+        document.getElementById('event_start').textContent = event.start?.toLocaleString() ?? 'N/A';
+        document.getElementById('event_end').textContent = event.end?.toLocaleString() ?? 'N/A';
+        document.getElementById('event_status').textContent = safe(props.status);
+        document.getElementById('event_job_no').textContent = safe(props.job_no);
+        document.getElementById('event_vehicle').textContent = safe(props.vehicle);
+        document.getElementById('event_customer').textContent = safe(props.customer);
+        document.getElementById('event_mechanic').textContent = safe(props.mechanic);
+        document.getElementById('event_description').textContent = safe(props.description);
     }
 });
 
