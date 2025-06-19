@@ -119,9 +119,9 @@
         border-color: var(--danger-color);
     }
 
-    /* Modal Styling for Event Details (reusing actionModal) */
+    /* Modal Styling for Event Details */
     #actionModal .modal-header {
-        background: linear-gradient(90deg, var(--primary-color), var(--primary-hover-color)) !important;
+        background: var(--primary-hover-color) !important;
         color: white !important;
         border-top-left-radius: 15px;
         border-top-right-radius: 15px;
