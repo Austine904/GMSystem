@@ -126,6 +126,7 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     // Calendar
     $routes->get('calendar', 'CalendarController::index');
     $routes->get('calendar/getEvents', 'CalendarController::getEvents');
+    $routes->post('calendar/addEvent', 'CalendarController::addEvent');
 });
 
 $routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');

@@ -1,4 +1,3 @@
-
 <!-- Re-using actionModal for Event Details -->
 <div id="actionModal" class="modal fade" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">

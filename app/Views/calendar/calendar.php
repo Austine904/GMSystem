@@ -16,10 +16,10 @@
     </div>
 
     <div class="calendar-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <label for="eventTypeFilter" class="form-label">Filter by Type</label>
-                <select id="eventTypeFilter" class="form-select d-inline-block" style="width: 200px;">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 p-3 bg-light rounded shadow-sm sticky-top" style="z-index: 1020;">
+            <div class="d-flex align-items-center gap-2">
+                <label for="eventTypeFilter" class="form-label mb-0">Filter by Type</label>
+                <select id="eventTypeFilter" class="form-select form-select-sm" style="width: 150px;">
                     <option value="all">All</option>
                     <option value="service">Service</option>
                     <option value="inspection">Inspection</option>
@@ -27,78 +27,36 @@
                     <option value="cancelled">Cancelled</option>
                 </select>
             </div>
+
+
+            <!-- Toast for Feedback -->
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="calendarToast" class="toast text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+                    <div class="toast-body">
+                        Filter applied successfully!
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex align-items-center gap-2">
-                <input id="eventSearchInput" type="text" class="form-control" placeholder="Search events..." style="width: 200px;">
-                <button id="addEventBtn" class="btn btn-primary">➕ Add Event</button>
+                <label for="startDate" class="form-label mb-0">From</label>
+                <input type="date" id="startDate" class="form-control form-control-sm">
+                <label for="endDate" class="form-label mb-0">To</label>
+                <input type="date" id="endDate" class="form-control form-control-sm">
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input id="eventSearchInput" type="text" class="form-control form-control-sm" placeholder="Search events..." style="width: 200px;">
+                <button id="addEventBtn" class="btn btn-primary btn-sm">➕ Add Event</button>
             </div>
         </div>
         <div id="calendar"></div>
+        <small id="eventCount" class="text-muted ms-2"></small>
     </div>
+
 </div>
 
 <?= $this->include('calendar/modals') ?>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const calendarEl = document.getElementById('calendar');
-        const filterSelect = document.getElementById('eventTypeFilter');
-        const searchInput = document.getElementById('eventSearchInput');
-        const addEventBtn = document.getElementById('addEventBtn');
-        let calendar;
-
-        function getSelectedType() {
-            return filterSelect.value;
-        }
-
-        function getSearchTerm() {
-            return searchInput.value.toLowerCase();
-        }
-
-        function filterEvents(event) {
-            const selectedType = getSelectedType();
-            const searchTerm = getSearchTerm();
-            const matchesType = selectedType === 'all' || event.extendedProps.type === selectedType;
-            const matchesSearch = event.title.toLowerCase().includes(searchTerm);
-            return matchesType && matchesSearch;
-        }
-
-        function renderCalendar() {
-            if (calendar) calendar.destroy();
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                themeSystem: 'bootstrap5',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                height: 'auto',
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    fetch('/api/events')
-                        .then(response => response.json())
-                        .then(data => {
-                            const filtered = data.filter(event => filterEvents(event));
-                            successCallback(filtered);
-                        })
-                        .catch(err => failureCallback(err));
-                }
-            });
-            calendar.render();
-        }
-
-        filterSelect.addEventListener('change', renderCalendar);
-        searchInput.addEventListener('input', renderCalendar);
-        addEventBtn.addEventListener('click', function() {
-            // Replace with your modal or redirect logic
-            alert('Add Event button clicked!');
-        });
-
-        renderCalendar();
-    });
-</script>
 
 
 <?= $this->endSection() ?>

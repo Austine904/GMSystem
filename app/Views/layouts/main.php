@@ -69,6 +69,7 @@
     <script src="<?= base_url('public/assets/js/customers.js') ?>"></script>
     <script src="<?= base_url('public/assets/js/job_intake.js') ?>"></script>
     <script src="<?= base_url('public/assets/js/calendar.js') ?>"></script>
+  
     
 </body>
 
