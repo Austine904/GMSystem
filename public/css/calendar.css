@@ -1,5 +1,6 @@
 :root {
     --primary-color: #007bff;
+    --secondary-color: #6c757d;
     --primary-hover-color: #0056b3;
     --text-dark: #343a40;
     --bg-light: #f8f9fa;
@@ -14,9 +15,9 @@
 
 body {
     font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5;
     color: var(--text-dark);
     padding: 2rem;
-    background-color: #f0f2f5;
 }
 
 .container.mt-5 {
@@ -29,46 +30,58 @@ h3 {
     margin-bottom: 2rem !important;
 }
 
-/* Card styling for the calendar container */
+/* Calendar card styling */
 .calendar-card {
-    background: #fff;
+    background: var(--card-bg);
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 20px var(--shadow-light);
     padding: 1rem;
-
-    /* Needed for responsive FullCalendar */
 }
 
-/* FullCalendar specific styling */
+/* FullCalendar base */
 .fc {
-    /* FullCalendar container */
     font-family: 'Inter', sans-serif;
     max-width: 100%;
-    /* Ensure it doesn't overflow */
 }
+
+/* Toolbar */
+.fc-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.fc-toolbar-chunk {
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 
 .fc .fc-toolbar-title {
     font-weight: 600;
-    color: var(--text-dark);
     font-size: 1.5rem;
-    /* Larger title for calendar header */
+    color: var(--text-dark);
 }
 
-.fc .fc-button {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    padding: 0.5rem 1rem;
-    /* Adjust button padding */
+.fc .fc-button,
+.fc .fc-button-primary {
+  font-size: 0.75rem !important;
+  padding: 0.1rem 0.6rem !important;
+  border-radius: 6px !important;
+  height: auto !important;
 }
+
 
 .fc .fc-button:hover {
     background-color: var(--primary-hover-color);
     border-color: var(--primary-hover-color);
-    transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+    transform: translateY(-1px);
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active {
@@ -76,62 +89,86 @@ h3 {
     border-color: var(--primary-hover-color);
 }
 
+
+/* Day cells */
+.fc-daygrid-day-frame {
+    padding: 4px;
+}
+
+.fc-daygrid-day-number {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+/* Event base */
 .fc-event {
+    border: none;
     border-radius: 5px;
     font-size: 0.85rem;
-    padding: 2px 5px;
+    padding: 2px 6px;
     margin-bottom: 2px;
     cursor: pointer;
-    border: none;
-    /* Indicate events are clickable */
+    transition: background-color 0.2s ease;
+    white-space: normal;
 }
 
 .fc-event-title {
     font-weight: 500;
-    
 }
 
-.fc-daygrid-event {
-    white-space: normal;
-    /* Allow event text to wrap */
+/* Hover effect */
+.fc-event:hover {
+    filter: brightness(90%);
 }
 
-.fc-daygrid-day-number {
-    color: var(--text-dark);
-    font-weight: 500;
-}
-
-/* Specific event colors (optional, can be passed from backend) */
+/* Event coloring via status */
 .fc-event[data-status="In Progress"] {
     background-color: var(--info-color);
-    border-color: var(--info-color);
 }
 
 .fc-event[data-status="Completed"] {
     background-color: var(--success-color);
-    border-color: var(--success-color);
 }
 
 .fc-event[data-status="Awaiting Parts"] {
     background-color: var(--warning-color);
-    border-color: var(--warning-color);
+    color: #212529;
 }
 
 .fc-event[data-status="Cancelled"] {
     background-color: var(--danger-color);
-    border-color: var(--danger-color);
 }
 
+/* NEW: Event coloring via type */
+.fc-event[data-type="service"] {
+    background-color: var(--success-color);
+}
+
+.fc-event[data-type="repair"] {
+    background-color: var(--warning-color);
+    color: #212529;
+}
+
+.fc-event[data-type="inspection"] {
+    background-color: var(--info-color);
+}
+
+.fc-event[data-type="cancelled"] {
+    background-color: var(--danger-color);
+}
+
+/* Today's cell */
 .fc-day-today {
-    background: #ffeeba !important;
+    background-color: #fff3cd !important;
 }
 
+/* Legend styling */
 .legend span {
     display: inline-block;
     width: 1rem;
     height: 1rem;
-    margin-right: 5px;
     border-radius: 3px;
+    margin-right: 5px;
 }
 
 .legend-item {
@@ -140,54 +177,37 @@ h3 {
     margin-right: 1rem;
 }
 
-/* Modal Styling for Event Details */
+/* Modal headers */
 #actionModal .modal-header {
-    background: var(--primary-hover-color) !important;
-    color: white !important;
+    background: var(--primary-hover-color);
+    color: white;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
 }
 
-#actionModal .modal-header .modal-title {
-    color: white !important;
-}
-
+#actionModal .modal-header .modal-title,
 #actionModal .modal-header .btn-close {
-    filter: invert(1);
+    color: white;
+    /* filter: invert(1); */
 }
 
-#actionModal .info-item {
-    margin-bottom: 0.75rem;
-    text-align: left;
-}
-
-#actionModal .info-label {
-    font-weight: 600;
-    color: var(--text-dark);
-    display: block;
-    margin-bottom: 0.25rem;
-    font-size: 0.9rem;
-}
-
-#actionModal .info-value {
-    color: #555;
-    font-size: 1rem;
-}
-
-
-
-
-.modal-body .info-item:last-child {
-    border-bottom: none;
-}
-
+/* Modal content formatting */
 .info-item {
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #f1f1f1;
+    margin-bottom: 0.5rem;
+    text-align: left;
 }
 
-.info-item:last-child {
-    border-bottom: none;
+.info-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.info-value {
+    font-size: 1rem;
+    color: #555;
 }
 
 .modal-content {
@@ -208,10 +228,6 @@ h3 {
     margin-bottom: 0.75rem;
     border-bottom: 1px solid #dee2e6;
     padding-bottom: 0.4rem;
-}
-
-.modal-body div:not(.section-box) {
-    margin-bottom: 0.5rem;
 }
 
 .text-muted {

@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
     const filterSelect = document.getElementById('eventTypeFilter');
@@ -10,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const eventCountDisplay = document.getElementById('eventCount');
     const actionModalElement = document.getElementById('actionModal');
     const actionModal = new bootstrap.Modal(actionModalElement);
+
+
     let calendar;
 
     function getSelectedType() {
@@ -88,69 +89,104 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    if (calendarEl) {
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            themeSystem: 'bootstrap5',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            height: 'auto',
-            editable: true,
-            selectable: true,
-            dayMaxEvents: true,
 
+    const addEventModalElement = document.getElementById('addEventModal');
+    const addEventForm = document.getElementById('addEventForm');
 
-            // Fetch events from server
-            events: {
-                url: `${BASE_URL}admin/calendar/getEvents`,
-                method: 'GET',
-                failure: function () {
-                    Swal.fire('Error', 'There was an error while fetching events!', 'error');
-                }
-            },
+    if (addEventModalElement && addEventForm && addEventBtn) {
+        const addEventModal = new bootstrap.Modal(addEventModalElement);
 
-            // Handle rendering extra data
-            eventDidMount: function (info) {
-                const { status, type } = info.event.extendedProps;
+        addEventBtn.addEventListener('click', function () {
+            addEventForm.reset();
 
-                // For styling or identification
-                if (status) {
-                    info.el.setAttribute('data-status', status);
-                }
-                if (type) {
-                    info.el.setAttribute('data-type', type);
-                }
-            },
+            const eventAllDayCheckbox = document.getElementById('eventAllDay');
+            const eventEndInput = document.getElementById('eventEnd');
 
-            // When an event is clicked
-            eventClick: function (info) {
-                info.jsEvent.preventDefault(); // prevent default browser behavior
-                populateEventModal(info.event);
-                actionModal.show();
-            },
-
-            // When a date is selected
-            select: function (info) {
-                const url = `${BASE_URL}admin/calendar/addEventForm?start=${info.startStr}&end=${info.endStr}`;
-                openModal(url, 'Add New Event');
+            // Optional chaining prevents crashes
+            if (eventAllDayCheckbox) eventAllDayCheckbox.checked = false;
+            if (eventEndInput) {
+                eventEndInput.readOnly = false;
+                eventEndInput.style.backgroundColor = '';
             }
-        });
 
-        calendar.render();
+            addEventModal.show();
+        });
+    } else {
+        console.warn('Modal or form element not found in DOM.');
+    }
+
+
+
+    function renderCalendar() {
+        if (calendarEl) {
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                themeSystem: 'bootstrap5',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                height: 'auto',
+                editable: true,
+                selectable: true,
+                dayMaxEvents: true,
+
+
+                // Fetch events from server
+                events: {
+                    url: `${BASE_URL}admin/calendar/getEvents`,
+                    method: 'GET',
+                    failure: function () {
+                        Swal.fire('Error', 'There was an error while fetching events!', 'error');
+                    }
+                },
+
+                // Handle rendering extra data
+                eventDidMount: function (info) {
+                    const { status, type } = info.event.extendedProps;
+
+                    // For styling or identification
+                    if (status) {
+                        info.el.setAttribute('data-status', status);
+                    }
+                    if (type) {
+                        info.el.setAttribute('data-type', type);
+                    }
+                    if (info.event.extendedProps.type) {
+                        info.el.setAttribute('data-type', info.event.extendedProps.type);
+                    }
+                },
+
+                // When an event is clicked
+                eventClick: function (info) {
+                    info.jsEvent.preventDefault(); // prevent default browser behavior
+                    populateEventModal(info.event);
+                    actionModal.show();
+                },
+
+                // When a date is selected
+                select: function (info) {
+                    const url = `${BASE_URL}admin/calendar/addEventForm?start=${info.startStr}&end=${info.endStr}`;
+                    openModal(url, 'Add New Event');
+                }
+            });
+
+            calendar.render();
+        }
     }
 
 
     [filterSelect, searchInput, startDateInput, endDateInput].forEach(input => {
-        input.addEventListener('input', renderCalendar);
+        if (input) {
+            input.addEventListener('input', renderCalendar);
+        } else {
+            console.warn(`Element with ID ${input.id} not found in DOM.`);
+        }
     });
 
-    addEventBtn.addEventListener('click', function () {
-        const url = `${BASE_URL}admin/calendar/addEventForm`;
-        openModal(url, 'Add New Event');
-    });
+
+
 
     resetFiltersBtn?.addEventListener('click', () => {
         filterSelect.value = 'all';

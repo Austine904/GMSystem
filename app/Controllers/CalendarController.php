@@ -192,4 +192,60 @@ class CalendarController extends BaseController
             return $this->failServerError('An unexpected error occurred while fetching calendar events.');
         }
     }
+
+    public function addEvent()
+    {
+        if (!$this->session->get('isLoggedIn') || ($this->session->get('role') !== 'admin' && $this->session->get('role') !== 'receptionist')) {
+            return $this->failForbidden('Forbidden: Insufficient permissions to add calendar events.');
+        }
+
+        $input = $this->request->getJSON(true); // Get JSON input as associative array
+
+        // Input validation rules
+        $rules = [
+            'title' => 'required|min_length[3]|max_length[255]',
+            'start_time' => 'required|valid_date',
+            'end_time' => 'permit_empty|valid_date', // Permit empty if optional
+            'all_day' => 'permit_empty|in_list[0,1]',
+            'event_type' => 'permit_empty|max_length[50]',
+            'color' => 'permit_empty|regex_match[/^#[0-9a-fA-F]{6}$/]',
+            'description' => 'permit_empty',
+            'related_table' => 'permit_empty|max_length[50]',
+            'related_id' => 'permit_empty|integer',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
+
+        try {
+            $data = [
+                'title'         => $input['title'],
+                'description'   => $input['description'] ?? null,
+                'start_time'    => $input['start_time'],
+                'end_time'      => $input['end_time'] ?? null,
+                'all_day'       => $input['all_day'] ?? 0,
+                'event_type'    => $input['event_type'] ?? 'general',
+                'color'         => $input['color'] ?? '#007bff',
+                'related_table' => $input['related_table'] ?? null,
+                'related_id'    => $input['related_id'] ?? null,
+                'created_by_user_id' => $this->session->get('user_id'), // Get logged-in user ID
+            ];
+
+            $this->db->table('calendar_events')->insert($data);
+            $newEventId = $this->db->insertID();
+
+            if ($newEventId) {
+                return $this->respondCreated(['status' => 'success', 'message' => 'Event added successfully!', 'id' => $newEventId]);
+            } else {
+                return $this->failServerError('Failed to insert event into database.');
+            }
+        } catch (DatabaseException $e) {
+            log_message('error', 'Database error adding calendar event: ' . $e->getMessage());
+            return $this->failServerError('Database error: Could not add calendar event.');
+        } catch (Exception $e) {
+            log_message('error', 'Error adding calendar event: ' . $e->getMessage());
+            return $this->failServerError('An unexpected error occurred while adding the event.');
+        }
+    }
 }

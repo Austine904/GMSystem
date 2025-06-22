@@ -119,14 +119,15 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('customers/load', 'Admin\CustomersController::load');
     $routes->get('customers/load', 'CustomersController::load');
     $routes->get('customers/details/(:num)', 'CustomersController::details/$1');
-    $routes->get('customers/add', 'CustomersController::add'); // For loading add form in modal
-    $routes->get('customers/edit/(:num)', 'CustomersController::edit/$1'); // For loading edit form in modal
+    $routes->get('customers/add', 'CustomersController::add');
+    $routes->get('customers/edit/(:num)', 'CustomersController::edit/$1'); 
     $routes->post('customers/bulk_action', 'CustomersController::bulk_action');
 
     // Calendar
     $routes->get('calendar', 'CalendarController::index');
     $routes->get('calendar/getEvents', 'CalendarController::getEvents');
     $routes->post('calendar/addEvent', 'CalendarController::addEvent');
+    $routes->post('calendar/updateEventDate', 'CalendarController::updateEventDate');
 });
 
 $routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');

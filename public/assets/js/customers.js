@@ -274,43 +274,57 @@ $(document).ready(function () {
 
     // --- Delete Customer Logic ---
     let customerIdToDelete = null;
-    const confirmDeleteModalElement = document.getElementById('confirmDeleteModal');
-    const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalElement);
-    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-    $('#customerTable tbody').on('click', '.delete-customer', function () {
-        customerIdToDelete = $(this).data('id');
-        confirmDeleteModal.show();
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmDeleteModalElement = document.getElementById('confirmDeleteModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-    confirmDeleteBtn.addEventListener('click', async function () {
-        confirmDeleteModal.hide(); // Hide the confirmation modal
-        if (customerIdToDelete) {
-            try {
-                const response = await fetch(`${BASE_URL}admin/customers/bulk_action`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ customers: [customerIdToDelete] }) // Send as an array of IDs
-                });
+        let confirmDeleteModal;
 
-                const responseData = await response.json(); // Assuming JSON response
-
-                if (response.ok && responseData.status === 'success') {
-                    Swal.fire('Deleted!', responseData.message, 'success');
-                    customerTable.ajax.reload(); // Reload DataTables
-                } else {
-                    Swal.fire('Error!', responseData.message || 'Failed to delete customer.', 'error');
-                }
-            } catch (error) {
-                console.error('Error during deletion:', error);
-                Swal.fire('Error!', 'An unexpected error occurred during deletion.', 'error');
-            } finally {
-                customerIdToDelete = null; // Clear the ID
-            }
+        if (confirmDeleteModalElement) {
+            confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalElement);
+        } else {
+            console.warn('Confirm Delete Modal element not found. Ensure it exists in your HTML.');
+            return;
         }
+
+        // When delete icon is clicked in table
+        $('#customerTable tbody').on('click', '.delete-customer', function () {
+            customerIdToDelete = $(this).data('id');
+            confirmDeleteModal.show();
+        });
+
+        // When delete is confirmed
+        confirmDeleteBtn?.addEventListener('click', async function () {
+            confirmDeleteModal.hide();
+
+            if (customerIdToDelete) {
+                try {
+                    const response = await fetch(`${BASE_URL}admin/customers/bulk_action`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ customers: [customerIdToDelete] })
+                    });
+
+                    const responseData = await response.json();
+
+                    if (response.ok && responseData.status === 'success') {
+                        Swal.fire('Deleted!', responseData.message, 'success');
+                        customerTable.ajax.reload();
+                    } else {
+                        Swal.fire('Error!', responseData.message || 'Failed to delete customer.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error during deletion:', error);
+                    Swal.fire('Error!', 'An unexpected error occurred during deletion.', 'error');
+                } finally {
+                    customerIdToDelete = null;
+                }
+            }
+        });
     });
 
     // --- Placeholder for Bulk Delete button if you add it ---
