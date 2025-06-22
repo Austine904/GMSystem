@@ -66,31 +66,71 @@
 
 
 <!-- Multi-Step Add Event Modal -->
+
+<style>
+  .progress-dots {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+
+  .progress-dots .dot {
+    width: 12px;
+    height: 12px;
+    background-color: #ccc;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+  }
+
+  .progress-dots .dot.active {
+    background-color: var(--primary-color, #007bff);
+  }
+  #addEventModal .modal-body {
+    min-height: 500px;
+    /* Ensures uniform height across steps */
+  }
+  
+</style>
+
+
+
 <div id="addEventModal" class="modal fade" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
+        <h5 class="modal-title" id="addEventModalLabel">Add New Calendar Event</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="addEventForm">
-          <!-- Step 1: Basic Info -->
+        <!-- Progress Dots -->
+        <div class="progress-dots text-center mb-4">
+          <span class="dot active" data-step="1"></span>
+          <span class="dot" data-step="2"></span>
+          <span class="dot" data-step="3"></span>
+        </div>
+
+        <form id="addEventForm" novalidate>
+          <!-- Step 1 -->
           <div class="form-step" data-step="1">
+            <h6 class="mb-3 text-primary">Step 1: Event Details</h6>
             <div class="mb-3">
               <label for="eventTitle" class="form-label">Event Title <span class="text-danger">*</span></label>
               <input type="text" class="form-control" id="eventTitle" name="title" required>
+              <div class="invalid-feedback">Event Title is required.</div>
             </div>
             <div class="mb-3">
-              <label for="eventType" class="form-label">Event Type</label>
-              <select class="form-select select2" id="eventType" name="event_type" required>
+              <label for="eventType" class="form-label">Event Type <span class="text-danger">*</span></label>
+              <select class="form-select select2-basic" id="eventType" name="event_type" required>
                 <option value="">-- Select Type --</option>
+                <option value="general">General</option>
                 <option value="job_pickup">Job Pickup</option>
                 <option value="appointment">Appointment</option>
                 <option value="meeting">Meeting</option>
                 <option value="holiday">Holiday</option>
                 <option value="leave">Leave</option>
               </select>
+              <div class="invalid-feedback">Event Type is required.</div>
             </div>
             <div class="mb-3">
               <label for="eventColor" class="form-label">Event Color</label>
@@ -102,49 +142,61 @@
             </div>
           </div>
 
-          <!-- Step 2: Scheduling -->
+          <!-- Step 2 -->
           <div class="form-step d-none" data-step="2">
+            <h6 class="mb-3 text-primary">Step 2: Scheduling</h6>
             <div class="row mb-3">
               <div class="col-md-6">
-                <label for="eventStart" class="form-label">Start Time <span class="text-danger">*</span></label>
-                <input type="datetime-local" class="form-control" id="eventStart" name="start_time" required>
+                <label for="eventStartTimeInput" class="form-label">Start Date & Time <span class="text-danger">*</span></label>
+                <input type="datetime-local" class="form-control" id="eventStartTimeInput" name="start_time" required>
               </div>
               <div class="col-md-6">
-                <label for="eventEnd" class="form-label">End Time</label>
-                <input type="datetime-local" class="form-control" id="eventEnd" name="end_time">
+                <label for="eventEndTimeInput" class="form-label">End Date & Time</label>
+                <input type="datetime-local" class="form-control" id="eventEndTimeInput" name="end_time">
               </div>
             </div>
-            <div class="mb-3 form-check">
+            <div class="form-check mb-3">
               <input type="checkbox" class="form-check-input" id="eventAllDay" name="all_day">
               <label class="form-check-label" for="eventAllDay">All Day Event</label>
             </div>
           </div>
 
-          <!-- Step 3: Related Info -->
+          <!-- Step 3 -->
           <div class="form-step d-none" data-step="3">
+            <h6 class="mb-3 text-primary">Step 3: Related Info & Notifications</h6>
             <div id="dynamicFieldsContainer"></div>
             <div class="mb-3">
               <label for="notifyUsers" class="form-label">Notify Users</label>
-              <select id="notifyUsers" class="form-select select2" name="notify_users[]" multiple>
-                <option value="1">Admin</option>
-                <option value="2">Mechanic</option>
-                <option value="3">Receptionist</option>
+              <select id="notifyUsers" class="form-select select2-full" name="notify_users[]" multiple>
+                <?php foreach (($users_for_notification ?? []) as $user): ?>
+                  <option value="<?= esc($user['id']) ?>">
+                    <?= esc($user['first_name'] . ' ' . $user['last_name'] . ' (' . $user['role'] . ')') ?>
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
             <div class="mb-3">
               <label for="priority" class="form-label">Priority</label>
               <select class="form-select" id="priority" name="priority">
                 <option value="low">Low</option>
-                <option value="medium">Medium</option>
+                <option value="medium" selected>Medium</option>
                 <option value="high">High</option>
               </select>
             </div>
           </div>
 
-          <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-secondary" id="prevStepBtn" disabled>Back</button>
-            <button type="button" class="btn btn-primary" id="nextStepBtn">Next</button>
-            <button type="submit" class="btn btn-success d-none" id="submitEventBtn">Save Event</button>
+          <!-- Navigation Buttons -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary" id="prevStepBtn" disabled>
+              <i class="bi bi-arrow-left me-2"></i> Back
+            </button>
+            <button type="button" class="btn btn-primary" id="nextStepBtn">
+              Next <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+            <button type="submit" class="btn btn-success d-none" id="submitEventBtn">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              <span class="button-text"><i class="bi bi-check-circle me-2"></i> Save Event</span>
+            </button>
           </div>
         </form>
       </div>
@@ -152,19 +204,12 @@
   </div>
 </div>
 
-<!-- Toast Container -->
-<div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
-  <div id="calendarToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">
-        Event saved successfully!
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
+<!--Add Event Modal Script-->
+
 
 <script>
+  // ✅ Add Event Modal JS - Step 3 Dynamic Logic (A + C route)
+
   document.addEventListener('DOMContentLoaded', function() {
     let currentStep = 1;
 
@@ -175,6 +220,7 @@
     const form = document.getElementById('addEventForm');
     const typeSelect = document.getElementById('eventType');
     const dynamicContainer = document.getElementById('dynamicFieldsContainer');
+    const progressDots = document.querySelectorAll('.progress-dots .dot');
 
     function updateStepDisplay() {
       steps.forEach(step => step.classList.add('d-none'));
@@ -182,21 +228,54 @@
       prevBtn.disabled = currentStep === 1;
       nextBtn.classList.toggle('d-none', currentStep === steps.length);
       submitBtn.classList.toggle('d-none', currentStep !== steps.length);
+
+      progressDots.forEach(dot => dot.classList.remove('active'));
+      document.querySelector(`.progress-dots .dot[data-step="${currentStep}"]`)?.classList.add('active');
     }
 
     function generateDynamicFields(type) {
       let html = '';
+
       if (type === 'job_pickup') {
-        html += '<div class="mb-3"><label>Job ID</label><input type="text" name="job_id" class="form-control"></div>';
-        html += '<div class="mb-3"><label>Vehicle</label><input type="text" name="vehicle" class="form-control"></div>';
-      } else if (type === 'meeting') {
-        html += '<div class="mb-3"><label>Location</label><input type="text" name="location" class="form-control"></div>';
-        html += '<div class="mb-3"><label>Participants</label><input type="text" name="participants" class="form-control"></div>';
+        html += `<div class="mb-3">
+        <label for="relatedJob" class="form-label">Select Job</label>
+        <select id="relatedJob" class="form-select select2-related" name="related_id"></select>
+        <input type="hidden" name="related_table" value="jobs">
+      </div>`;
+      } else if (type === 'appointment' || type === 'meeting') {
+        html += `<div class="mb-3">
+        <label for="relatedCustomer" class="form-label">Select Customer</label>
+        <select id="relatedCustomer" class="form-select select2-related" name="related_id"></select>
+        <input type="hidden" name="related_table" value="customers">
+      </div>`;
       } else if (type === 'leave') {
-        html += '<div class="mb-3"><label>Staff Name</label><input type="text" name="staff" class="form-control"></div>';
-        html += '<div class="mb-3"><label>Leave Type</label><input type="text" name="leave_type" class="form-control"></div>';
+        html += `<div class="mb-3">
+        <label for="leaveType" class="form-label">Leave Type</label>
+        <input type="text" class="form-control" name="leave_type">
+      </div>`;
+        html += `<input type="hidden" name="related_table" value="users">
+        <input type="hidden" name="related_id" value="${LOGGED_IN_USER_ID}">`;
       }
+
       dynamicContainer.innerHTML = html;
+
+      // Load select2 AJAX only for related select
+      $('.select2-related').select2({
+        dropdownParent: $('#addEventModal'),
+        ajax: {
+          url: type === 'job_pickup' ? `${BASE_URL}admin/calendar/getRelatedJobs` : `${BASE_URL}admin/calendar/getCustomersList`,
+          dataType: 'json',
+          delay: 250,
+          processResults: function(data) {
+            return {
+              results: data.map(item => ({
+                id: item.id,
+                text: item.label
+              }))
+            };
+          }
+        }
+      });
     }
 
     typeSelect.addEventListener('change', function() {
@@ -217,8 +296,8 @@
       }
     });
 
-    $(".select2").select2({
-      dropdownParent: $("#addEventModal")
+    $(".select2-basic, .select2-full").select2({
+      dropdownParent: $('#addEventModal')
     });
 
     form.addEventListener('submit', function(e) {
