@@ -199,7 +199,7 @@ class CalendarController extends BaseController
             return $this->failForbidden('Forbidden: Insufficient permissions to add calendar events.');
         }
 
-        $input = $this->request->getJSON(true); // Get JSON input as associative array
+        $input = $this->request->getPost();
 
         // Input validation rules
         $rules = [
@@ -210,8 +210,8 @@ class CalendarController extends BaseController
             'event_type' => 'permit_empty|max_length[50]',
             'color' => 'permit_empty|regex_match[/^#[0-9a-fA-F]{6}$/]',
             'description' => 'permit_empty',
-            'related_table' => 'permit_empty|max_length[50]',
-            'related_id' => 'permit_empty|integer',
+            // 'related_table' => 'permit_empty|max_length[50]',
+            // 'related_id' => 'permit_empty|integer',
         ];
 
         if (!$this->validate($rules)) {
@@ -227,8 +227,8 @@ class CalendarController extends BaseController
                 'all_day'       => $input['all_day'] ?? 0,
                 'event_type'    => $input['event_type'] ?? 'general',
                 'color'         => $input['color'] ?? '#007bff',
-                'related_table' => $input['related_table'] ?? null,
-                'related_id'    => $input['related_id'] ?? null,
+                // 'related_table' => $input['related_table'] ?? null,
+                // 'related_id'    => $input['related_id'] ?? null,
                 'created_by_user_id' => $this->session->get('user_id'), // Get logged-in user ID
             ];
 
