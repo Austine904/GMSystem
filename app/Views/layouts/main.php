@@ -39,6 +39,7 @@
     <link rel="stylesheet" href="<?= base_url('public/css/job_intake.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/customers.css') ?>">
     <link rel="stylesheet" href="<?= base_url('public/css/calendar.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('public/css/sublets.css') ?>">
 
     <!-- Global JS Variables -->
     <script>
@@ -71,6 +72,8 @@
     <script src="<?= base_url('public/assets/js/job_intake.js') ?>"></script>
     <script src="<?= base_url('public/assets/js/customers.js') ?>"></script>
     <script src="<?= base_url('public/assets/js/calendar.js') ?>"></script>
+    <script src="<?= base_url('public/assets/js/sublets.js') ?>"></script>
+
 
 
     <!-- Main Content -->

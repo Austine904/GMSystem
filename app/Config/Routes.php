@@ -64,7 +64,6 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('/', 'DashboardController::admin');
     $routes->get('dashboard', 'DashboardController::admin');
 
-
     // Users
     $routes->get('users', 'UsersController::index');
     $routes->get('users/add', 'UsersController::add');
@@ -76,8 +75,6 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('users/bulk_action', 'UsersController::bulk_action');
     $routes->get('users/fetch/(:num)', 'UsersController::details/$1');
     $routes->get('users/fetch', 'UsersController::fetchUsers');
-
-
 
     // Vehicles
     $routes->get('vehicles', 'VehicleController::index');
@@ -128,8 +125,17 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('calendar/getEvents', 'CalendarController::getEvents');
     $routes->get('calendar/addEvent', 'CalendarController::addEvent');
     $routes->post('calendar/addEvent', 'CalendarController::addEvent');
-
     $routes->post('calendar/updateEventDate', 'CalendarController::updateEventDate');
+
+    // Sublets
+    $routes->get('sublets', 'SubletsController::index');
+    $routes->get('sublets/add', 'SubletsController::add');
+    $routes->post('sublets/load', 'SubletsController::load');
+    $routes->get('sublets/edit/(:num)', 'SubletsController::add/$1');
+    $routes->post('sublets/save', 'SubletsController::save');
+    $routes->get('sublets/details/(:num)', 'SubletsController::details/$1');
+    $routes->post('sublets/delete/(:num)', 'SubletsController::delete/$1');
+    $routes->post('sublets/bulkAction', 'SubletsController::bulkAction');
 });
 
 $routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');

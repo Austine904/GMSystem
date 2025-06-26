@@ -9,9 +9,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const eventCountDisplay = document.getElementById('eventCount');
     const actionModalElement = document.getElementById('actionModal');
     const actionModal = new bootstrap.Modal(actionModalElement);
-
+    const addEventModalElement = document.getElementById('addEventModal');
+    const addEventForm = document.getElementById('addEventForm');
 
     let calendar;
+    let allEvents = [];
 
     function getSelectedType() {
         return filterSelect.value;
@@ -34,9 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const searchTerm = getSearchTerm();
         const startDate = getStartDate();
         const endDate = getEndDate();
+
         const matchesType = selectedType === 'all' || event.extendedProps.type === selectedType;
         const matchesSearch = event.title.toLowerCase().includes(searchTerm);
-
         const eventStart = new Date(event.start);
         const withinStart = !startDate || eventStart >= startDate;
         const withinEnd = !endDate || eventStart <= endDate;
@@ -60,14 +62,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('event_description').textContent = safe(props.description);
     }
 
-    function getColorByType(type) {
-        const colorMap = {
-            service: '#198754',
-            inspection: '#0dcaf0',
-            repair: '#ffc107',
-            cancelled: '#dc3545'
-        };
-        return colorMap[type] || '#6c757d';
+    function updateEventCount(count) {
+        if (eventCountDisplay) {
+            eventCountDisplay.textContent = count;
+        }
     }
 
     function updateEventDate(id, start, end) {
@@ -89,37 +87,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-
-    const addEventModalElement = document.getElementById('addEventModal');
-    const addEventForm = document.getElementById('addEventForm');
-
-    if (addEventModalElement && addEventForm && addEventBtn) {
-        const addEventModal = new bootstrap.Modal(addEventModalElement);
-
-        addEventBtn.addEventListener('click', function () {
-            addEventForm.reset();
-
-            const eventAllDayCheckbox = document.getElementById('eventAllDay');
-            const eventEndInput = document.getElementById('eventEnd');
-
-            // Optional chaining prevents crashes
-            if (eventAllDayCheckbox) eventAllDayCheckbox.checked = false;
-            if (eventEndInput) {
-                eventEndInput.readOnly = false;
-                eventEndInput.style.backgroundColor = '';
-            }
-
-            addEventModal.show();
-        });
-    } else {
-        console.warn('Modal or form element not found in DOM.');
-    }
-
-
-
     function renderCalendar() {
         if (calendarEl) {
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 themeSystem: 'bootstrap5',
                 headerToolbar: {
@@ -132,43 +102,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectable: true,
                 dayMaxEvents: true,
 
-
-                // Fetch events from server
-                events: {
-                    url: `${BASE_URL}admin/calendar/getEvents`,
-                    method: 'GET',
-                    failure: function () {
-                        Swal.fire('Error', 'There was an error while fetching events!', 'error');
-                    }
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    fetch(`${BASE_URL}admin/calendar/getEvents`)
+                        .then(res => res.json())
+                        .then(data => {
+                            allEvents = data;
+                            const filtered = allEvents.filter(filterEvents);
+                            successCallback(filtered);
+                            updateEventCount(filtered.length);
+                        })
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                            Swal.fire('Error', 'There was an error while fetching events!', 'error');
+                            failureCallback(error);
+                        });
                 },
 
-                // Handle rendering extra data
                 eventDidMount: function (info) {
                     const { status, type } = info.event.extendedProps;
-
-                    // For styling or identification
-                    if (status) {
-                        info.el.setAttribute('data-status', status);
-                    }
-                    if (type) {
-                        info.el.setAttribute('data-type', type);
-                    }
-                    if (info.event.extendedProps.type) {
-                        info.el.setAttribute('data-type', info.event.extendedProps.type);
-                    }
+                    if (status) info.el.setAttribute('data-status', status);
+                    if (type) info.el.setAttribute('data-type', type);
                 },
 
-                // When an event is clicked
                 eventClick: function (info) {
-                    info.jsEvent.preventDefault(); // prevent default browser behavior
+                    info.jsEvent.preventDefault();
                     populateEventModal(info.event);
                     actionModal.show();
                 },
 
-                // When a date is selected
                 select: function (info) {
                     const url = `${BASE_URL}admin/calendar/addEventForm?start=${info.startStr}&end=${info.endStr}`;
-                    openModal(url, 'Add New Event');
+                    if (typeof openModal === 'function') {
+                        openModal(url, 'Add New Event');
+                    } else {
+                        console.warn('openModal function is not defined.');
+                    }
                 }
             });
 
@@ -176,26 +144,47 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Re-filter without reloading all events
+    function refilterEvents() {
+        const filtered = allEvents.filter(filterEvents);
+        calendar.removeAllEvents();
+        calendar.addEventSource(filtered);
+        updateEventCount(filtered.length);
+    }
 
+    // Attach event listeners to filters
     [filterSelect, searchInput, startDateInput, endDateInput].forEach(input => {
         if (input) {
-            input.addEventListener('input', renderCalendar);
-        } else {
-            console.warn(`Element with ID ${input.id} not found in DOM.`);
+            input.addEventListener('input', refilterEvents);
         }
     });
-
-
-
 
     resetFiltersBtn?.addEventListener('click', () => {
         filterSelect.value = 'all';
         searchInput.value = '';
         startDateInput.value = '';
         endDateInput.value = '';
-        renderCalendar();
+        refilterEvents();
     });
+
+    if (addEventModalElement && addEventForm && addEventBtn) {
+        const addEventModal = new bootstrap.Modal(addEventModalElement);
+
+        addEventBtn.addEventListener('click', function () {
+            addEventForm.reset();
+
+            const eventAllDayCheckbox = document.getElementById('eventAllDay');
+            const eventEndInput = document.getElementById('eventEnd');
+
+            if (eventAllDayCheckbox) eventAllDayCheckbox.checked = false;
+            if (eventEndInput) {
+                eventEndInput.readOnly = false;
+                eventEndInput.style.backgroundColor = '';
+            }
+
+            addEventModal.show();
+        });
+    }
 
     renderCalendar();
 });
-

@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use Exception;
-use App\Models\JobCardModel; // Assuming you have a JobCardModel
-use App\Models\SupplierModel; // Assuming you have a SupplierModel
 
 class SubletsController extends BaseController
 {
@@ -15,15 +13,11 @@ class SubletsController extends BaseController
 
     protected $db;
     protected $session;
-    protected $jobCardModel;
-    protected $supplierModel;
 
     public function __construct()
     {
         $this->db = \Config\Database::connect();
         $this->session = \Config\Services::session();
-        $this->jobCardModel = new JobCardModel();
-        $this->supplierModel = new SupplierModel();
     }
 
     /**
@@ -35,7 +29,7 @@ class SubletsController extends BaseController
         if (!$this->session->get('isLoggedIn') || (!in_array($this->session->get('role'), ['admin', 'receptionist']))) {
             return redirect()->to('/login')->with('error', 'You do not have permission to access this page.');
         }
-        return view('admin/sublets/index');
+        return view('sublets/index');
     }
 
     /**
@@ -56,7 +50,20 @@ class SubletsController extends BaseController
         $order_dir = $request->getPost('order')[0]['dir'];
         $columns = $request->getPost('columns');
 
-        $order_by = $columns[$order_column]['data']; // Get column name for ordering
+        // Map DataTables column index to database column name
+        $orderableColumns = [
+            0 => 'sublets.id', // Checkbox column, not directly orderable by DB, but safe placeholder
+            1 => 'sublets.id',
+            2 => 'job_cards.job_no',
+            3 => 'sublets.description',
+            4 => 'suppliers.name',
+            5 => 'sublets.cost',
+            6 => 'sublets.status',
+            7 => 'sublets.date_sent',
+            8 => 'sublets.date_returned',
+            9 => 'sublets.id', // Actions column
+        ];
+        $order_by = $orderableColumns[$order_column] ?? 'sublets.id'; // Default to ID if column not found
 
         try {
             $builder = $this->db->table('sublets')
@@ -82,6 +89,12 @@ class SubletsController extends BaseController
                         ->orLike('job_cards.job_no', $search_value)
                         ->orLike('suppliers.name', $search_value)
                         ->groupEnd();
+            }
+
+            // Apply status filter from JS
+            $statusFilter = $request->getPost('status_filter');
+            if (!empty($statusFilter)) {
+                $builder->where('sublets.status', $statusFilter);
             }
 
             // Get total count (before pagination and filtering)
@@ -133,13 +146,20 @@ class SubletsController extends BaseController
             }
         }
 
-        // Fetch necessary data for dropdowns
-        $data['job_cards'] = $this->jobCardModel->select('id, job_no, vehicle_id')->findAll();
-        // Fetch suppliers who can be sublet providers (e.g., role='external_service_provider' or similar)
-        // For simplicity, fetching all suppliers. Adjust if you have a specific supplier type.
-        $data['sublet_providers'] = $this->supplierModel->select('id, name')->findAll();
+        // Fetch necessary data for dropdowns using direct DB calls
+        $data['job_cards'] = $this->db->table('job_cards')
+                                     ->select('job_cards.id, job_cards.job_no, vehicles.registration_number')
+                                     ->join('vehicles', 'vehicles.id = job_cards.vehicle_id', 'left')
+                                     ->get()
+                                     ->getResultArray();
 
-        return view('admin/sublets/_form', $data);
+        // Fetch suppliers using direct DB calls
+        $data['sublet_providers'] = $this->db->table('suppliers')
+                                            ->select('id, name')
+                                            ->get()
+                                            ->getResultArray();
+
+        return view('sublets/form', $data);
     }
 
     /**
@@ -211,6 +231,8 @@ class SubletsController extends BaseController
             log_message('error', 'Error saving sublet: ' . $e->getMessage());
             return $this->failServerError('An unexpected error occurred while saving the sublet.');
         }
+        //error in console
+        
     }
 
     /**
@@ -292,7 +314,7 @@ class SubletsController extends BaseController
         $ids = $this->request->getPost('ids'); // Array of IDs
 
         if (empty($ids) || !is_array($ids)) {
-            return $this->failValidationError('No items selected for bulk action.');
+            return $this->failValidationErrors('No items selected for bulk action.');
         }
 
         try {
@@ -308,7 +330,7 @@ class SubletsController extends BaseController
                     return $this->failNotFound('No sublets found or deleted for the provided IDs.');
                 }
             } else {
-                return $this->failValidationError('Invalid bulk action specified.');
+                return $this->failValidationErrors('Invalid bulk action specified.');
             }
         } catch (DatabaseException $e) {
             log_message('error', 'Database error during bulk sublet action: ' . $e->getMessage());
