@@ -136,6 +136,12 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('sublets/details/(:num)', 'SubletsController::details/$1');
     $routes->post('sublets/delete/(:num)', 'SubletsController::delete/$1');
     $routes->post('sublets/bulkAction', 'SubletsController::bulkAction');
+    $routes->get('sublets/fetch', 'SubletsController::fetchSublets');
+    $routes->get('sublets/fetch/(:num)', 'SubletsController::fetchSublets/$1');
+    $routes->get('sublets/(:num)', 'SubletsController::details/$1');
+    $routes->get('sublets/(:num)/edit', 'SubletsController::edit/$1');
+    $routes->post('sublets/(:num)/update', 'SubletsController::update/$1');
+    
 });
 
 $routes->get('vehicles/details/(:num)', 'VehicleController::details/$1');
