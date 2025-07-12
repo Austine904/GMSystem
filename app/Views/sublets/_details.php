@@ -1,5 +1,5 @@
 <?php
-// Ensure $sublet is defined and not null
+
 $sublet = $sublet ?? [];
 
 // Helper function for safe output
@@ -16,7 +16,7 @@ $getStatusBadgeClass = function($status) {
         case 'Invoiced': return 'status-badge-invoiced';
         case 'Paid': return 'status-badge-paid';
         case 'Cancelled': return 'status-badge-cancelled';
-        default: return 'bg-secondary text-white'; // Default Bootstrap grey
+        default: return 'bg-secondary text-white'; 
     }
 };
 ?>
